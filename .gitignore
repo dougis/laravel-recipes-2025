@@ -1,0 +1,120 @@
+# Laravel specific
+/vendor/
+/node_modules/
+/public/hot
+/public/storage
+/storage/*.key
+/storage/app/public/*
+!/storage/app/public/.gitkeep
+/storage/framework/cache/data/*
+!/storage/framework/cache/data/.gitkeep
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitkeep
+/storage/framework/testing/*
+!/storage/framework/testing/.gitkeep
+/storage/framework/views/*
+!/storage/framework/views/.gitkeep
+/storage/logs/*
+!/storage/logs/.gitkeep
+/bootstrap/cache/*
+!/bootstrap/cache/.gitkeep
+
+# Environment files
+.env
+.env.backup
+.env.production
+.phpunit.result.cache
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Node.js / NPM
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Vue.js / Frontend build files
+/public/build
+/public/css
+/public/js
+/public/mix-manifest.json
+dist/
+build/
+
+# Testing
+coverage/
+.nyc_output
+*.lcov
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Documentation (optional - remove if you want to track docs)
+# /docs/
+
+# Temporary files
+tmp/
+temp/
+
+# Laravel Telescope (optional)
+/storage/telescope
+
+# Laravel Nova (if used)
+/nova
+
+# Backup files
+*.bak
+
+# Laravel Sail
+docker-compose.override.yml
+
+# Composer
+composer.phar
+
+# PHPUnit
+.phpunit.cache
+
+# Laravel Dusk
+/tests/Browser/screenshots/
+/tests/Browser/console/
+
+# MongoDB (if using local MongoDB files)
+/data/
+/dump/
+
+# Redis dump files
+*.rdb
+
+# Deployment files
+deployment/
+deploy.php
+
+# Local development files
+.vagrant/
+Homestead.json
+Homestead.yaml
+auth.json
+/.fleet
+/.vscode
