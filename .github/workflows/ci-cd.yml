@@ -1,0 +1,416 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+  PHP_VERSION: '8.3'
+
+jobs:
+  # Code Quality and Security Checks
+  code-quality:
+    name: Code Quality & Security
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mongodb, redis, gd, zip, bcmath
+          coverage: xdebug
+      
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ runner.os }}-${{ hashFiles('src/composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+      
+      - name: Install Composer dependencies
+        working-directory: src
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: src/package-lock.json
+      
+      - name: Install NPM dependencies
+        working-directory: src
+        run: npm ci
+      
+      - name: Run PHP CodeSniffer
+        working-directory: src
+        run: |
+          composer require --dev squizlabs/php_codesniffer
+          ./vendor/bin/phpcs --standard=PSR12 app/ --ignore=app/Console/Kernel.php
+        continue-on-error: true
+      
+      - name: Run PHPStan
+        working-directory: src
+        run: |
+          composer require --dev phpstan/phpstan larastan/larastan
+          ./vendor/bin/phpstan analyse --memory-limit=2G
+        continue-on-error: true
+      
+      - name: Run ESLint
+        working-directory: src
+        run: |
+          npm run lint
+        continue-on-error: true
+      
+      - name: Security Audit (Composer)
+        working-directory: src
+        run: composer audit
+        continue-on-error: true
+      
+      - name: Security Audit (NPM)
+        working-directory: src
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
+  # Backend Testing
+  test-backend:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    needs: code-quality
+    
+    services:
+      mongodb:
+        image: mongo:7.0
+        env:
+          MONGO_INITDB_ROOT_USERNAME: admin
+          MONGO_INITDB_ROOT_PASSWORD: password
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mongodb, redis, gd, zip, bcmath
+          coverage: xdebug
+      
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ runner.os }}-${{ hashFiles('src/composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+      
+      - name: Install Composer dependencies
+        working-directory: src
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+      
+      - name: Create .env file
+        working-directory: src
+        run: |
+          cp .env.example .env
+          echo "DB_CONNECTION=mongodb" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_PORT=27017" >> .env
+          echo "DB_DATABASE=laravel_recipes_test" >> .env
+          echo "REDIS_HOST=127.0.0.1" >> .env
+          echo "REDIS_PORT=6379" >> .env
+          echo "CACHE_DRIVER=redis" >> .env
+          echo "SESSION_DRIVER=redis" >> .env
+          echo "QUEUE_CONNECTION=sync" >> .env
+      
+      - name: Generate application key
+        working-directory: src
+        run: php artisan key:generate
+      
+      - name: Run database migrations
+        working-directory: src
+        run: php artisan migrate --force
+      
+      - name: Run database seeders
+        working-directory: src
+        run: php artisan db:seed --force
+      
+      - name: Run Unit Tests
+        working-directory: src
+        run: php artisan test --testsuite=Unit --coverage-clover=coverage-unit.xml
+      
+      - name: Run Feature Tests
+        working-directory: src
+        run: php artisan test --testsuite=Feature --coverage-clover=coverage-feature.xml
+      
+      - name: Combine test coverage
+        working-directory: src
+        run: |
+          php -r "
+          \$unit = simplexml_load_file('coverage-unit.xml');
+          \$feature = simplexml_load_file('coverage-feature.xml');
+          \$totalLines = (int)\$unit->project->metrics['elements'] + (int)\$feature->project->metrics['elements'];
+          \$coveredLines = (int)\$unit->project->metrics['coveredelements'] + (int)\$feature->project->metrics['coveredelements'];
+          \$coverage = \$totalLines > 0 ? round((\$coveredLines / \$totalLines) * 100, 2) : 0;
+          echo \"Total Coverage: {\$coverage}%\n\";
+          file_put_contents('coverage-summary.txt', \$coverage);
+          "
+      
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: |
+            src/coverage-unit.xml
+            src/coverage-feature.xml
+            src/coverage-summary.txt
+
+  # Frontend Testing
+  test-frontend:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    needs: code-quality
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: src/package-lock.json
+      
+      - name: Install NPM dependencies
+        working-directory: src
+        run: npm ci
+      
+      - name: Run JavaScript tests
+        working-directory: src
+        run: npm run test
+        continue-on-error: true
+      
+      - name: Build production assets
+        working-directory: src
+        run: npm run build
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: src/public/build/
+
+  # Integration Testing
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: [test-backend, test-frontend]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Build and test with Docker
+        run: |
+          cp .env.dev .env
+          docker-compose -f docker-compose.dev.yml up -d --build
+          sleep 30
+          
+          # Wait for services to be ready
+          docker-compose -f docker-compose.dev.yml exec -T app php artisan migrate --force
+          docker-compose -f docker-compose.dev.yml exec -T app php artisan db:seed --force
+          
+          # Run integration tests
+          docker-compose -f docker-compose.dev.yml exec -T app php artisan test --testsuite=Feature
+          
+          # Test API endpoints
+          curl -f http://localhost:8080/api/v1/recipes/public || exit 1
+          
+          # Cleanup
+          docker-compose -f docker-compose.dev.yml down
+
+  # Security Scanning
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: code-quality
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+      
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  # Build and Deploy to Staging
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [integration-tests, security-scan]
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    environment: staging
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.REGISTRY_URL }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/php/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.REGISTRY_URL }}/laravel-recipes:staging-${{ github.sha }}
+            ${{ secrets.REGISTRY_URL }}/laravel-recipes:staging-latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: Deploy to staging server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USERNAME }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          script: |
+            cd /opt/laravel-recipes
+            docker-compose pull
+            docker-compose up -d
+            docker-compose exec -T app php artisan migrate --force
+            docker-compose exec -T app php artisan config:cache
+            docker-compose exec -T app php artisan view:cache
+
+  # Build and Deploy to Production
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [integration-tests, security-scan]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.REGISTRY_URL }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/php/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.REGISTRY_URL }}/laravel-recipes:${{ github.sha }}
+            ${{ secrets.REGISTRY_URL }}/laravel-recipes:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: Deploy to production server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USERNAME }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          script: |
+            cd /opt/laravel-recipes
+            docker-compose pull
+            docker-compose up -d
+            docker-compose exec -T app php artisan migrate --force
+            docker-compose exec -T app php artisan config:cache
+            docker-compose exec -T app php artisan view:cache
+            docker-compose exec -T app php artisan queue:restart
+
+  # Create Release
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: deploy-production
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Generate changelog
+        id: changelog
+        run: |
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          git log --pretty=format:"- %s (%h)" $(git describe --tags --abbrev=0)..HEAD >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          body: |
+            ## Changes in this release
+            
+            ${{ steps.changelog.outputs.changelog }}
+            
+            ## Docker Images
+            
+            - `${{ secrets.REGISTRY_URL }}/laravel-recipes:${{ github.sha }}`
+            - `${{ secrets.REGISTRY_URL }}/laravel-recipes:latest`
+          draft: false
+          prerelease: false

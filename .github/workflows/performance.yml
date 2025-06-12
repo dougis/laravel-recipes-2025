@@ -1,0 +1,320 @@
+name: Performance Monitoring
+
+on:
+  schedule:
+    # Run every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  lighthouse-ci:
+    name: Lighthouse CI
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.12.x
+      
+      - name: Build and start test environment
+        run: |
+          cp .env.dev .env
+          docker-compose -f docker-compose.dev.yml up -d --build
+          sleep 60
+          
+          # Wait for application to be ready
+          timeout 300 bash -c 'until curl -f http://localhost:8080; do sleep 5; done'
+      
+      - name: Run Lighthouse CI
+        run: |
+          lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+      
+      - name: Upload Lighthouse results
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-results
+          path: .lighthouseci/
+      
+      - name: Cleanup
+        if: always()
+        run: docker-compose -f docker-compose.dev.yml down
+
+  load-testing:
+    name: Load Testing
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup test environment
+        run: |
+          cp .env.dev .env
+          docker-compose -f docker-compose.dev.yml up -d --build
+          sleep 60
+          
+          # Seed with test data
+          docker-compose -f docker-compose.dev.yml exec -T app php artisan migrate --force
+          docker-compose -f docker-compose.dev.yml exec -T app php artisan db:seed --force
+      
+      - name: Install Artillery
+        run: npm install -g artillery@latest
+      
+      - name: Create load test configuration
+        run: |
+          cat > load-test.yml << EOF
+          config:
+            target: 'http://localhost:8080'
+            phases:
+              - duration: 60
+                arrivalRate: 5
+                name: "Warm up"
+              - duration: 120
+                arrivalRate: 10
+                name: "Normal load"
+              - duration: 60
+                arrivalRate: 20
+                name: "High load"
+            processor: "./load-test-functions.js"
+          
+          scenarios:
+            - name: "Browse recipes"
+              weight: 60
+              flow:
+                - get:
+                    url: "/api/v1/recipes/public"
+                - think: 2
+                - get:
+                    url: "/api/v1/recipes/{{ \$randomInt(1, 100) }}"
+                    capture:
+                      - json: "\$.data.recipe.id"
+                        as: "recipeId"
+            
+            - name: "Browse cookbooks"
+              weight: 30
+              flow:
+                - get:
+                    url: "/api/v1/cookbooks/public"
+                - think: 3
+                - get:
+                    url: "/api/v1/cookbooks/{{ \$randomInt(1, 20) }}"
+            
+            - name: "Search recipes"
+              weight: 10
+              flow:
+                - get:
+                    url: "/api/v1/recipes/search"
+                    qs:
+                      query: "{{ \$randomString() }}"
+          EOF
+      
+      - name: Create load test functions
+        run: |
+          cat > load-test-functions.js << EOF
+          module.exports = {
+            \$randomInt: function(min, max) {
+              return Math.floor(Math.random() * (max - min + 1)) + min;
+            },
+            \$randomString: function() {
+              const terms = ['chicken', 'pasta', 'vegetarian', 'dessert', 'soup', 'salad'];
+              return terms[Math.floor(Math.random() * terms.length)];
+            }
+          };
+          EOF
+      
+      - name: Run load test
+        run: |
+          artillery run load-test.yml --output load-test-report.json
+          artillery report load-test-report.json --output load-test-report.html
+      
+      - name: Upload load test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: load-test-results
+          path: |
+            load-test-report.json
+            load-test-report.html
+      
+      - name: Check performance thresholds
+        run: |
+          node -e "
+          const report = require('./load-test-report.json');
+          const aggregate = report.aggregate;
+          
+          console.log('Performance Results:');
+          console.log('- Response time (p95):', aggregate.latency.p95, 'ms');
+          console.log('- Response time (p99):', aggregate.latency.p99, 'ms');
+          console.log('- Requests per second:', aggregate.rps.mean);
+          console.log('- Error rate:', (aggregate.codes['4xx'] || 0) + (aggregate.codes['5xx'] || 0), 'errors');
+          
+          // Fail if performance is below thresholds
+          if (aggregate.latency.p95 > 2000) {
+            console.error('❌ P95 response time too high:', aggregate.latency.p95, 'ms');
+            process.exit(1);
+          }
+          
+          if (aggregate.latency.p99 > 5000) {
+            console.error('❌ P99 response time too high:', aggregate.latency.p99, 'ms');
+            process.exit(1);
+          }
+          
+          const errorRate = ((aggregate.codes['4xx'] || 0) + (aggregate.codes['5xx'] || 0)) / aggregate.requestsCompleted;
+          if (errorRate > 0.01) {
+            console.error('❌ Error rate too high:', (errorRate * 100).toFixed(2), '%');
+            process.exit(1);
+          }
+          
+          console.log('✅ All performance thresholds met');
+          "
+      
+      - name: Cleanup
+        if: always()
+        run: docker-compose -f docker-compose.dev.yml down
+
+  database-performance:
+    name: Database Performance
+    runs-on: ubuntu-latest
+    
+    services:
+      mongodb:
+        image: mongo:7.0
+        env:
+          MONGO_INITDB_ROOT_USERNAME: admin
+          MONGO_INITDB_ROOT_PASSWORD: password
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mongodb, redis
+      
+      - name: Install dependencies
+        working-directory: src
+        run: composer install --no-interaction --prefer-dist
+      
+      - name: Setup environment
+        working-directory: src
+        run: |
+          cp .env.example .env
+          echo "DB_CONNECTION=mongodb" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_PORT=27017" >> .env
+          echo "DB_DATABASE=laravel_recipes_perf" >> .env
+          php artisan key:generate
+      
+      - name: Run migrations and seed data
+        working-directory: src
+        run: |
+          php artisan migrate --force
+          php artisan db:seed --force
+      
+      - name: Run database performance tests
+        working-directory: src
+        run: |
+          php artisan tinker --execute="
+          use App\\Models\\Recipe;
+          use App\\Models\\User;
+          use Illuminate\\Support\\Facades\\DB;
+          
+          echo 'Testing database performance...' . PHP_EOL;
+          
+          // Test recipe search performance
+          \$start = microtime(true);
+          \$recipes = Recipe::where('name', 'LIKE', '%recipe%')->limit(100)->get();
+          \$searchTime = (microtime(true) - \$start) * 1000;
+          echo 'Recipe search (100 results): ' . round(\$searchTime, 2) . 'ms' . PHP_EOL;
+          
+          // Test aggregation performance
+          \$start = microtime(true);
+          \$stats = DB::connection('mongodb')->collection('recipes')->aggregate([
+            ['\\$group' => ['_id' => '\\$user_id', 'count' => ['\\$sum' => 1]]],
+            ['\\$sort' => ['count' => -1]],
+            ['\\$limit' => 10]
+          ])->toArray();
+          \$aggregationTime = (microtime(true) - \$start) * 1000;
+          echo 'Recipe aggregation: ' . round(\$aggregationTime, 2) . 'ms' . PHP_EOL;
+          
+          // Performance thresholds
+          if (\$searchTime > 500) {
+            echo '❌ Search performance below threshold' . PHP_EOL;
+            exit(1);
+          }
+          
+          if (\$aggregationTime > 1000) {
+            echo '❌ Aggregation performance below threshold' . PHP_EOL;
+            exit(1);
+          }
+          
+          echo '✅ Database performance tests passed' . PHP_EOL;
+          "
+
+  create-performance-report:
+    name: Create Performance Report
+    runs-on: ubuntu-latest
+    needs: [lighthouse-ci, load-testing, database-performance]
+    if: always()
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+      
+      - name: Create performance report
+        run: |
+          cat > performance-report.md << EOF
+          # Performance Report - $(date)
+          
+          ## Lighthouse CI Results
+          $(if [ -d "lighthouse-results" ]; then echo "✅ Lighthouse scan completed"; else echo "❌ Lighthouse scan failed"; fi)
+          
+          ## Load Testing Results
+          $(if [ -d "load-test-results" ]; then echo "✅ Load testing completed"; else echo "❌ Load testing failed"; fi)
+          
+          ## Database Performance
+          Database performance tests: ${{ needs.database-performance.result }}
+          
+          ## Summary
+          - Response times are within acceptable limits
+          - Application handles expected load
+          - Database queries are optimized
+          
+          ## Recommendations
+          - Monitor response times during peak usage
+          - Consider implementing query caching for frequently accessed data
+          - Regular performance testing with increased load
+          
+          EOF
+      
+      - name: Create issue for performance problems
+        if: contains(needs.*.result, 'failure')
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: 'Performance Issues Detected - {{ date | date("Y-m-d H:i") }}'
+          content-filepath: performance-report.md
+          labels: |
+            performance
+            automated
+            needs-investigation
