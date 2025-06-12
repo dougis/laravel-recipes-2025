@@ -1,0 +1,10 @@
+# GitHub Repository Setup Commands
+
+# Add the remote origin (replace 'dougis' with your actual GitHub username if different)
+git remote add origin https://github.com/dougis/laravel-recipes-2025.git
+
+# Rename the default branch to 'main' (GitHub's default)
+git branch -M main
+
+# Push the code to GitHub
+git push -u origin main
