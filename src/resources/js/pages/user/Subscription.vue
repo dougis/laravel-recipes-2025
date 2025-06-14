@@ -21,7 +21,7 @@
                 <p class="text-sm text-gray-600 mt-1">{{ currentPlanDescription }}</p>
                 <div v-if="user?.admin_override" class="mt-2">
                   <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                    <CrownIcon class="w-4 h-4 mr-1" />
+                    <StarIcon class="w-4 h-4 mr-1" />
                     Admin Override Active
                   </span>
                 </div>
@@ -336,7 +336,7 @@ import {
   XMarkIcon,
   DocumentTextIcon
 } from '@heroicons/vue/24/outline';
-import { CrownIcon } from '@heroicons/vue/24/solid';
+import { StarIcon } from '@heroicons/vue/24/solid';
 import ConfirmationModal from '../../components/ui/ConfirmationModal.vue';
 
 export default {
@@ -345,7 +345,7 @@ export default {
     CheckIcon,
     XMarkIcon,
     DocumentTextIcon,
-    CrownIcon,
+    StarIcon,
     ConfirmationModal
   },
   setup() {

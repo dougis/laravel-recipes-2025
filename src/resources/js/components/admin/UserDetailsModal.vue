@@ -46,7 +46,7 @@
                     {{ getSubscriptionName(user.subscription_tier) }}
                   </span>
                   <span v-if="user.admin_override" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                    <CrownIcon class="w-3 h-3 mr-1" />
+                    <StarIcon class="w-3 h-3 mr-1" />
                     Admin Override
                   </span>
                 </div>
@@ -128,7 +128,7 @@
                   :disabled="loading"
                   class="btn-outline flex items-center justify-center"
                 >
-                  <CrownIcon class="w-4 h-4 mr-2" />
+                  <StarIcon class="w-4 h-4 mr-2" />
                   {{ user.admin_override ? 'Remove' : 'Grant' }} Admin Override
                 </button>
 
@@ -192,7 +192,7 @@ import {
   BookOpenIcon,
   DocumentTextIcon
 } from '@heroicons/vue/24/outline';
-import { CrownIcon } from '@heroicons/vue/24/solid';
+import { StarIcon } from '@heroicons/vue/24/solid';
 
 export default {
   name: 'UserDetailsModal',
@@ -203,7 +203,7 @@ export default {
     KeyIcon,
     BookOpenIcon,
     DocumentTextIcon,
-    CrownIcon
+    StarIcon
   },
   props: {
     user: {

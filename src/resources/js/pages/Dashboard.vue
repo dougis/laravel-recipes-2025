@@ -76,7 +76,7 @@
             <div class="flex items-center">
               <div class="flex-shrink-0">
                 <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                  <CrownIcon class="w-6 h-6 text-green-600" />
+                  <StarIcon class="w-6 h-6 text-green-600" />
                 </div>
               </div>
               <div class="ml-4">
@@ -277,7 +277,7 @@ import {
   UserIcon,
   ChevronRightIcon
 } from '@heroicons/vue/24/outline';
-import { CrownIcon } from '@heroicons/vue/24/solid';
+import { StarIcon } from '@heroicons/vue/24/solid';
 
 export default {
   name: 'Dashboard',
@@ -288,7 +288,7 @@ export default {
     MagnifyingGlassIcon,
     UserIcon,
     ChevronRightIcon,
-    CrownIcon
+    StarIcon
   },
   setup() {
     const authStore = useAuthStore();

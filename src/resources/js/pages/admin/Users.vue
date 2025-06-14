@@ -153,7 +153,7 @@
                         <div class="text-sm text-gray-500">{{ user.email }}</div>
                         <div v-if="user.admin_override" class="mt-1">
                           <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                            <CrownIcon class="w-3 h-3 mr-1" />
+                            <StarIcon class="w-3 h-3 mr-1" />
                             Admin Override
                           </span>
                         </div>
@@ -191,7 +191,7 @@
                         class="text-yellow-600 hover:text-yellow-900"
                         :title="user.admin_override ? 'Remove Admin Override' : 'Grant Admin Override'"
                       >
-                        <CrownIcon class="w-4 h-4" />
+                        <StarIcon class="w-4 h-4" />
                       </button>
 
                       <!-- More Actions -->
@@ -316,7 +316,7 @@ import {
   NoSymbolIcon,
   UsersIcon
 } from '@heroicons/vue/24/outline';
-import { CrownIcon } from '@heroicons/vue/24/solid';
+import { StarIcon } from '@heroicons/vue/24/solid';
 import UserDetailsModal from '../../components/admin/UserDetailsModal.vue';
 import ConfirmationModal from '../../components/ui/ConfirmationModal.vue';
 
@@ -332,7 +332,7 @@ export default {
     KeyIcon,
     NoSymbolIcon,
     UsersIcon,
-    CrownIcon,
+    StarIcon,
     UserDetailsModal,
     ConfirmationModal
   },
