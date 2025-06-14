@@ -1,0 +1,191 @@
+name: Dependency Updates
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-composer-dependencies:
+    name: Update Composer Dependencies
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mongodb, redis, gd, zip, bcmath
+      
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ runner.os }}-${{ hashFiles('src/composer.lock') }}
+      
+      - name: Install Composer dependencies
+        working-directory: src
+        run: composer install --no-interaction --prefer-dist
+      
+      - name: Update Composer dependencies
+        working-directory: src
+        run: |
+          composer update --no-interaction --prefer-dist
+          composer audit
+      
+      - name: Check for updates
+        id: check-updates
+        working-directory: src
+        run: |
+          if git diff --quiet composer.lock; then
+            echo "no_updates=true" >> $GITHUB_OUTPUT
+          else
+            echo "no_updates=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create Pull Request
+        if: steps.check-updates.outputs.no_updates == 'false'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: update Composer dependencies'
+          title: 'Automated Composer dependency updates'
+          body: |
+            This PR contains automated updates to Composer dependencies.
+            
+            ## Changes
+            - Updated PHP packages to latest compatible versions
+            - Ran security audit to check for vulnerabilities
+            
+            ## Testing
+            - [ ] All existing tests pass
+            - [ ] Security audit shows no high-severity issues
+            - [ ] Application functionality verified
+          branch: chore/composer-updates
+          delete-branch: true
+          labels: |
+            dependencies
+            automated
+
+  update-npm-dependencies:
+    name: Update NPM Dependencies
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: src/package-lock.json
+      
+      - name: Install NPM dependencies
+        working-directory: src
+        run: npm ci
+      
+      - name: Update NPM dependencies
+        working-directory: src
+        run: |
+          npm update
+          npm audit fix --audit-level=high
+      
+      - name: Build assets
+        working-directory: src
+        run: npm run build
+      
+      - name: Check for updates
+        id: check-updates
+        working-directory: src
+        run: |
+          if git diff --quiet package-lock.json; then
+            echo "no_updates=true" >> $GITHUB_OUTPUT
+          else
+            echo "no_updates=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create Pull Request
+        if: steps.check-updates.outputs.no_updates == 'false'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: update NPM dependencies'
+          title: 'Automated NPM dependency updates'
+          body: |
+            This PR contains automated updates to NPM dependencies.
+            
+            ## Changes
+            - Updated JavaScript packages to latest compatible versions
+            - Fixed security vulnerabilities where possible
+            - Rebuilt production assets
+            
+            ## Testing
+            - [ ] Assets build successfully
+            - [ ] Frontend functionality verified
+            - [ ] No console errors in browser
+          branch: chore/npm-updates
+          delete-branch: true
+          labels: |
+            dependencies
+            automated
+            frontend
+
+  security-updates:
+    name: Security Updates
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mongodb, redis, gd, zip, bcmath
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: src/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: src
+        run: |
+          composer install --no-interaction --prefer-dist
+          npm ci
+      
+      - name: Check for security vulnerabilities
+        working-directory: src
+        run: |
+          echo "## Composer Security Audit" > security-report.md
+          composer audit --format=json > composer-audit.json || true
+          
+          echo "## NPM Security Audit" >> security-report.md
+          npm audit --json > npm-audit.json || true
+      
+      - name: Create security issue
+        if: always()
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: 'Security Vulnerabilities Detected - {{ date | date("Y-m-d") }}'
+          content-filepath: src/security-report.md
+          labels: |
+            security
+            automated
+            high-priority
