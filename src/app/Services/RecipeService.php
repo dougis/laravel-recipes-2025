@@ -159,6 +159,16 @@ class RecipeService
     public function generateRecipeText($recipe)
     {
         $text = "RECIPE: {$recipe->name}\n\n";
+        $text .= $this->generateRecipeMetadata($recipe);
+        $text .= $this->generateRecipeContent($recipe);
+        $text .= $this->generateRecipeNutrition($recipe);
+        
+        return $text;
+    }
+
+    private function generateRecipeMetadata($recipe)
+    {
+        $text = '';
         
         if ($recipe->source && $recipe->source->name) {
             $text .= "Source: {$recipe->source->name}\n";
@@ -172,7 +182,12 @@ class RecipeService
             $text .= "Servings: {$recipe->servings}\n";
         }
         
-        $text .= "\nINGREDIENTS:\n";
+        return $text;
+    }
+
+    private function generateRecipeContent($recipe)
+    {
+        $text = "\nINGREDIENTS:\n";
         $text .= $recipe->ingredients . "\n\n";
         
         $text .= "INSTRUCTIONS:\n";
@@ -183,30 +198,42 @@ class RecipeService
             $text .= $recipe->notes . "\n\n";
         }
         
-        if ($recipe->calories || $recipe->fat || $recipe->cholesterol || $recipe->sodium || $recipe->protein) {
-            $text .= "NUTRITIONAL INFORMATION:\n";
-            
-            if ($recipe->calories) {
-                $text .= "Calories: {$recipe->calories}\n";
-            }
-            
-            if ($recipe->fat) {
-                $text .= "Fat: {$recipe->fat}g\n";
-            }
-            
-            if ($recipe->cholesterol) {
-                $text .= "Cholesterol: {$recipe->cholesterol}mg\n";
-            }
-            
-            if ($recipe->sodium) {
-                $text .= "Sodium: {$recipe->sodium}mg\n";
-            }
-            
-            if ($recipe->protein) {
-                $text .= "Protein: {$recipe->protein}g\n";
-            }
+        return $text;
+    }
+
+    private function generateRecipeNutrition($recipe)
+    {
+        if (!$this->hasNutritionalData($recipe)) {
+            return '';
+        }
+        
+        $text = "NUTRITIONAL INFORMATION:\n";
+        
+        if ($recipe->calories) {
+            $text .= "Calories: {$recipe->calories}\n";
+        }
+        
+        if ($recipe->fat) {
+            $text .= "Fat: {$recipe->fat}g\n";
+        }
+        
+        if ($recipe->cholesterol) {
+            $text .= "Cholesterol: {$recipe->cholesterol}mg\n";
+        }
+        
+        if ($recipe->sodium) {
+            $text .= "Sodium: {$recipe->sodium}mg\n";
+        }
+        
+        if ($recipe->protein) {
+            $text .= "Protein: {$recipe->protein}g\n";
         }
         
         return $text;
+    }
+
+    private function hasNutritionalData($recipe)
+    {
+        return $recipe->calories || $recipe->fat || $recipe->cholesterol || $recipe->sodium || $recipe->protein;
     }
 }

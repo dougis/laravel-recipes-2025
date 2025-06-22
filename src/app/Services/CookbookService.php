@@ -288,13 +288,21 @@ class CookbookService
      */
     public function generateCookbookText($cookbook)
     {
-        // Get cookbook with recipes
         $cookbook = $this->getCookbookWithRecipes($cookbook->_id);
         
         if (!$cookbook) {
             return '';
         }
         
+        $text = $this->generateCookbookHeader($cookbook);
+        $text .= $this->generateTableOfContents($cookbook->recipes);
+        $text .= $this->generateRecipesText($cookbook->recipes);
+        
+        return $text;
+    }
+
+    private function generateCookbookHeader($cookbook)
+    {
         $text = "COOKBOOK: {$cookbook->name}\n\n";
         
         if ($cookbook->description) {
@@ -302,73 +310,114 @@ class CookbookService
             $text .= $cookbook->description . "\n\n";
         }
         
-        // Table of contents
-        $text .= "TABLE OF CONTENTS:\n";
+        return $text;
+    }
+
+    private function generateTableOfContents($recipes)
+    {
+        $text = "TABLE OF CONTENTS:\n";
         $page = 1;
         
-        foreach ($cookbook->recipes as $index => $recipe) {
+        foreach ($recipes as $index => $recipe) {
             $text .= ($index + 1) . ". {$recipe->name} - Page " . $page . "\n";
-            $page += 2; // Assuming each recipe takes 2 pages
+            $page += 2;
         }
         
-        $text .= "\n\n";
+        return $text . "\n\n";
+    }
+
+    private function generateRecipesText($recipes)
+    {
+        $text = '';
         
-        // Recipes
-        foreach ($cookbook->recipes as $index => $recipe) {
-            $text .= str_repeat("-", 80) . "\n";
-            $text .= "RECIPE " . ($index + 1) . ": {$recipe->name}\n";
-            $text .= str_repeat("-", 80) . "\n\n";
-            
-            if ($recipe->source && $recipe->source->name) {
-                $text .= "Source: {$recipe->source->name}\n";
-            }
-            
-            if ($recipe->classification && $recipe->classification->name) {
-                $text .= "Classification: {$recipe->classification->name}\n";
-            }
-            
-            if ($recipe->servings) {
-                $text .= "Servings: {$recipe->servings}\n";
-            }
-            
-            $text .= "\nINGREDIENTS:\n";
-            $text .= $recipe->ingredients . "\n\n";
-            
-            $text .= "INSTRUCTIONS:\n";
-            $text .= $recipe->instructions . "\n\n";
-            
-            if ($recipe->notes) {
-                $text .= "NOTES:\n";
-                $text .= $recipe->notes . "\n\n";
-            }
-            
-            if ($recipe->calories || $recipe->fat || $recipe->cholesterol || $recipe->sodium || $recipe->protein) {
-                $text .= "NUTRITIONAL INFORMATION:\n";
-                
-                if ($recipe->calories) {
-                    $text .= "Calories: {$recipe->calories}\n";
-                }
-                
-                if ($recipe->fat) {
-                    $text .= "Fat: {$recipe->fat}g\n";
-                }
-                
-                if ($recipe->cholesterol) {
-                    $text .= "Cholesterol: {$recipe->cholesterol}mg\n";
-                }
-                
-                if ($recipe->sodium) {
-                    $text .= "Sodium: {$recipe->sodium}mg\n";
-                }
-                
-                if ($recipe->protein) {
-                    $text .= "Protein: {$recipe->protein}g\n";
-                }
-            }
-            
-            $text .= "\n\n";
+        foreach ($recipes as $index => $recipe) {
+            $text .= $this->generateSingleRecipeText($recipe, $index + 1);
         }
         
         return $text;
+    }
+
+    private function generateSingleRecipeText($recipe, $recipeNumber)
+    {
+        $text = str_repeat("-", 80) . "\n";
+        $text .= "RECIPE {$recipeNumber}: {$recipe->name}\n";
+        $text .= str_repeat("-", 80) . "\n\n";
+        
+        $text .= $this->generateRecipeMetadata($recipe);
+        $text .= $this->generateRecipeContent($recipe);
+        $text .= $this->generateNutritionalInfo($recipe);
+        
+        return $text . "\n\n";
+    }
+
+    private function generateRecipeMetadata($recipe)
+    {
+        $text = '';
+        
+        if ($recipe->source && $recipe->source->name) {
+            $text .= "Source: {$recipe->source->name}\n";
+        }
+        
+        if ($recipe->classification && $recipe->classification->name) {
+            $text .= "Classification: {$recipe->classification->name}\n";
+        }
+        
+        if ($recipe->servings) {
+            $text .= "Servings: {$recipe->servings}\n";
+        }
+        
+        return $text;
+    }
+
+    private function generateRecipeContent($recipe)
+    {
+        $text = "\nINGREDIENTS:\n";
+        $text .= $recipe->ingredients . "\n\n";
+        
+        $text .= "INSTRUCTIONS:\n";
+        $text .= $recipe->instructions . "\n\n";
+        
+        if ($recipe->notes) {
+            $text .= "NOTES:\n";
+            $text .= $recipe->notes . "\n\n";
+        }
+        
+        return $text;
+    }
+
+    private function generateNutritionalInfo($recipe)
+    {
+        if (!$this->hasNutritionalInfo($recipe)) {
+            return '';
+        }
+        
+        $text = "NUTRITIONAL INFORMATION:\n";
+        
+        if ($recipe->calories) {
+            $text .= "Calories: {$recipe->calories}\n";
+        }
+        
+        if ($recipe->fat) {
+            $text .= "Fat: {$recipe->fat}g\n";
+        }
+        
+        if ($recipe->cholesterol) {
+            $text .= "Cholesterol: {$recipe->cholesterol}mg\n";
+        }
+        
+        if ($recipe->sodium) {
+            $text .= "Sodium: {$recipe->sodium}mg\n";
+        }
+        
+        if ($recipe->protein) {
+            $text .= "Protein: {$recipe->protein}g\n";
+        }
+        
+        return $text;
+    }
+
+    private function hasNutritionalInfo($recipe)
+    {
+        return $recipe->calories || $recipe->fat || $recipe->cholesterol || $recipe->sodium || $recipe->protein;
     }
 }

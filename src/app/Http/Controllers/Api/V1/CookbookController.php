@@ -402,7 +402,16 @@ class CookbookController extends Controller
     {
         $cookbook = $this->cookbookService->getCookbookWithRecipes($id);
 
-        // Check if cookbook exists
+        $validationResult = $this->validateExportRequest($cookbook, $format);
+        if ($validationResult) {
+            return $validationResult;
+        }
+
+        return $this->generateExportResponse($cookbook, $format);
+    }
+
+    private function validateExportRequest($cookbook, $format)
+    {
         if (!$cookbook) {
             return response()->json([
                 'status' => 'error',
@@ -410,7 +419,6 @@ class CookbookController extends Controller
             ], 404);
         }
 
-        // Check if user has access to this cookbook
         if (!$this->cookbookService->userCanAccessCookbook(Auth::id(), $cookbook)) {
             return response()->json([
                 'status' => 'error',
@@ -418,17 +426,41 @@ class CookbookController extends Controller
             ], 403);
         }
 
-        // Check if user has Tier 1 access for export functionality
-        $user = Auth::user();
-        if (!$user && !$cookbook->is_private) {
-            // Allow public access to public cookbooks without login
-        } else if (!$user->hasTier1Access() && !$user->isAdmin()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Export functionality is only available for Tier 1 and Tier 2 subscribers'
-            ], 403);
+        $tierValidationResult = $this->validateUserTierForExport($cookbook);
+        if ($tierValidationResult) {
+            return $tierValidationResult;
         }
 
+        if (!in_array($format, ['pdf', 'txt'])) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unsupported export format'
+            ], 400);
+        }
+
+        return null;
+    }
+
+    private function validateUserTierForExport($cookbook)
+    {
+        $user = Auth::user();
+        
+        if (!$user && !$cookbook->is_private) {
+            return null;
+        }
+        
+        if ($user && ($user->hasTier1Access() || $user->isAdmin())) {
+            return null;
+        }
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Export functionality is only available for Tier 1 and Tier 2 subscribers'
+        ], 403);
+    }
+
+    private function generateExportResponse($cookbook, $format)
+    {
         switch ($format) {
             case 'pdf':
                 $pdf = $this->pdfService->generateCookbookPDF($cookbook);
@@ -438,11 +470,6 @@ class CookbookController extends Controller
                 return response($content)
                     ->header('Content-Type', 'text/plain')
                     ->header('Content-Disposition', 'attachment; filename="cookbook-' . $cookbook->id . '.txt"');
-            default:
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Unsupported export format'
-                ], 400);
         }
     }
 }
