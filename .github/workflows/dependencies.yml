@@ -92,7 +92,7 @@ jobs:
       
       - name: Install NPM dependencies
         working-directory: src
-        run: npm ci
+        run: npm ci --omit=optional
       
       - name: Update NPM dependencies
         working-directory: src
@@ -167,7 +167,7 @@ jobs:
         working-directory: src
         run: |
           composer install --no-interaction --prefer-dist
-          npm ci
+          npm ci --omit=optional
       
       - name: Check for security vulnerabilities
         working-directory: src

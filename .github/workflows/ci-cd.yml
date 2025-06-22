@@ -50,7 +50,7 @@ jobs:
       
       - name: Install NPM dependencies
         working-directory: src
-        run: npm ci
+        run: npm ci --omit=optional
       
       - name: Run PHP CodeSniffer
         working-directory: src
@@ -97,10 +97,10 @@ jobs:
         ports:
           - 27017:27017
         options: >-
-          --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })'"
+          --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })' || mongosh --eval 'db.runCommand({ ping: 1 })'"
           --health-interval 10s
           --health-timeout 5s
-          --health-retries 5
+          --health-retries 10
       
       redis:
         image: redis:alpine
@@ -209,7 +209,7 @@ jobs:
       
       - name: Install NPM dependencies
         working-directory: src
-        run: npm ci
+        run: npm ci --omit=optional
       
       - name: Run JavaScript tests
         working-directory: src
@@ -238,7 +238,14 @@ jobs:
       
       - name: Build and test with Docker
         run: |
-          cp .env.dev .env
+          if [ -f ".env.dev" ]; then
+            cp .env.dev .env
+          else
+            cp src/.env.example .env
+            echo "APP_URL=http://localhost:8080" >> .env
+            echo "DB_HOST=mongodb" >> .env
+            echo "REDIS_HOST=redis" >> .env
+          fi
           docker-compose -f docker-compose.dev.yml up -d --build
           sleep 30
           
