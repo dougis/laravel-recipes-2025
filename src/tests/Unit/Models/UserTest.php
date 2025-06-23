@@ -290,6 +290,132 @@ class UserTest extends TestCase
     }
 
     /**
+     * Test free user cannot create recipe over limit.
+     */
+    public function test_free_user_cannot_create_recipe_over_limit()
+    {
+        $user = $this->createFreeUser();
+        
+        // Create 25 recipes (the limit)
+        for ($i = 0; $i < 25; $i++) {
+            $this->createRecipe($user);
+        }
+        
+        // 26th recipe should fail
+        $this->assertFalse($user->canCreateRecipe());
+    }
+
+    /**
+     * Test tier 1 user has unlimited recipes but limited cookbooks.
+     */
+    public function test_tier_1_user_has_unlimited_recipes_but_limited_cookbooks()
+    {
+        $user = $this->createTier1User();
+        
+        // Should allow unlimited recipes
+        for ($i = 0; $i < 30; $i++) {
+            $this->assertTrue($user->canCreateRecipe());
+            $this->createRecipe($user);
+        }
+        
+        // Should allow 10 cookbooks max
+        for ($i = 0; $i < 10; $i++) {
+            $this->assertTrue($user->canCreateCookbook());
+            $this->createCookbook($user);
+        }
+        
+        // 11th cookbook should fail
+        $this->assertFalse($user->canCreateCookbook());
+    }
+
+    /**
+     * Test tier 2 user has unlimited access.
+     */
+    public function test_tier_2_user_has_unlimited_access()
+    {
+        $user = $this->createTier2User();
+        
+        // Should allow unlimited recipes
+        for ($i = 0; $i < 50; $i++) {
+            $this->assertTrue($user->canCreateRecipe());
+            $this->createRecipe($user);
+        }
+        
+        // Should allow unlimited cookbooks
+        for ($i = 0; $i < 20; $i++) {
+            $this->assertTrue($user->canCreateCookbook());
+            $this->createCookbook($user);
+        }
+    }
+
+    /**
+     * Test admin user bypasses all limits.
+     */
+    public function test_admin_user_bypasses_all_limits()
+    {
+        $user = $this->createAdminUser();
+        
+        // Should allow unlimited recipes
+        for ($i = 0; $i < 50; $i++) {
+            $this->assertTrue($user->canCreateRecipe());
+            $this->createRecipe($user);
+        }
+        
+        // Should allow unlimited cookbooks
+        for ($i = 0; $i < 20; $i++) {
+            $this->assertTrue($user->canCreateCookbook());
+            $this->createCookbook($user);
+        }
+    }
+
+    /**
+     * Test free user cookbook limit enforcement.
+     */
+    public function test_free_user_cookbook_limit_enforcement()
+    {
+        $user = $this->createFreeUser();
+        
+        // Should allow 1 cookbook
+        $this->assertTrue($user->canCreateCookbook());
+        $this->createCookbook($user);
+        
+        // 2nd cookbook should fail
+        $this->assertFalse($user->canCreateCookbook());
+    }
+
+    /**
+     * Test admin override functionality.
+     */
+    public function test_admin_override_functionality()
+    {
+        $user = User::create([
+            'name' => 'Override User',
+            'email' => 'override@example.com',
+            'password' => 'password123',
+            'subscription_tier' => 0, // Free tier
+            'admin_override' => true,
+        ]);
+        
+        // Should have tier 1 access despite being free tier
+        $this->assertTrue($user->hasTier1Access());
+        
+        // Should have tier 2 access despite being free tier
+        $this->assertTrue($user->hasTier2Access());
+        
+        // Should bypass recipe limits
+        for ($i = 0; $i < 30; $i++) {
+            $this->assertTrue($user->canCreateRecipe());
+            $this->createRecipe($user);
+        }
+        
+        // Should bypass cookbook limits
+        for ($i = 0; $i < 15; $i++) {
+            $this->assertTrue($user->canCreateCookbook());
+            $this->createCookbook($user);
+        }
+    }
+
+    /**
      * Test MongoDB connection.
      */
     public function test_mongodb_connection()
