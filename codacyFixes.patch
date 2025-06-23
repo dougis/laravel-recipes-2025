@@ -1,0 +1,2023 @@
+diff --git a/docs/GitHub-Workflow-Guide.md b/docs/GitHub-Workflow-Guide.md
+--- a/docs/GitHub-Workflow-Guide.md
++++ b/docs/GitHub-Workflow-Guide.md
+@@ -3,1 +3,1 @@
+-## Overview
++## Overview
+
+@@ -6,1 +6,1 @@
+-## Prerequisites
++## Prerequisites
+
+@@ -7,1 +7,1 @@
+-- Git configured with appropriate credentials
++
+- Git configured with appropriate credentials
+@@ -16,1 +16,1 @@
+-#### 1.1 Read and Understand the Issue
++#### 1.1 Read and Understand the Issue
+
+@@ -23,1 +23,1 @@
+-- Issue title and description
++
+- Issue title and description
+@@ -29,1 +29,1 @@
+-#### 1.2 Verify Issue Status
++#### 1.2 Verify Issue Status
+
+@@ -30,1 +30,1 @@
+-- Ensure issue is open and not already assigned
++
+- Ensure issue is open and not already assigned
+@@ -36,1 +36,1 @@
+-#### 2.1 Prepare Local Repository
++#### 2.1 Prepare Local Repository
+
+@@ -44,1 +44,1 @@
+-#### 2.2 Create Feature Branch
++#### 2.2 Create Feature Branch
+
+@@ -53,1 +53,1 @@
+-#### 2.3 Push Branch to Remote
++#### 2.3 Push Branch to Remote
+
+@@ -60,1 +60,1 @@
+-- `feature/issue-{number}-{kebab-case-description}`
++
+- `feature/issue-{number}-{kebab-case-description}`
+@@ -66,1 +66,1 @@
+-#### 3.1 Examine Existing Code Structure
++#### 3.1 Examine Existing Code Structure
+
+@@ -76,1 +76,1 @@
+-- **Single Responsibility**: Each commit should address one logical change
++
+- **Single Responsibility**: Each commit should address one logical change
+@@ -81,1 +81,1 @@
+-#### 3.3 Regular Commits
++#### 3.3 Regular Commits
+
+@@ -113,1 +113,1 @@
+-#### 4.1 Testing Requirements
++#### 4.1 Testing Requirements
+
+@@ -114,1 +114,1 @@
+-- **Unit Tests**: Mock dependencies, test business logic in isolation
++
+- **Unit Tests**: Mock dependencies, test business logic in isolation
+@@ -119,1 +119,1 @@
+-#### 4.2 Code Organization
++#### 4.2 Code Organization
+
+@@ -138,1 +138,1 @@
+-#### 4.3 Documentation Standards
++#### 4.3 Documentation Standards
+
+@@ -139,1 +139,1 @@
+-- PHPDoc comments for all public methods
++
+- PHPDoc comments for all public methods
+@@ -146,1 +146,1 @@
+-#### 5.1 Final Push
++#### 5.1 Final Push
+
+@@ -152,1 +152,1 @@
+-#### 5.2 Create Pull Request
++#### 5.2 Create Pull Request
+
+@@ -192,1 +192,1 @@
+-#### 6.1 Self-Review Checklist
++#### 6.1 Self-Review Checklist
+
+@@ -193,1 +193,1 @@
+-- [ ] All acceptance criteria met
++
+- [ ] All acceptance criteria met
+@@ -200,1 +200,1 @@
+-#### 6.2 Merge Process
++#### 6.2 Merge Process
+
+@@ -206,1 +206,1 @@
+-#### 6.3 Issue Closure
++#### 6.3 Issue Closure
+
+@@ -213,1 +213,1 @@
+-#### 6.4 Local Cleanup
++#### 6.4 Local Cleanup
+
+@@ -227,1 +227,1 @@
+-#### File Structure
++#### File Structure
+
+@@ -245,1 +245,1 @@
+-#### Technology Stack
++#### Technology Stack
+
+@@ -246,1 +246,1 @@
+-- **Backend**: Laravel 11.x with MongoDB
++
+- **Backend**: Laravel 11.x with MongoDB
+@@ -252,1 +252,1 @@
+-#### Subscription Tier Implementation
++#### Subscription Tier Implementation
+
+@@ -268,1 +268,1 @@
+-#### API Versioning
++#### API Versioning
+
+@@ -269,1 +269,1 @@
+-- All API endpoints use `/api/v1/` prefix
++
+- All API endpoints use `/api/v1/` prefix
+@@ -276,1 +276,1 @@
+-#### Testing Issues
++#### Testing Issues
+
+@@ -277,1 +277,1 @@
+-- **Unit Tests**: Focus on mocking dependencies and testing business logic
++
+- **Unit Tests**: Focus on mocking dependencies and testing business logic
+@@ -281,1 +281,1 @@
+-#### Feature Implementation
++#### Feature Implementation
+
+@@ -282,1 +282,1 @@
+-- **CRUD Operations**: Follow repository pattern with service layer
++
+- **CRUD Operations**: Follow repository pattern with service layer
+@@ -286,1 +286,1 @@
+-#### Infrastructure Issues
++#### Infrastructure Issues
+
+@@ -287,1 +287,1 @@
+-- **Docker**: Multi-container setup with PHP, MongoDB, Redis, Nginx
++
+- **Docker**: Multi-container setup with PHP, MongoDB, Redis, Nginx
+@@ -293,1 +293,1 @@
+-### Common Git Issues
++### Common Git Issues
+
+@@ -307,1 +307,1 @@
+-### Development Environment Issues
++### Development Environment Issues
+
+@@ -321,1 +321,1 @@
+-### Code Quality Issues
++### Code Quality Issues
+
+@@ -322,1 +322,1 @@
+-- Run `php artisan test` before committing
++
+- Run `php artisan test` before committing
+@@ -339,1 +339,1 @@
+-### Issue Analysis Template
++### Issue Analysis Template
+
+@@ -360,1 +360,1 @@
+-### Commit Message Template
++### Commit Message Template
+
+@@ -369,1 +369,1 @@
+-### PR Description Template
++### PR Description Template
+
+diff --git a/CLAUDE.md b/CLAUDE.md
+--- a/CLAUDE.md
++++ b/CLAUDE.md
+@@ -11,1 +11,1 @@
+-### Backend Development
++### Backend Development
+
+@@ -40,1 +40,1 @@
+-### Frontend Development
++### Frontend Development
+
+@@ -53,1 +53,1 @@
+-### Development Setup
++### Development Setup
+
+@@ -68,1 +68,1 @@
+-### Repository Pattern Implementation
++### Repository Pattern Implementation
+
+@@ -69,1 +69,1 @@
+-- **Interfaces**: All repositories implement contracts in `app/Repositories/`
++
+- **Interfaces**: All repositories implement contracts in `app/Repositories/`
+@@ -74,1 +74,1 @@
+-### API Structure
++### API Structure
+
+@@ -75,1 +75,1 @@
+-- **Base Path**: `/api/v1/` (versioned for future compatibility)
++
+- **Base Path**: `/api/v1/` (versioned for future compatibility)
+@@ -80,1 +80,1 @@
+-### Database Design (MongoDB)
++### Database Design (MongoDB)
+
+@@ -81,1 +81,1 @@
+-- **Collections**: Users, Recipes, Cookbooks, Classifications, Sources, Meals, Courses, Preparations
++
+- **Collections**: Users, Recipes, Cookbooks, Classifications, Sources, Meals, Courses, Preparations
+@@ -86,1 +86,1 @@
+-### Subscription System
++### Subscription System
+
+@@ -87,1 +87,1 @@
+-- **Tiers**: Free (0), Tier 1 (1), Tier 2 (2), Admin (100)
++
+- **Tiers**: Free (0), Tier 1 (1), Tier 2 (2), Admin (100)
+@@ -91,1 +91,1 @@
+-### Service Layer Organization
++### Service Layer Organization
+
+@@ -100,1 +100,1 @@
+-### Frontend Architecture (Vue 3)
++### Frontend Architecture (Vue 3)
+
+@@ -101,1 +101,1 @@
+-- **Components**: Modular Vue 3 with Composition API
++
+- **Components**: Modular Vue 3 with Composition API
+@@ -109,1 +109,1 @@
+-### Test Structure (Setup Required - 0% Complete)
++### Test Structure (Setup Required - 0% Complete)
+
+@@ -119,1 +119,1 @@
+-### Default Test Users (After db:seed)
++### Default Test Users (After db:seed)
+
+@@ -120,1 +120,1 @@
+-- **Admin**: admin@example.com / password (full access)
++- **Admin**: <admin@example.com> / password (full access)
+@@ -121,1 +121,1 @@
+-- **Free**: free@example.com / password (25 recipes, 1 cookbook)
++- **Free**: <free@example.com> / password (25 recipes, 1 cookbook)
+@@ -122,1 +122,1 @@
+-- **Tier 1**: tier1@example.com / password (unlimited public, 10 cookbooks)
++- **Tier 1**: <tier1@example.com> / password (unlimited public, 10 cookbooks)
+@@ -123,1 +123,1 @@
+-- **Tier 2**: tier2@example.com / password (privacy controls, unlimited)
++- **Tier 2**: <tier2@example.com> / password (privacy controls, unlimited)
+@@ -127,1 +127,1 @@
+-### Controller Structure
++### Controller Structure
+
+@@ -129,1 +129,1 @@
+-1. Request validation via Form Request classes
++
+1. Request validation via Form Request classes
+@@ -134,1 +134,1 @@
+-### Repository Pattern Usage
++### Repository Pattern Usage
+
+@@ -143,1 +143,1 @@
+-### Authentication Flow
++### Authentication Flow
+
+@@ -144,1 +144,1 @@
+-1. Login via `/api/v1/auth/login` returns JWT token
++
+1. Login via `/api/v1/auth/login` returns JWT token
+@@ -148,1 +148,1 @@
+-### Privacy Implementation
++### Privacy Implementation
+
+@@ -149,1 +149,1 @@
+-- Public/private toggle available for Tier 2+ users
++
+- Public/private toggle available for Tier 2+ users
+@@ -155,1 +155,1 @@
+-### Required Extensions
++### Required Extensions
+
+@@ -156,1 +156,1 @@
+-- PHP 8.3+ with: mongodb, redis, gd, curl, mbstring, openssl, pdo, tokenizer, xml
++
+- PHP 8.3+ with: mongodb, redis, gd, curl, mbstring, openssl, pdo, tokenizer, xml
+@@ -161,1 +161,1 @@
+-### Key Configuration
++### Key Configuration
+
+@@ -162,1 +162,1 @@
+-- MongoDB connection via `DB_CONNECTION=mongodb`
++
+- MongoDB connection via `DB_CONNECTION=mongodb`
+@@ -170,1 +170,1 @@
+-- `docker-compose.yml` for production
++
+- `docker-compose.yml` for production
+@@ -177,1 +177,1 @@
+-1. **Code Quality**: PHP CS, PHPStan, ESLint, security audits
++
+1. **Code Quality**: PHP CS, PHPStan, ESLint, security audits
+diff --git a/docs/README.md b/docs/README.md
+--- a/docs/README.md
++++ b/docs/README.md
+@@ -7,1 +7,1 @@
+-### Core Documents
++### Core Documents
+
+@@ -8,1 +8,1 @@
+-- **[Project Status](./Laravel%20Recipes%202025%20-%20Project%20Status.md)** - Current implementation status and progress assessment
++
+- **[Project Status](./Laravel%20Recipes%202025%20-%20Project%20Status.md)** - Current implementation status and progress assessment
+@@ -22,1 +22,1 @@
+-### Key Features Implemented â
++### Key Features Implemented â
+
+@@ -23,1 +23,1 @@
+-- Complete Laravel backend with API versioning
++
+- Complete Laravel backend with API versioning
+@@ -32,1 +32,1 @@
+-### Remaining Tasks â³
++### Remaining Tasks â³
+
+@@ -33,1 +33,1 @@
+-- Comprehensive testing suite (unit, feature, browser)
++
+- Comprehensive testing suite (unit, feature, browser)
+@@ -50,1 +50,1 @@
+-### Development
++### Development
+
+@@ -51,1 +51,1 @@
+-- [Installation Instructions](./Laravel%20Recipes%202025%20-%20Project%20Status.md#installation--setup-instructions)
++
+- [Installation Instructions](./Laravel%20Recipes%202025%20-%20Project%20Status.md#installation--setup-instructions)
+@@ -55,1 +55,1 @@
+-### Planning
++### Planning
+
+@@ -56,1 +56,1 @@
+-- [Product Overview](./product_requirements.md#overview)
++
+- [Product Overview](./product_requirements.md#overview)
+@@ -60,1 +60,1 @@
+-### Technical
++### Technical
+
+@@ -61,1 +61,1 @@
+-- [System Architecture](./technical_specification.md#system-architecture)
++
+- [System Architecture](./technical_specification.md#system-architecture)
+@@ -82,1 +82,1 @@
+-### High Priority (Production Readiness)
++### High Priority (Production Readiness)
+
+@@ -83,1 +83,1 @@
+-1. **Testing Implementation** - Comprehensive test suite for all components
++
+1. **Testing Implementation** - Comprehensive test suite for all components
+@@ -88,1 +88,1 @@
+-### Medium Priority (Enhancements)
++### Medium Priority (Enhancements)
+
+@@ -89,1 +89,1 @@
+-1. **File Upload System** - Recipe image management
++
+1. **File Upload System** - Recipe image management
+diff --git a/docs/ci-cd/README.md b/docs/ci-cd/README.md
+--- a/docs/ci-cd/README.md
++++ b/docs/ci-cd/README.md
+@@ -52,1 +52,1 @@
+-- Push to `main` or `develop` branches
++
+- Push to `main` or `develop` branches
+@@ -58,1 +58,1 @@
+-#### Code Quality & Security
++#### Code Quality & Security
+
+@@ -66,1 +66,1 @@
+-#### Backend Testing
++#### Backend Testing
+
+@@ -74,1 +74,1 @@
+-#### Frontend Testing
++#### Frontend Testing
+
+@@ -81,1 +81,1 @@
+-#### Integration Testing
++#### Integration Testing
+
+@@ -89,1 +89,1 @@
+-#### Security Scanning
++#### Security Scanning
+
+@@ -97,1 +97,1 @@
+-#### Deployment
++#### Deployment
+
+@@ -110,1 +110,1 @@
+-- Automated Composer dependency updates
++
+- Automated Composer dependency updates
+@@ -120,1 +120,1 @@
+-- Lighthouse CI performance testing
++
+- Lighthouse CI performance testing
+@@ -131,1 +131,1 @@
+-#### Container Registry
++#### Container Registry
+
+@@ -138,1 +138,1 @@
+-#### Staging Environment
++#### Staging Environment
+
+@@ -145,1 +145,1 @@
+-#### Production Environment
++#### Production Environment
+
+@@ -152,1 +152,1 @@
+-#### Monitoring & Notifications
++#### Monitoring & Notifications
+
+@@ -162,1 +162,1 @@
+-#### Development (.env.dev)
++#### Development (.env.dev)
+
+@@ -170,1 +170,1 @@
+-#### Staging (.env.staging)
++#### Staging (.env.staging)
+
+@@ -178,1 +178,1 @@
+-#### Production (.env.production)
++#### Production (.env.production)
+
+@@ -193,1 +193,1 @@
+-1. Code quality and security checks
++
+1. Code quality and security checks
+@@ -203,1 +203,1 @@
+-- URL: https://staging.laravel-recipes.com
++
+- URL: https://staging.laravel-recipes.com
+@@ -212,1 +212,1 @@
+-1. All staging deployment steps
++
+1. All staging deployment steps
+@@ -223,1 +223,1 @@
+-- URL: https://laravel-recipes.com
++- URL: <https://laravel-recipes.com>
+@@ -246,1 +246,1 @@
+-#### Application Health
++#### Application Health
+
+@@ -247,1 +247,1 @@
+-- API endpoint availability
++
+- API endpoint availability
+@@ -252,1 +252,1 @@
+-#### Performance Metrics
++#### Performance Metrics
+
+@@ -253,1 +253,1 @@
+-- Response time monitoring
++
+- Response time monitoring
+@@ -258,1 +258,1 @@
+-#### Security Monitoring
++#### Security Monitoring
+
+@@ -259,1 +259,1 @@
+-- Vulnerability scanning
++
+- Vulnerability scanning
+@@ -266,1 +266,1 @@
+-#### Slack Integration
++#### Slack Integration
+
+@@ -276,1 +276,1 @@
+-#### GitHub Issues
++#### GitHub Issues
+
+@@ -277,1 +277,1 @@
+-- Automatic issue creation for failures
++
+- Automatic issue creation for failures
+@@ -290,1 +290,1 @@
+-#### Database Health
++#### Database Health
+
+@@ -296,1 +296,1 @@
+-#### Detailed Health
++#### Detailed Health
+
+@@ -315,1 +315,1 @@
+-- CI pipeline fails at testing stage
++
+- CI pipeline fails at testing stage
+@@ -334,1 +334,1 @@
+-- Deployment pipeline fails
++
+- Deployment pipeline fails
+@@ -355,1 +355,1 @@
+-- Migration fails during deployment
++
+- Migration fails during deployment
+@@ -374,1 +374,1 @@
+-- Lighthouse scores below threshold
++
+- Lighthouse scores below threshold
+@@ -394,1 +394,1 @@
+-#### Pipeline Debugging
++#### Pipeline Debugging
+
+@@ -409,1 +409,1 @@
+-#### Application Debugging
++#### Application Debugging
+
+@@ -427,1 +427,1 @@
+-#### Database Optimization
++#### Database Optimization
+
+@@ -440,1 +440,1 @@
+-#### Application Optimization
++#### Application Optimization
+
+@@ -458,1 +458,1 @@
+-#### Pre-commit Checks
++#### Pre-commit Checks
+
+diff --git a/.github/pull_request_template.md b/.github/pull_request_template.md
+--- a/.github/pull_request_template.md
++++ b/.github/pull_request_template.md
+@@ -1,1 +1,1 @@
+-## Summary
++## Summary
+
+@@ -6,1 +6,1 @@
+-## Changes Made
++## Changes Made
+
+@@ -7,1 +7,1 @@
+-- â **Component 1**: Description of changes
++
+- â **Component 1**: Description of changes
+@@ -15,1 +15,1 @@
+-## Type of Change
++## Type of Change
+
+@@ -16,1 +16,1 @@
+-- [ ] ð Bug fix (non-breaking change which fixes an issue)
++
+- [ ] ð Bug fix (non-breaking change which fixes an issue)
+@@ -27,1 +27,1 @@
+-## Testing
++## Testing
+
+@@ -28,1 +28,1 @@
+-### Manual Testing
++
+### Manual Testing
+@@ -29,1 +29,1 @@
+-- [ ] All existing functionality still works
++
+- [ ] All existing functionality still works
+@@ -34,1 +34,1 @@
+-### Automated Testing
++### Automated Testing
+
+@@ -35,1 +35,1 @@
+-- [ ] Unit tests pass (`php artisan test --testsuite=Unit`)
++
+- [ ] Unit tests pass (`php artisan test --testsuite=Unit`)
+@@ -41,1 +41,1 @@
+-### API Testing (if applicable)
++### API Testing (if applicable)
+
+@@ -42,1 +42,1 @@
+-- [ ] API endpoints tested with Postman/Insomnia
++
+- [ ] API endpoints tested with Postman/Insomnia
+@@ -47,1 +47,1 @@
+-## Database Changes
++## Database Changes
+
+@@ -48,1 +48,1 @@
+-- [ ] No database changes
++
+- [ ] No database changes
+@@ -54,1 +54,1 @@
+-## Frontend Changes
++## Frontend Changes
+
+@@ -55,1 +55,1 @@
+-- [ ] No frontend changes
++
+- [ ] No frontend changes
+@@ -61,1 +61,1 @@
+-## Security Considerations
++## Security Considerations
+
+@@ -62,1 +62,1 @@
+-- [ ] No security implications
++
+- [ ] No security implications
+@@ -69,1 +69,1 @@
+-## Performance Impact
++## Performance Impact
+
+@@ -70,1 +70,1 @@
+-- [ ] No performance impact
++
+- [ ] No performance impact
+@@ -76,1 +76,1 @@
+-## Deployment Considerations
++## Deployment Considerations
+
+@@ -77,1 +77,1 @@
+-- [ ] No special deployment steps required
++
+- [ ] No special deployment steps required
+@@ -87,1 +87,1 @@
+-## Checklist
++## Checklist
+
+@@ -88,1 +88,1 @@
+-- [ ] Code follows the project's coding standards
++
+- [ ] Code follows the project's coding standards
+@@ -102,1 +102,1 @@
+-## Review Requests
++## Review Requests
+
+@@ -103,1 +103,1 @@
+-- [ ] Code review
++
+- [ ] Code review
+@@ -110,1 +110,1 @@
+-### For Reviewers:
++### For Reviewers:
+
+@@ -111,1 +111,1 @@
+-- **Focus Areas**: [What should reviewers pay special attention to?]
++
+- **Focus Areas**: [What should reviewers pay special attention to?]
+diff --git a/.github/ISSUE_TEMPLATE/bug_report.md b/.github/ISSUE_TEMPLATE/bug_report.md
+--- a/.github/ISSUE_TEMPLATE/bug_report.md
++++ b/.github/ISSUE_TEMPLATE/bug_report.md
+@@ -9,1 +9,1 @@
+-## Bug Description
++## Bug Description
+
+@@ -12,1 +12,1 @@
+-## Steps to Reproduce
++## Steps to Reproduce
+
+@@ -14,1 +14,1 @@
+-1. Go to '...'
++
+1. Go to '...'
+@@ -19,1 +19,1 @@
+-## Expected Behavior
++## Expected Behavior
+
+@@ -22,1 +22,1 @@
+-## Actual Behavior
++## Actual Behavior
+
+@@ -25,1 +25,1 @@
+-## Screenshots
++## Screenshots
+
+@@ -28,1 +28,1 @@
+-## Environment Information
++## Environment Information
+
+@@ -29,1 +29,1 @@
+-- **OS**: [e.g. iOS, Windows, Ubuntu]
++
+- **OS**: [e.g. iOS, Windows, Ubuntu]
+@@ -34,1 +34,1 @@
+-## Additional Context
++## Additional Context
+
+@@ -37,1 +37,1 @@
+-## API Response (if applicable)
++## API Response (if applicable)
+
+@@ -42,1 +42,1 @@
+-## Console Logs (if applicable)
++## Console Logs (if applicable)
+
+@@ -47,1 +47,1 @@
+-## Priority
++## Priority
+
+@@ -48,1 +48,1 @@
+-- [ ] High - Application is unusable
++
+- [ ] High - Application is unusable
+@@ -52,1 +52,1 @@
+-## Subscription Tier (if applicable)
++## Subscription Tier (if applicable)
+
+@@ -53,1 +53,1 @@
+-- [ ] Free
++
+- [ ] Free
+@@ -58,1 +58,1 @@
+-## Related Components
++## Related Components
+
+@@ -59,1 +59,1 @@
+-- [ ] Authentication
++
+- [ ] Authentication
+diff --git a/.github/ISSUE_TEMPLATE/security.md b/.github/ISSUE_TEMPLATE/security.md
+--- a/.github/ISSUE_TEMPLATE/security.md
++++ b/.github/ISSUE_TEMPLATE/security.md
+@@ -11,1 +11,1 @@
+-**IMPORTANT**: If this is a serious security vulnerability that could compromise user data or system security, please DO NOT create a public issue. Instead, please email security@laravel-recipes.com or use GitHub's private vulnerability reporting feature.
++**IMPORTANT**: If this is a serious security vulnerability that could compromise user data or system security, please DO NOT create a public issue. Instead, please email <security@laravel-recipes.com> or use GitHub's private vulnerability reporting feature.
+@@ -13,1 +13,1 @@
+-## Vulnerability Description
++## Vulnerability Description
+
+@@ -16,1 +16,1 @@
+-## Vulnerability Type
++## Vulnerability Type
+
+@@ -17,1 +17,1 @@
+-- [ ] Authentication bypass
++
+- [ ] Authentication bypass
+@@ -30,1 +30,1 @@
+-## Steps to Reproduce
++## Steps to Reproduce
+
+@@ -31,1 +31,1 @@
+-1. Go to '...'
++
+1. Go to '...'
+@@ -35,1 +35,1 @@
+-## Impact Assessment
++## Impact Assessment
+
+@@ -36,1 +36,1 @@
+-- **Severity**: 
++
+- **Severity**: 
+@@ -48,1 +48,1 @@
+-## Proof of Concept
++## Proof of Concept
+
+@@ -52,1 +52,1 @@
+-## Suggested Fix
++## Suggested Fix
+
+@@ -55,1 +55,1 @@
+-## Environment Information
++## Environment Information
+
+@@ -56,1 +56,1 @@
+-- **Version**: [e.g. commit hash or release version]
++
+- **Version**: [e.g. commit hash or release version]
+@@ -60,1 +60,1 @@
+-## Discovery Method
++## Discovery Method
+
+@@ -62,1 +62,1 @@
+-- [ ] Manual testing
++
+- [ ] Manual testing
+@@ -69,1 +69,1 @@
+-## Additional Context
++## Additional Context
+
+@@ -72,1 +72,1 @@
+-## CWE/CVE References
++## CWE/CVE References
+
+@@ -78,1 +78,1 @@
+-- Initial report: [DATE]
++
+- Initial report: [DATE]
+diff --git a/docs/product_requirements.md b/docs/product_requirements.md
+--- a/docs/product_requirements.md
++++ b/docs/product_requirements.md
+@@ -3,1 +3,1 @@
+-## Overview
++## Overview
+
+@@ -6,1 +6,1 @@
+-## Target Audience
++## Target Audience
+
+@@ -7,1 +7,1 @@
+-- Home cooks and professional chefs
++
+- Home cooks and professional chefs
+@@ -14,1 +14,1 @@
+-### Casual Cook (Free Tier)
++### Casual Cook (Free Tier)
+
+@@ -15,1 +15,1 @@
+-- Wants to store personal recipes
++
+- Wants to store personal recipes
+@@ -19,1 +19,1 @@
+-### Enthusiast Cook (Paid Tier 1)
++### Enthusiast Cook (Paid Tier 1)
+
+@@ -20,1 +20,1 @@
+-- Maintains a large recipe collection
++
+- Maintains a large recipe collection
+@@ -25,1 +25,1 @@
+-### Professional Chef (Paid Tier 2)
++### Professional Chef (Paid Tier 2)
+
+@@ -26,1 +26,1 @@
+-- Requires advanced organization features
++
+- Requires advanced organization features
+@@ -31,1 +31,1 @@
+-### Administrator
++### Administrator
+
+@@ -32,1 +32,1 @@
+-- Manages user accounts and subscription tiers
++
+- Manages user accounts and subscription tiers
+@@ -38,1 +38,1 @@
+-### Authentication and User Management
++### Authentication and User Management
+
+@@ -39,1 +39,1 @@
+-1. User registration with email verification
++
+1. User registration with email verification
+@@ -45,1 +45,1 @@
+-### Subscription Management
++### Subscription Management
+
+@@ -46,1 +46,1 @@
+-1. Three-tier subscription model:
++
+1. Three-tier subscription model:
+@@ -54,1 +54,1 @@
+-### Recipe Management
++### Recipe Management
+
+@@ -55,1 +55,1 @@
+-1. Create, edit, and delete recipes
++
+1. Create, edit, and delete recipes
+@@ -64,1 +64,1 @@
+-### Cookbook Management
++### Cookbook Management
+
+@@ -65,1 +65,1 @@
+-1. Create, edit, and delete cookbooks
++
+1. Create, edit, and delete cookbooks
+@@ -71,1 +71,1 @@
+-### Printing and Export
++### Printing and Export
+
+@@ -72,1 +72,1 @@
+-1. Print individual recipes with consistent formatting
++
+1. Print individual recipes with consistent formatting
+@@ -83,1 +83,1 @@
+-### Free Tier
++### Free Tier
+
+@@ -84,1 +84,1 @@
+-- Create up to 25 recipes (all recipes are publicly viewable)
++
+- Create up to 25 recipes (all recipes are publicly viewable)
+@@ -90,1 +90,1 @@
+-### Paid Tier 1
++### Paid Tier 1
+
+@@ -91,1 +91,1 @@
+-- Unlimited recipes (all recipes are publicly viewable)
++
+- Unlimited recipes (all recipes are publicly viewable)
+@@ -98,1 +98,1 @@
+-### Paid Tier 2
++### Paid Tier 2
+
+@@ -99,1 +99,1 @@
+-- All Tier 1 features
++
+- All Tier 1 features
+@@ -110,1 +110,1 @@
+-### Performance
++### Performance
+
+@@ -111,1 +111,1 @@
+-- Page load time under 2 seconds
++
+- Page load time under 2 seconds
+@@ -115,1 +115,1 @@
+-### Security
++### Security
+
+@@ -116,1 +116,1 @@
+-- Secure user authentication
++
+- Secure user authentication
+@@ -122,1 +122,1 @@
+-### Reliability
++### Reliability
+
+@@ -123,1 +123,1 @@
+-- 99.9% uptime
++
+- 99.9% uptime
+@@ -127,1 +127,1 @@
+-### Scalability
++### Scalability
+
+@@ -128,1 +128,1 @@
+-- Horizontal scaling capability
++
+- Horizontal scaling capability
+@@ -132,1 +132,1 @@
+-### Usability
++### Usability
+
+@@ -133,1 +133,1 @@
+-- Mobile-first responsive design
++
+- Mobile-first responsive design
+@@ -141,1 +141,1 @@
+-### General UI Guidelines
++### General UI Guidelines
+
+@@ -142,1 +142,1 @@
+-- Clean, minimalist design
++
+- Clean, minimalist design
+@@ -149,1 +149,1 @@
+-### Key Screens
++### Key Screens
+
+@@ -150,1 +150,1 @@
+-1. **Dashboard/Home**
++
+1. **Dashboard/Home**
+@@ -187,1 +187,1 @@
+-## Technical Constraints
++## Technical Constraints
+
+@@ -188,1 +188,1 @@
+-- MongoDB as the primary database
++
+- MongoDB as the primary database
+@@ -195,1 +195,1 @@
+-## Success Metrics
++## Success Metrics
+
+@@ -196,1 +196,1 @@
+-- User registration and retention rates
++
+- User registration and retention rates
+@@ -202,1 +202,1 @@
+-## Timeline
++## Timeline
+
+@@ -203,1 +203,1 @@
+-- **Phase 1 (2 months)**: Core recipe and cookbook functionality with MongoDB migration
++
+- **Phase 1 (2 months)**: Core recipe and cookbook functionality with MongoDB migration
+@@ -210,1 +210,1 @@
+-## Future Considerations
++## Future Considerations
+
+@@ -211,1 +211,1 @@
+-- Mobile app versions (iOS, Android)
++
+- Mobile app versions (iOS, Android)
+diff --git a/SECURITY.md b/SECURITY.md
+--- a/SECURITY.md
++++ b/SECURITY.md
+@@ -21,1 +21,1 @@
+-1. **Email**: security@laravel-recipes.com
++1. **Email**: <security@laravel-recipes.com>
+@@ -54,1 +54,1 @@
+-#### Critical (CVSS 9.0-10.0)
++#### Critical (CVSS 9.0-10.0)
+
+@@ -55,1 +55,1 @@
+-- **Examples**: Remote code execution, authentication bypass, data breach
++
+- **Examples**: Remote code execution, authentication bypass, data breach
+@@ -60,1 +60,1 @@
+-#### High (CVSS 7.0-8.9)
++#### High (CVSS 7.0-8.9)
+
+@@ -61,1 +61,1 @@
+-- **Examples**: Privilege escalation, SQL injection, XSS with significant impact
++
+- **Examples**: Privilege escalation, SQL injection, XSS with significant impact
+@@ -66,1 +66,1 @@
+-#### Medium (CVSS 4.0-6.9)
++#### Medium (CVSS 4.0-6.9)
+
+@@ -67,1 +67,1 @@
+-- **Examples**: Information disclosure, CSRF, authorization issues
++
+- **Examples**: Information disclosure, CSRF, authorization issues
+@@ -72,1 +72,1 @@
+-#### Low (CVSS 0.1-3.9)
++#### Low (CVSS 0.1-3.9)
+
+@@ -73,1 +73,1 @@
+-- **Examples**: Security misconfigurations, minor information leaks
++
+- **Examples**: Security misconfigurations, minor information leaks
+@@ -82,1 +82,1 @@
+-#### â Acceptable Testing
++#### â Acceptable Testing
+
+@@ -83,1 +83,1 @@
+-- Test against your own accounts and data
++
+- Test against your own accounts and data
+@@ -88,1 +88,1 @@
+-#### â Prohibited Activities
++#### â Prohibited Activities
+
+@@ -89,1 +89,1 @@
+-- Accessing other users' data
++
+- Accessing other users' data
+@@ -100,1 +100,1 @@
+-#### Hall of Fame
++#### Hall of Fame
+
+@@ -101,1 +101,1 @@
+-- Public recognition in our security acknowledgments
++
+- Public recognition in our security acknowledgments
+@@ -105,1 +105,1 @@
+-#### Responsible Disclosure Rewards
++#### Responsible Disclosure Rewards
+
+@@ -107,1 +107,1 @@
+-- Swag and merchandise for valid reports
++
+- Swag and merchandise for valid reports
+@@ -114,1 +114,1 @@
+-#### For Developers
++#### For Developers
+
+@@ -115,1 +115,1 @@
+-- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
++
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
+@@ -119,1 +119,1 @@
+-#### For Researchers
++#### For Researchers
+
+@@ -120,1 +120,1 @@
+-- [CVSS Calculator](https://www.first.org/cvss/calculator/3.1)
++
+- [CVSS Calculator](https://www.first.org/cvss/calculator/3.1)
+@@ -128,1 +128,1 @@
+-#### Authentication & Authorization
++#### Authentication & Authorization
+
+@@ -129,1 +129,1 @@
+-- JWT-based authentication with Laravel Sanctum
++
+- JWT-based authentication with Laravel Sanctum
+@@ -134,1 +134,1 @@
+-#### Data Protection
++#### Data Protection
+
+@@ -135,1 +135,1 @@
+-- Encryption at rest and in transit
++
+- Encryption at rest and in transit
+@@ -140,1 +140,1 @@
+-#### Infrastructure Security
++#### Infrastructure Security
+
+@@ -141,1 +141,1 @@
+-- Regular security updates
++
+- Regular security updates
+@@ -147,1 +147,1 @@
+-#### Application Security
++#### Application Security
+
+@@ -148,1 +148,1 @@
+-- Content Security Policy (CSP)
++
+- Content Security Policy (CSP)
+@@ -158,1 +158,1 @@
+-#### Automated Monitoring
++#### Automated Monitoring
+
+@@ -159,1 +159,1 @@
+-- Dependency vulnerability scanning
++
+- Dependency vulnerability scanning
+@@ -164,1 +164,1 @@
+-#### Manual Reviews
++#### Manual Reviews
+
+@@ -165,1 +165,1 @@
+-- Regular security audits
++
+- Regular security audits
+@@ -185,1 +185,1 @@
+-#### Timeline
++#### Timeline
+
+@@ -186,1 +186,1 @@
+-- **Report Received**: Acknowledgment within 24 hours
++
+- **Report Received**: Acknowledgment within 24 hours
+@@ -192,1 +192,1 @@
+-#### Communication
++#### Communication
+
+@@ -193,1 +193,1 @@
+-- Regular updates throughout the process
++
+- Regular updates throughout the process
+@@ -202,1 +202,1 @@
+-- **Primary**: security@laravel-recipes.com
++- **Primary**: <security@laravel-recipes.com>
+@@ -220,1 +220,1 @@
+-- **Security Mailing List** (subscribe at security@laravel-recipes.com)
++- **Security Mailing List** (subscribe at <security@laravel-recipes.com>)
+@@ -234,1 +234,1 @@
+-- **Security Team**: security@laravel-recipes.com
++- **Security Team**: <security@laravel-recipes.com>
+@@ -235,1 +235,1 @@
+-- **General Contact**: hello@laravel-recipes.com
++- **General Contact**: <hello@laravel-recipes.com>
+diff --git a/docs/technical_specification.md b/docs/technical_specification.md
+--- a/docs/technical_specification.md
++++ b/docs/technical_specification.md
+@@ -5,1 +5,1 @@
+-### Overview
++### Overview
+
+@@ -8,1 +8,1 @@
+-### Technology Stack
++### Technology Stack
+
+@@ -9,1 +9,1 @@
+-- **Backend Framework**: Laravel 11.x
++
+- **Backend Framework**: Laravel 11.x
+@@ -24,1 +24,1 @@
+-#### Backend Components
++#### Backend Components
+
+@@ -25,1 +25,1 @@
+-1. **Models**: MongoDB document models for all entities
++
+1. **Models**: MongoDB document models for all entities
+@@ -35,1 +35,1 @@
+-#### Frontend Components
++#### Frontend Components
+
+@@ -36,1 +36,1 @@
+-1. **Layouts**: Base templates for consistent UI
++
+1. **Layouts**: Base templates for consistent UI
+@@ -42,1 +42,1 @@
+-#### Infrastructure Components
++#### Infrastructure Components
+
+@@ -43,1 +43,1 @@
+-1. **Web Server**: Nginx
++
+1. **Web Server**: Nginx
+@@ -54,1 +54,1 @@
+-#### Users Collection
++#### Users Collection
+
+@@ -74,1 +74,1 @@
+-#### Recipes Collection
++#### Recipes Collection
+
+@@ -103,1 +103,1 @@
+-#### Cookbooks Collection
++#### Cookbooks Collection
+
+@@ -123,1 +123,1 @@
+-#### Classifications Collection
++#### Classifications Collection
+
+@@ -133,1 +133,1 @@
+-#### Sources Collection
++#### Sources Collection
+
+@@ -143,1 +143,1 @@
+-#### Meals Collection
++#### Meals Collection
+
+@@ -153,1 +153,1 @@
+-#### Courses Collection
++#### Courses Collection
+
+@@ -163,1 +163,1 @@
+-#### Preparations Collection
++#### Preparations Collection
+
+@@ -173,1 +173,1 @@
+-#### Subscriptions Collection
++#### Subscriptions Collection
+
+@@ -187,1 +187,1 @@
+-### Indexes
++### Indexes
+
+@@ -188,1 +188,1 @@
+-- Users: email (unique)
++
+- Users: email (unique)
+@@ -195,1 +195,1 @@
+-### Version Management Strategy
++### Version Management Strategy
+
+@@ -196,1 +196,1 @@
+-- **Versioning Approach**: URI Path Versioning (e.g., `/api/v1/recipes`)
++
+- **Versioning Approach**: URI Path Versioning (e.g., `/api/v1/recipes`)
+@@ -204,1 +204,1 @@
+-### Directory Structure
++### Directory Structure
+
+@@ -205,1 +205,1 @@
+-- Controllers organized by version:
++
+- Controllers organized by version:
+@@ -220,1 +220,1 @@
+-### Implementation Details
++### Implementation Details
+
+@@ -221,1 +221,1 @@
+-- **Route Registration**:
++
+- **Route Registration**:
+@@ -242,1 +242,1 @@
+-### Version Transition Strategy
++### Version Transition Strategy
+
+@@ -243,1 +243,1 @@
+-- Minimum 6-month overlap period for major version changes
++
+- Minimum 6-month overlap period for major version changes
+@@ -248,1 +248,1 @@
+-### Version Control Guidelines
++### Version Control Guidelines
+
+@@ -249,1 +249,1 @@
+-- **When to Create a New Version**:
++
+- **When to Create a New Version**:
+@@ -263,1 +263,1 @@
+-### Backward Compatibility
++### Backward Compatibility
+
+@@ -264,1 +264,1 @@
+-- All deprecated fields marked in API documentation
++
+- All deprecated fields marked in API documentation
+@@ -270,1 +270,1 @@
+-### Authentication
++### Authentication
+
+@@ -271,1 +271,1 @@
+-- JWT-based authentication using Laravel Sanctum
++
+- JWT-based authentication using Laravel Sanctum
+@@ -277,1 +277,1 @@
+-### Authorization
++### Authorization
+
+@@ -278,1 +278,1 @@
+-- Role-based access control:
++
+- Role-based access control:
+@@ -291,1 +291,1 @@
+-### API Versioning Strategy
++### API Versioning Strategy
+
+@@ -292,1 +292,1 @@
+-- All API endpoints use versioning prefix (starting with v1)
++
+- All API endpoints use versioning prefix (starting with v1)
+@@ -299,1 +299,1 @@
+-### Authentication Endpoints
++### Authentication Endpoints
+
+@@ -300,1 +300,1 @@
+-- `POST /api/v1/auth/register` - Register a new user
++
+- `POST /api/v1/auth/register` - Register a new user
+@@ -308,1 +308,1 @@
+-### User Endpoints
++### User Endpoints
+
+@@ -309,1 +309,1 @@
+-- `GET /api/v1/users/profile` - Get user profile
++
+- `GET /api/v1/users/profile` - Get user profile
+@@ -314,1 +314,1 @@
+-### Recipe Endpoints
++### Recipe Endpoints
+
+@@ -315,1 +315,1 @@
+-- `GET /api/v1/recipes` - List user recipes
++
+- `GET /api/v1/recipes` - List user recipes
+@@ -324,1 +324,1 @@
+-### Cookbook Endpoints
++### Cookbook Endpoints
+
+@@ -325,1 +325,1 @@
+-- `GET /api/v1/cookbooks` - List user cookbooks
++
+- `GET /api/v1/cookbooks` - List user cookbooks
+@@ -336,1 +336,1 @@
+-### Print/Export Endpoints
++### Print/Export Endpoints
+
+@@ -337,1 +337,1 @@
+-- `GET /api/v1/recipes/{id}/print` - Get printable recipe
++
+- `GET /api/v1/recipes/{id}/print` - Get printable recipe
+@@ -342,1 +342,1 @@
+-### Admin Endpoints
++### Admin Endpoints
+
+@@ -343,1 +343,1 @@
+-- `GET /api/v1/admin/users` - List all users
++
+- `GET /api/v1/admin/users` - List all users
+diff --git a/CONTRIBUTING.md b/CONTRIBUTING.md
+--- a/CONTRIBUTING.md
++++ b/CONTRIBUTING.md
+@@ -45,1 +45,1 @@
+-   - Main App: http://localhost:8080
++   - Main App: <http://localhost:8080>
+@@ -46,1 +46,1 @@
+-   - MongoDB Admin: http://localhost:8081
++   - MongoDB Admin: <http://localhost:8081>
+@@ -47,1 +47,1 @@
+-   - Redis Admin: http://localhost:8082
++   - Redis Admin: <http://localhost:8082>
+@@ -178,1 +178,1 @@
+-#### Unit Tests
++#### Unit Tests
+
+@@ -194,1 +194,1 @@
+-#### Feature Tests
++#### Feature Tests
+
+@@ -393,1 +393,1 @@
+-- **Email**: security@laravel-recipes.com for security issues
++- **Email**: <security@laravel-recipes.com> for security issues
+diff --git a/docs/Laravel Recipes 2025 - Project Status.md b/docs/Laravel Recipes 2025 - Project Status.md
+--- a/docs/Laravel Recipes 2025 - Project Status.md
++++ b/docs/Laravel Recipes 2025 - Project Status.md
+@@ -3,1 +3,1 @@
+-## Project Overview
++## Project Overview
+
+@@ -6,1 +6,1 @@
+-## Project Structure
++## Project Structure
+
+@@ -145,1 +145,1 @@
+-#### Backend (Laravel)
++#### Backend (Laravel)
+
+@@ -146,1 +146,1 @@
+-- **Models**: All MongoDB models with relationships and validation
++
+- **Models**: All MongoDB models with relationships and validation
+@@ -161,1 +161,1 @@
+-#### Frontend (Vue.js 3)
++#### Frontend (Vue.js 3)
+
+@@ -162,1 +162,1 @@
+-- **Component Architecture**: Modern Vue 3 with Composition API
++
+- **Component Architecture**: Modern Vue 3 with Composition API
+@@ -179,1 +179,1 @@
+-#### Technical Infrastructure
++#### Technical Infrastructure
+
+@@ -180,1 +180,1 @@
+-- **Dependencies**: All required packages configured (MongoDB, Sanctum, Scout, Stripe, DomPDF)
++
+- **Dependencies**: All required packages configured (MongoDB, Sanctum, Scout, Stripe, DomPDF)
+@@ -187,1 +187,1 @@
+-#### Subscription System
++#### Subscription System
+
+@@ -188,1 +188,1 @@
+-- **Backend**: Full subscription service and Stripe integration setup
++
+- **Backend**: Full subscription service and Stripe integration setup
+@@ -195,1 +195,1 @@
+-#### Testing
++#### Testing
+
+@@ -196,1 +196,1 @@
+-- **Unit Tests**: No unit tests for models, services, or repositories
++
+- **Unit Tests**: No unit tests for models, services, or repositories
+@@ -201,1 +201,1 @@
+-#### Deployment & DevOps
++#### Deployment & DevOps
+
+@@ -202,1 +202,1 @@
+-- **Docker Configuration**: Docker directory exists but is empty
++
+- **Docker Configuration**: Docker directory exists but is empty
+@@ -207,1 +207,1 @@
+-#### Advanced Features (Future Enhancements)
++#### Advanced Features (Future Enhancements)
+
+@@ -208,1 +208,1 @@
+-- **File Upload**: Recipe image handling not fully implemented
++
+- **File Upload**: Recipe image handling not fully implemented
+@@ -217,1 +217,1 @@
+-### Strengths
++### Strengths
+
+@@ -218,1 +218,1 @@
+-1. **Comprehensive Backend**: The Laravel backend is production-ready with excellent architecture
++
+1. **Comprehensive Backend**: The Laravel backend is production-ready with excellent architecture
+@@ -226,1 +226,1 @@
+-### Areas Needing Attention
++### Areas Needing Attention
+
+@@ -227,1 +227,1 @@
+-1. **Testing**: Complete lack of automated testing (critical for production)
++
+1. **Testing**: Complete lack of automated testing (critical for production)
+@@ -235,1 +235,1 @@
+-### High Priority (Production Readiness)
++### High Priority (Production Readiness)
+
+@@ -236,1 +236,1 @@
+-1. **Testing Implementation** (2-3 weeks)
++
+1. **Testing Implementation** (2-3 weeks)
+@@ -254,1 +254,1 @@
+-### Medium Priority (Enhancement)
++### Medium Priority (Enhancement)
+
+@@ -255,1 +255,1 @@
+-1. **File Upload System** (1-2 weeks)
++
+1. **File Upload System** (1-2 weeks)
+@@ -266,1 +266,1 @@
+-### Low Priority (Future Enhancements)
++### Low Priority (Future Enhancements)
+
+@@ -267,1 +267,1 @@
+-1. **Monitoring & Analytics** (1-2 weeks)
++
+1. **Monitoring & Analytics** (1-2 weeks)
+@@ -273,1 +273,1 @@
+-1. Clone the repository:
++1. Clone the repository:
+
+@@ -279,1 +279,1 @@
+-2. Install dependencies:
++2. Install dependencies:
+
+@@ -285,1 +285,1 @@
+-3. Set up environment:
++3. Set up environment:
+
+@@ -291,1 +291,1 @@
+-4. Configure MongoDB connection in .env file:
++4. Configure MongoDB connection in .env file:
+
+@@ -301,1 +301,1 @@
+-5. Run migrations and seeders:
++5. Run migrations and seeders:
+
+@@ -307,1 +307,1 @@
+-6. Build frontend assets:
++6. Build frontend assets:
+
+@@ -314,1 +314,1 @@
+-7. Start the development server:
++7. Start the development server:
+
+@@ -319,1 +319,1 @@
+-8. Default users for testing:
++8. Default users for testing:
+
+@@ -320,1 +320,1 @@
+-- Admin: admin@example.com / password
++- Admin: <admin@example.com> / password
+@@ -321,1 +321,1 @@
+-- Free Tier: free@example.com / password
++- Free Tier: <free@example.com> / password
+@@ -322,1 +322,1 @@
+-- Tier 1: tier1@example.com / password
++- Tier 1: <tier1@example.com> / password
+@@ -323,1 +323,1 @@
+-- Tier 2: tier2@example.com / password
++- Tier 2: <tier2@example.com> / password
+@@ -327,1 +327,1 @@
+-### Backend
++### Backend
+
+@@ -328,1 +328,1 @@
+-- **Framework**: Laravel 11.x
++
+- **Framework**: Laravel 11.x
+@@ -336,1 +336,1 @@
+-### Frontend
++### Frontend
+
+@@ -337,1 +337,1 @@
+-- **Framework**: Vue.js 3.x with Composition API
++
+- **Framework**: Vue.js 3.x with Composition API
+diff --git a/README.md b/README.md
+--- a/README.md
++++ b/README.md
+@@ -13,1 +13,1 @@
+-### Core Functionality
++### Core Functionality
+
+@@ -14,1 +14,1 @@
+-- ðï¸ **Recipe Management** - Create, edit, organize, and search recipes with fuzzy matching
++
+- ðï¸ **Recipe Management** - Create, edit, organize, and search recipes with fuzzy matching
+@@ -22,1 +22,1 @@
+-### Subscription Tiers
++### Subscription Tiers
+
+@@ -23,1 +23,1 @@
+-- **Free Tier** - Up to 25 public recipes, 1 public cookbook, basic search
++
+- **Free Tier** - Up to 25 public recipes, 1 public cookbook, basic search
+@@ -27,1 +27,1 @@
+-### Technical Features
++### Technical Features
+
+@@ -28,1 +28,1 @@
+-- ð **Secure Authentication** - Laravel Sanctum with JWT tokens
++
+- ð **Secure Authentication** - Laravel Sanctum with JWT tokens
+@@ -37,1 +37,1 @@
+-### Prerequisites
++### Prerequisites
+
+@@ -38,1 +38,1 @@
+-- **PHP 8.3+** with extensions: mongodb, redis, gd, curl, mbstring, openssl, pdo, tokenizer, xml
++
+- **PHP 8.3+** with extensions: mongodb, redis, gd, curl, mbstring, openssl, pdo, tokenizer, xml
+@@ -128,1 +128,1 @@
+-   - **Web Interface**: http://localhost:8000
++   - **Web Interface**: <http://localhost:8000>
+@@ -129,1 +129,1 @@
+-   - **API Base URL**: http://localhost:8000/api/v1
++   - **API Base URL**: <http://localhost:8000/api/v1>
+@@ -131,1 +131,1 @@
+-### Default Test Users
++### Default Test Users
+
+@@ -192,1 +192,1 @@
+-### Backend (Fully Implemented)
++### Backend (Fully Implemented)
+
+@@ -193,1 +193,1 @@
+-- **Framework**: Laravel 11.x with PHP 8.3+
++
+- **Framework**: Laravel 11.x with PHP 8.3+
+@@ -202,1 +202,1 @@
+-### Frontend (Implemented)
++### Frontend (Implemented)
+
+@@ -203,1 +203,1 @@
+-- **Framework**: Vue.js 3.x with Composition API
++
+- **Framework**: Vue.js 3.x with Composition API
+@@ -208,1 +208,1 @@
+-### Development Tools
++### Development Tools
+
+@@ -209,1 +209,1 @@
+-- **Local Environment**: Laravel Sail (Docker) or traditional LAMP/LEMP
++
+- **Local Environment**: Laravel Sail (Docker) or traditional LAMP/LEMP
+@@ -219,1 +219,1 @@
+-### Authentication Endpoints
++### Authentication Endpoints
+
+@@ -229,1 +229,1 @@
+-### Recipe Management
++### Recipe Management
+
+@@ -241,1 +241,1 @@
+-### Cookbook Management
++### Cookbook Management
+
+@@ -254,1 +254,1 @@
+-### PDF Export & Printing
++### PDF Export & Printing
+
+@@ -262,1 +262,1 @@
+-### Metadata & Classification
++### Metadata & Classification
+
+@@ -271,1 +271,1 @@
+-### User & Subscription Management
++### User & Subscription Management
+
+@@ -279,1 +279,1 @@
+-### Admin Endpoints (Admin users only)
++### Admin Endpoints (Admin users only)
+
+@@ -288,1 +288,1 @@
+-### API Response Format
++### API Response Format
+
+@@ -304,1 +304,1 @@
+-### Running Tests
++### Running Tests
+
+@@ -317,1 +317,1 @@
+-### Test Structure (Planned)
++### Test Structure (Planned)
+
+@@ -318,1 +318,1 @@
+-- **Unit Tests**: Model validation, service logic, repository methods
++
+- **Unit Tests**: Model validation, service logic, repository methods
+@@ -324,1 +324,1 @@
+-### Laravel Forge (Recommended)
++### Laravel Forge (Recommended)
+
+@@ -325,1 +325,1 @@
+-1. Connect your server to Laravel Forge
++
+1. Connect your server to Laravel Forge
+@@ -331,1 +331,1 @@
+-### Manual Deployment
++### Manual Deployment
+
+@@ -332,1 +332,1 @@
+-1. **Server Requirements**:
++
+1. **Server Requirements**:
+@@ -390,1 +390,1 @@
+-### Development Guidelines
++### Development Guidelines
+
+@@ -391,1 +391,1 @@
+-- Follow Laravel best practices and conventions
++
+- Follow Laravel best practices and conventions
+@@ -415,1 +415,1 @@
+-### Phase 1: Testing & Quality Assurance (2-3 weeks)
++### Phase 1: Testing & Quality Assurance (2-3 weeks)
+
+@@ -416,1 +416,1 @@
+-- [ ] Comprehensive test suite (Unit, Feature, Browser)
++
+- [ ] Comprehensive test suite (Unit, Feature, Browser)
+@@ -421,1 +421,1 @@
+-### Phase 2: Production Deployment (1-2 weeks)
++### Phase 2: Production Deployment (1-2 weeks)
+
+@@ -422,1 +422,1 @@
+-- [ ] Docker containerization
++
+- [ ] Docker containerization
+@@ -427,1 +427,1 @@
+-### Phase 3: Advanced Features (4-6 weeks)
++### Phase 3: Advanced Features (4-6 weeks)
+
+@@ -428,1 +428,1 @@
+-- [ ] Recipe image uploads and processing
++
+- [ ] Recipe image uploads and processing
+@@ -433,1 +433,1 @@
+-### Future Enhancements
++### Future Enhancements
+
+@@ -434,1 +434,1 @@
+-- [ ] Mobile applications (iOS/Android)
++
+- [ ] Mobile applications (iOS/Android)
+diff --git a/.github/ISSUE_TEMPLATE/documentation.md b/.github/ISSUE_TEMPLATE/documentation.md
+--- a/.github/ISSUE_TEMPLATE/documentation.md
++++ b/.github/ISSUE_TEMPLATE/documentation.md
+@@ -9,1 +9,1 @@
+-## Documentation Issue
++## Documentation Issue
+
+@@ -12,1 +12,1 @@
+-## Current State
++## Current State
+
+@@ -14,1 +14,1 @@
+-- [ ] Documentation is missing
++
+- [ ] Documentation is missing
+@@ -20,1 +20,1 @@
+-## Suggested Improvement
++## Suggested Improvement
+
+@@ -23,1 +23,1 @@
+-## Location
++## Location
+
+@@ -25,1 +25,1 @@
+-- [ ] README.md
++
+- [ ] README.md
+@@ -35,1 +35,1 @@
+-## Audience
++## Audience
+
+@@ -37,1 +37,1 @@
+-- [ ] End Users
++
+- [ ] End Users
+@@ -43,1 +43,1 @@
+-## Priority
++## Priority
+
+@@ -44,1 +44,1 @@
+-- [ ] High - Blocking users from using the application
++
+- [ ] High - Blocking users from using the application
+@@ -48,1 +48,1 @@
+-## Additional Context
++## Additional Context
+
+@@ -51,1 +51,1 @@
+-## Examples
++## Examples
+
+diff --git a/docker/README.md b/docker/README.md
+--- a/docker/README.md
++++ b/docker/README.md
+@@ -9,1 +9,1 @@
+-### Production Services
++### Production Services
+
+@@ -10,1 +10,1 @@
+-- **nginx** - Web server (Alpine Linux)
++
+- **nginx** - Web server (Alpine Linux)
+@@ -17,1 +17,1 @@
+-### Development Additional Services
++### Development Additional Services
+
+@@ -18,1 +18,1 @@
+-- **node** - Node.js for frontend build tools
++
+- **node** - Node.js for frontend build tools
+@@ -39,1 +39,1 @@
+-   - Main App: http://localhost:8080
++   - Main App: <http://localhost:8080>
+@@ -40,1 +40,1 @@
+-   - MongoDB Admin: http://localhost:8081
++   - MongoDB Admin: <http://localhost:8081>
+@@ -41,1 +41,1 @@
+-   - Redis Admin: http://localhost:8082
++   - Redis Admin: <http://localhost:8082>
+@@ -58,1 +58,1 @@
+-   - Main App: http://localhost (or your domain)
++   - Main App: <http://localhost> (or your domain)
+@@ -82,1 +82,1 @@
+-### docker-compose.yml (Production)
++### docker-compose.yml (Production)
+
+@@ -83,1 +83,1 @@
+-- Optimized for production use
++
+- Optimized for production use
+@@ -88,1 +88,1 @@
+-### docker-compose.dev.yml (Development)
++### docker-compose.dev.yml (Development)
+
+@@ -89,1 +89,1 @@
+-- Development-friendly configuration
++
+- Development-friendly configuration
+@@ -96,1 +96,1 @@
+-### PHP Configuration
++### PHP Configuration
+
+@@ -97,1 +97,1 @@
+-- **PHP Version**: 8.3 FPM Alpine
++
+- **PHP Version**: 8.3 FPM Alpine
+@@ -103,1 +103,1 @@
+-### Nginx Configuration
++### Nginx Configuration
+
+@@ -104,1 +104,1 @@
+-- **Production**: Security headers, gzip compression, caching
++
+- **Production**: Security headers, gzip compression, caching
+@@ -108,1 +108,1 @@
+-### MongoDB Configuration
++### MongoDB Configuration
+
+@@ -109,1 +109,1 @@
+-- **Version**: 7.0
++
+- **Version**: 7.0
+@@ -114,1 +114,1 @@
+-### Redis Configuration
++### Redis Configuration
+
+@@ -115,1 +115,1 @@
+-- **Version**: Alpine latest
++
+- **Version**: Alpine latest
+@@ -122,1 +122,1 @@
+-### Required Variables
++### Required Variables
+
+@@ -133,1 +133,1 @@
+-### Optional Variables
++### Optional Variables
+
+@@ -143,1 +143,1 @@
+-### Development
++### Development
+
+@@ -165,1 +165,1 @@
+-### Production
++### Production
+
+@@ -186,1 +186,1 @@
+-### Production Security
++### Production Security
+
+@@ -187,1 +187,1 @@
+-1. **Change default passwords** in `.env` file
++
+1. **Change default passwords** in `.env` file
+@@ -193,1 +193,1 @@
+-### Network Security
++### Network Security
+
+@@ -194,1 +194,1 @@
+-- All services communicate through internal Docker network
++
+- All services communicate through internal Docker network
+@@ -201,1 +201,1 @@
+-- **PHP-FPM**: Checks if PHP process is responding
++
+- **PHP-FPM**: Checks if PHP process is responding
+@@ -207,1 +207,1 @@
+-### Log Locations
++### Log Locations
+
+@@ -208,1 +208,1 @@
+-- **Nginx**: `/var/log/nginx/`
++
+- **Nginx**: `/var/log/nginx/`
+@@ -213,1 +213,1 @@
+-### Monitoring
++### Monitoring
+
+@@ -214,1 +214,1 @@
+-- Use `docker stats` for resource usage
++
+- Use `docker stats` for resource usage
+@@ -220,1 +220,1 @@
+-### Database Backup
++### Database Backup
+
+@@ -229,1 +229,1 @@
+-### Application Backup
++### Application Backup
+
+@@ -273,1 +273,1 @@
+-### Adding New Services
++### Adding New Services
+
+@@ -274,1 +274,1 @@
+-1. Add service definition to `docker-compose.yml`
++
+1. Add service definition to `docker-compose.yml`
+@@ -279,1 +279,1 @@
+-### Modifying PHP Configuration
++### Modifying PHP Configuration
+
+@@ -280,1 +280,1 @@
+-1. Edit `docker/php/local.ini`
++
+1. Edit `docker/php/local.ini`
+@@ -284,1 +284,1 @@
+-### Nginx Customization
++### Nginx Customization
+
+@@ -285,1 +285,1 @@
+-1. Edit `docker/nginx/nginx.conf`
++
+1. Edit `docker/nginx/nginx.conf`
+@@ -299,1 +299,1 @@
+-1. Test both development and production configurations
++
+1. Test both development and production configurations
+diff --git a/.github/ISSUE_TEMPLATE/feature_request.md b/.github/ISSUE_TEMPLATE/feature_request.md
+--- a/.github/ISSUE_TEMPLATE/feature_request.md
++++ b/.github/ISSUE_TEMPLATE/feature_request.md
+@@ -9,1 +9,1 @@
+-## Feature Summary
++## Feature Summary
+
+@@ -12,1 +12,1 @@
+-## Problem Statement
++## Problem Statement
+
+@@ -16,1 +16,1 @@
+-## Proposed Solution
++## Proposed Solution
+
+@@ -19,1 +19,1 @@
+-## Alternative Solutions
++## Alternative Solutions
+
+@@ -22,1 +22,1 @@
+-## User Stories
++## User Stories
+
+@@ -24,1 +24,1 @@
+-- As a [user type], I want [functionality] so that [benefit]
++
+- As a [user type], I want [functionality] so that [benefit]
+@@ -27,1 +27,1 @@
+-## Acceptance Criteria
++## Acceptance Criteria
+
+@@ -29,1 +29,1 @@
+-- [ ] Criterion 1
++
+- [ ] Criterion 1
+@@ -33,1 +33,1 @@
+-## Mockups/Wireframes
++## Mockups/Wireframes
+
+@@ -36,1 +36,1 @@
+-## Technical Considerations
++## Technical Considerations
+
+@@ -38,1 +38,1 @@
+-- [ ] Backend changes required
++
+- [ ] Backend changes required
+@@ -45,1 +45,1 @@
+-## Subscription Tier Impact
++## Subscription Tier Impact
+
+@@ -47,1 +47,1 @@
+-- [ ] Free
++
+- [ ] Free
+@@ -52,1 +52,1 @@
+-## Priority
++## Priority
+
+@@ -53,1 +53,1 @@
+-- [ ] Critical - Needed for MVP
++
+- [ ] Critical - Needed for MVP
+@@ -58,1 +58,1 @@
+-## Related Components
++## Related Components
+
+@@ -60,1 +60,1 @@
+-- [ ] Authentication
++
+- [ ] Authentication
+@@ -72,1 +72,1 @@
+-## Additional Context
++## Additional Context
+
+@@ -75,1 +75,1 @@
+-## Definition of Done
++## Definition of Done
+
+@@ -76,1 +76,1 @@
+-- [ ] Feature implemented and tested
++
+- [ ] Feature implemented and tested
