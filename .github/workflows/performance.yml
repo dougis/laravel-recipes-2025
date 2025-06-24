@@ -53,20 +53,23 @@ jobs:
       
       - name: Setup environment file
         run: |
+          # Create environment file for Docker in src directory
           if [ -f ".env.dev" ]; then
-            cp .env.dev .env
+            cp .env.dev src/.env
           else
-            cp src/.env.example .env
-            # Generate APP_KEY if using example file
-            cd src && php artisan key:generate --force && cd ..
-            # Copy generated key to root .env
-            grep "APP_KEY=" src/.env >> .env || echo "APP_KEY=base64:$(openssl rand -base64 32)" >> .env
+            cp src/.env.example src/.env
           fi
           
-          # Update environment for GitHub Actions
-          echo "APP_URL=http://localhost:8080" >> .env
-          echo "DB_HOST=mongodb" >> .env
-          echo "REDIS_HOST=redis" >> .env
+          # Generate APP_KEY for Laravel
+          cd src && php artisan key:generate --force && cd ..
+          
+          # Update environment for GitHub Actions Docker containers
+          echo "APP_URL=http://localhost:8080" >> src/.env
+          echo "DB_HOST=mongodb" >> src/.env
+          echo "REDIS_HOST=redis" >> src/.env
+          
+          # Also create root .env for workflow compatibility
+          cp src/.env .env
       
       - name: Build and start test environment
         run: |
@@ -82,29 +85,34 @@ jobs:
           
           echo "Using Docker Compose command: $COMPOSE_CMD"
           
-          # Build and start services
-          $COMPOSE_CMD -f docker-compose.dev.yml up -d --build --wait
+          # Build and start services with extended timeout
+          $COMPOSE_CMD -f docker-compose.dev.yml up -d --build
           
-          # Wait for services to be healthy
-          echo "Waiting for services to be ready..."
-          sleep 30
+          # Wait for services to start
+          echo "Waiting for services to start..."
+          sleep 60
           
           # Check service status
           $COMPOSE_CMD -f docker-compose.dev.yml ps
           
-          # Wait for application to be ready with better error handling
+          # Wait for application to be ready with extended timeout
           echo "Waiting for application to respond..."
-          for i in {1..60}; do
+          for i in {1..120}; do
             if curl -f -s http://localhost:8080 >/dev/null 2>&1; then
               echo "Application is ready!"
               break
             fi
-            if [ $i -eq 60 ]; then
-              echo "Application failed to start within 5 minutes"
+            if [ $i -eq 120 ]; then
+              echo "Application failed to start within 10 minutes"
+              echo "=== Service Status ==="
+              $COMPOSE_CMD -f docker-compose.dev.yml ps
+              echo "=== Application Logs ==="
               $COMPOSE_CMD -f docker-compose.dev.yml logs app
+              echo "=== MongoDB Logs ==="
+              $COMPOSE_CMD -f docker-compose.dev.yml logs mongodb
               exit 1
             fi
-            echo "Attempt $i/60: Application not ready yet, waiting..."
+            echo "Attempt $i/120: Application not ready yet, waiting..."
             sleep 5
           done
       
@@ -179,20 +187,23 @@ jobs:
       
       - name: Setup environment file
         run: |
+          # Create environment file for Docker in src directory
           if [ -f ".env.dev" ]; then
-            cp .env.dev .env
+            cp .env.dev src/.env
           else
-            cp src/.env.example .env
-            # Generate APP_KEY if using example file
-            cd src && php artisan key:generate --force && cd ..
-            # Copy generated key to root .env
-            grep "APP_KEY=" src/.env >> .env || echo "APP_KEY=base64:$(openssl rand -base64 32)" >> .env
+            cp src/.env.example src/.env
           fi
           
-          # Update environment for GitHub Actions
-          echo "APP_URL=http://localhost:8080" >> .env
-          echo "DB_HOST=mongodb" >> .env
-          echo "REDIS_HOST=redis" >> .env
+          # Generate APP_KEY for Laravel
+          cd src && php artisan key:generate --force && cd ..
+          
+          # Update environment for GitHub Actions Docker containers
+          echo "APP_URL=http://localhost:8080" >> src/.env
+          echo "DB_HOST=mongodb" >> src/.env
+          echo "REDIS_HOST=redis" >> src/.env
+          
+          # Also create root .env for workflow compatibility
+          cp src/.env .env
       
       - name: Setup test environment
         run: |
@@ -205,25 +216,38 @@ jobs:
           
           echo "Using Docker Compose command: $COMPOSE_CMD"
           
-          # Build and start services
-          $COMPOSE_CMD -f docker-compose.dev.yml up -d --build --wait
+          # Build and start services with extended timeout
+          $COMPOSE_CMD -f docker-compose.dev.yml up -d --build
           
-          # Wait for services to be ready
-          echo "Waiting for services to be ready..."
-          sleep 30
+          # Wait for services to start
+          echo "Waiting for services to start..."
+          sleep 60
           
-          # Check if app service is running and run migrations
-          if $COMPOSE_CMD -f docker-compose.dev.yml ps app | grep -q "Up"; then
-            echo "Running database migrations..."
-            $COMPOSE_CMD -f docker-compose.dev.yml exec -T app php artisan migrate --force
-            echo "Seeding database..."
-            $COMPOSE_CMD -f docker-compose.dev.yml exec -T app php artisan db:seed --force
-          else
-            echo "App service is not running"
-            $COMPOSE_CMD -f docker-compose.dev.yml ps
-            $COMPOSE_CMD -f docker-compose.dev.yml logs app
-            exit 1
-          fi
+          # Check service status
+          $COMPOSE_CMD -f docker-compose.dev.yml ps
+          
+          # Wait for application container to be ready
+          echo "Waiting for application container..."
+          for i in {1..60}; do
+            if $COMPOSE_CMD -f docker-compose.dev.yml ps app | grep -q "Up"; then
+              echo "App container is running!"
+              break
+            fi
+            if [ $i -eq 60 ]; then
+              echo "App container failed to start"
+              $COMPOSE_CMD -f docker-compose.dev.yml ps
+              $COMPOSE_CMD -f docker-compose.dev.yml logs app
+              exit 1
+            fi
+            echo "Attempt $i/60: App container not ready yet, waiting..."
+            sleep 5
+          done
+          
+          # Run migrations and seed data
+          echo "Running database migrations..."
+          $COMPOSE_CMD -f docker-compose.dev.yml exec -T app php artisan migrate --force
+          echo "Seeding database..."
+          $COMPOSE_CMD -f docker-compose.dev.yml exec -T app php artisan db:seed --force
       
       - name: Install Artillery
         run: npm install -g artillery@latest
@@ -386,13 +410,15 @@ jobs:
           echo "DB_HOST=127.0.0.1" >> .env
           echo "DB_PORT=27017" >> .env
           echo "DB_DATABASE=laravel_recipes_perf" >> .env
+          echo "DB_USERNAME=admin" >> .env
+          echo "DB_PASSWORD=password" >> .env
           php artisan key:generate
       
       - name: Wait for MongoDB to be ready
         run: |
           echo "Waiting for MongoDB to be ready..."
           for i in {1..60}; do
-            if mongosh --host localhost:27017 --eval "db.runCommand({ ping: 1 })" >/dev/null 2>&1; then
+            if mongosh --host localhost:27017 -u admin -p password --eval "db.runCommand({ ping: 1 })" >/dev/null 2>&1; then
               echo "MongoDB is ready!"
               break
             fi
