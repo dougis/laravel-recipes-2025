@@ -29,6 +29,7 @@ php artisan test --coverage          # Run with coverage report
 composer require --dev squizlabs/php_codesniffer && ./vendor/bin/phpcs --standard=PSR12 app/
 composer require --dev phpstan/phpstan larastan/larastan && ./vendor/bin/phpstan analyse --memory-limit=2G
 composer audit                       # Security audit
+run codacy mcp server scan
 
 # Cache management
 php artisan config:cache             # Cache configuration
@@ -48,6 +49,7 @@ npm run preview                      # Preview production build
 # Code quality
 npm run lint                         # Run ESLint (requires configuration)
 npm audit --audit-level=high         # Security audit
+run codacy mcp server scan
 ```
 
 ### Development Setup
