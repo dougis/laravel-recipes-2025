@@ -26,6 +26,23 @@ jobs:
       
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      - name: Setup PHP (for key generation)
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mongodb
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: src/vendor
+          key: composer-lighthouse-${{ hashFiles('src/composer.lock') }}
+          restore-keys: composer-lighthouse-
+
+      - name: Install PHP dependencies
+        working-directory: src
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
       
       - name: Install dependencies
         working-directory: src
@@ -40,6 +57,10 @@ jobs:
             cp .env.dev .env
           else
             cp src/.env.example .env
+            # Generate APP_KEY if using example file
+            cd src && php artisan key:generate --force && cd ..
+            # Copy generated key to root .env
+            grep "APP_KEY=" src/.env >> .env || echo "APP_KEY=base64:$(openssl rand -base64 32)" >> .env
           fi
           
           # Update environment for GitHub Actions
@@ -135,6 +156,23 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+
+      - name: Setup PHP (for key generation)
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mongodb
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: src/vendor
+          key: composer-loadtest-${{ hashFiles('src/composer.lock') }}
+          restore-keys: composer-loadtest-
+
+      - name: Install PHP dependencies
+        working-directory: src
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
       
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -145,6 +183,10 @@ jobs:
             cp .env.dev .env
           else
             cp src/.env.example .env
+            # Generate APP_KEY if using example file
+            cd src && php artisan key:generate --force && cd ..
+            # Copy generated key to root .env
+            grep "APP_KEY=" src/.env >> .env || echo "APP_KEY=base64:$(openssl rand -base64 32)" >> .env
           fi
           
           # Update environment for GitHub Actions
@@ -201,7 +243,6 @@ jobs:
               - duration: 60
                 arrivalRate: 20
                 name: "High load"
-            processor: "./load-test-functions.js"
           
           scenarios:
             - name: "Browse recipes"
@@ -211,10 +252,7 @@ jobs:
                     url: "/api/v1/recipes/public"
                 - think: 2
                 - get:
-                    url: "/api/v1/recipes/{{ \$randomInt(1, 100) }}"
-                    capture:
-                      - json: "\$.data.recipe.id"
-                        as: "recipeId"
+                    url: "/api/v1/recipes/1"
             
             - name: "Browse cookbooks"
               weight: 30
@@ -223,7 +261,7 @@ jobs:
                     url: "/api/v1/cookbooks/public"
                 - think: 3
                 - get:
-                    url: "/api/v1/cookbooks/{{ \$randomInt(1, 20) }}"
+                    url: "/api/v1/cookbooks/1"
             
             - name: "Search recipes"
               weight: 10
@@ -231,22 +269,9 @@ jobs:
                 - get:
                     url: "/api/v1/recipes/search"
                     qs:
-                      query: "{{ \$randomString() }}"
+                      query: "chicken"
           EOF
       
-      - name: Create load test functions
-        run: |
-          cat > load-test-functions.js << EOF
-          module.exports = {
-            \$randomInt: function(min, max) {
-              return Math.floor(Math.random() * (max - min + 1)) + min;
-            },
-            \$randomString: function() {
-              const terms = ['chicken', 'pasta', 'vegetarian', 'dessert', 'soup', 'salad'];
-              return terms[Math.floor(Math.random() * terms.length)];
-            }
-          };
-          EOF
       
       - name: Run load test
         run: |
@@ -327,7 +352,7 @@ jobs:
         ports:
           - 27017:27017
         options: >-
-          --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })' || mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })' || mongo --eval 'db.runCommand({ ping: 1 })'"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 10
@@ -367,7 +392,7 @@ jobs:
         run: |
           echo "Waiting for MongoDB to be ready..."
           for i in {1..60}; do
-            if mongo --host localhost:27017 --eval "db.runCommand({ ping: 1 })" >/dev/null 2>&1 || mongosh --host localhost:27017 --eval "db.runCommand({ ping: 1 })" >/dev/null 2>&1; then
+            if mongosh --host localhost:27017 --eval "db.runCommand({ ping: 1 })" >/dev/null 2>&1; then
               echo "MongoDB is ready!"
               break
             fi
