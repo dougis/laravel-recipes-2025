@@ -29,7 +29,7 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('user', [AuthController::class, 'user'])->middleware('auth:sanctum');
     Route::post('password/email', [AuthController::class, 'sendPasswordResetEmail']);
     Route::post('password/reset', [AuthController::class, 'resetPassword']);
-    Route::post('email/verify/{id}', [AuthController::class, 'verifyEmail']);
+    Route::get('email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail']);
 });
 
 // User Endpoints
