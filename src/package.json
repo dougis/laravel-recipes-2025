@@ -10,6 +10,7 @@
         "test": "echo 'Tests not implemented yet'"
     },
     "devDependencies": {
+        "@babel/eslint-parser": "^7.28.0",
         "@tailwindcss/aspect-ratio": "^0.4.2",
         "@tailwindcss/forms": "^0.5.7",
         "@tailwindcss/typography": "^0.5.10",
@@ -17,11 +18,13 @@
         "autoprefixer": "^10.4.20",
         "axios": "^1.7.4",
         "eslint": "^8.57.0",
+        "eslint-plugin-vue": "^10.3.0",
         "laravel-vite-plugin": "^1.0.5",
         "postcss": "^8.4.41",
         "tailwindcss": "^3.4.10",
         "vite": "^5.0.0",
-        "vue": "^3.4.0"
+        "vue": "^3.4.0",
+        "vue-eslint-parser": "^10.2.0"
     },
     "dependencies": {
         "@headlessui/vue": "^1.7.22",

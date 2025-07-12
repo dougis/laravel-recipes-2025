@@ -7,6 +7,8 @@ module.exports = {
     extends: [
         'eslint:recommended'
     ],
+    plugins: ['vue'],
+    parser: 'vue-eslint-parser',
     parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module'
@@ -16,8 +18,17 @@ module.exports = {
         document: 'readonly',
         localStorage: 'readonly',
         console: 'readonly',
-        require: 'readonly'
+        require: 'readonly',
+        navigator: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly'
     },
+    ignorePatterns: [
+        'vendor/**/*',
+        'node_modules/**/*',
+        'bootstrap/cache/**/*',
+        'storage/**/*'
+    ],
     rules: {
         'no-unused-vars': 'warn',
         'no-console': 'warn'
