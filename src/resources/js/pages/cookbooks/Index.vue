@@ -240,10 +240,11 @@ export default {
         switch (sortBy.value) {
           case 'name':
             return a.name.localeCompare(b.name);
-          case 'recipe_count':
+          case 'recipe_count': {
             const aCount = a.recipe_ids?.length || 0;
             const bCount = b.recipe_ids?.length || 0;
             return bCount - aCount;
+          }
           case 'created_at':
             return new Date(b.created_at) - new Date(a.created_at);
           case 'updated_at':
