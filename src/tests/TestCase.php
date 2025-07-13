@@ -9,7 +9,7 @@ use MongoDB\Laravel\Eloquent\Model;
 
 abstract class TestCase extends BaseTestCase
 {
-    use CreatesApplication, RefreshDatabase;
+    use CreatesApplication;
 
     protected function setUp(): void
     {
@@ -18,9 +18,8 @@ abstract class TestCase extends BaseTestCase
         // Ensure we're using the test database
         Model::unguard();
         
-        // Set up test environment
-        $this->artisan('config:clear');
-        $this->artisan('cache:clear');
+        // Clean database before each test (MongoDB compatible)
+        $this->cleanDatabase();
     }
 
     protected function tearDown(): void
@@ -28,6 +27,23 @@ abstract class TestCase extends BaseTestCase
         // Clean up after each test
         Model::reguard();
         parent::tearDown();
+    }
+
+    /**
+     * Clean the database for testing (MongoDB compatible)
+     */
+    protected function cleanDatabase(): void
+    {
+        try {
+            // Clear all collections using deleteMany instead of truncate to avoid transactions
+            $collections = ['users', 'recipes', 'cookbooks', 'classifications', 'courses', 'meals', 'preparations', 'sources', 'subscriptions'];
+            
+            foreach ($collections as $collection) {
+                \DB::connection('mongodb')->collection($collection)->deleteMany([]);
+            }
+        } catch (\Exception $e) {
+            // If collections don't exist yet, that's fine
+        }
     }
 
     /**

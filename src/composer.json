@@ -7,15 +7,15 @@
     "require": {
         "php": "^8.3",
         "ext-mongodb": "*",
+        "barryvdh/laravel-dompdf": "^2.0",
         "guzzlehttp/guzzle": "^7.8",
-        "jenssegers/mongodb": "^4.0",
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
         "laravel/scout": "^10.0",
         "laravel/tinker": "^2.9",
-        "barryvdh/laravel-dompdf": "^2.0",
-        "stripe/stripe-php": "^13.0",
-        "predis/predis": "^2.2"
+        "mongodb/laravel-mongodb": "^4.8",
+        "predis/predis": "^2.2",
+        "stripe/stripe-php": "^13.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
