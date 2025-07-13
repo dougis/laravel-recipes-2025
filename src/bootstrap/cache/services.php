@@ -31,12 +31,11 @@
     27 => 'Laravel\\Scout\\ScoutServiceProvider',
     28 => 'Laravel\\Tinker\\TinkerServiceProvider',
     29 => 'MongoDB\\Laravel\\MongoDBServiceProvider',
-    30 => 'MongoDB\\Laravel\\MongoDBQueueServiceProvider',
-    31 => 'MongoDB\\Laravel\\MongoDBBusServiceProvider',
-    32 => 'Carbon\\Laravel\\ServiceProvider',
-    33 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
-    34 => 'Termwind\\Laravel\\TermwindServiceProvider',
-    35 => 'Spatie\\LaravelIgnition\\IgnitionServiceProvider',
+    30 => 'MongoDB\\Laravel\\MongoDBBusServiceProvider',
+    31 => 'Carbon\\Laravel\\ServiceProvider',
+    32 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
+    33 => 'Termwind\\Laravel\\TermwindServiceProvider',
+    34 => 'Spatie\\LaravelIgnition\\IgnitionServiceProvider',
   ),
   'eager' => 
   array (
@@ -199,11 +198,11 @@
     'auth.password.broker' => 'Illuminate\\Auth\\Passwords\\PasswordResetServiceProvider',
     'Illuminate\\Contracts\\Pipeline\\Hub' => 'Illuminate\\Pipeline\\PipelineServiceProvider',
     'pipeline' => 'Illuminate\\Pipeline\\PipelineServiceProvider',
-    'queue' => 'MongoDB\\Laravel\\MongoDBQueueServiceProvider',
-    'queue.connection' => 'MongoDB\\Laravel\\MongoDBQueueServiceProvider',
-    'queue.failer' => 'MongoDB\\Laravel\\MongoDBQueueServiceProvider',
-    'queue.listener' => 'MongoDB\\Laravel\\MongoDBQueueServiceProvider',
-    'queue.worker' => 'MongoDB\\Laravel\\MongoDBQueueServiceProvider',
+    'queue' => 'Illuminate\\Queue\\QueueServiceProvider',
+    'queue.connection' => 'Illuminate\\Queue\\QueueServiceProvider',
+    'queue.failer' => 'Illuminate\\Queue\\QueueServiceProvider',
+    'queue.listener' => 'Illuminate\\Queue\\QueueServiceProvider',
+    'queue.worker' => 'Illuminate\\Queue\\QueueServiceProvider',
     'redis' => 'Illuminate\\Redis\\RedisServiceProvider',
     'redis.connection' => 'Illuminate\\Redis\\RedisServiceProvider',
     'translator' => 'Illuminate\\Translation\\TranslationServiceProvider',
@@ -261,9 +260,6 @@
     array (
     ),
     'Laravel\\Tinker\\TinkerServiceProvider' => 
-    array (
-    ),
-    'MongoDB\\Laravel\\MongoDBQueueServiceProvider' => 
     array (
     ),
     'MongoDB\\Laravel\\MongoDBBusServiceProvider' => 

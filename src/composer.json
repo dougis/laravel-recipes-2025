@@ -13,7 +13,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/scout": "^10.0",
         "laravel/tinker": "^2.9",
-        "mongodb/laravel-mongodb": "^4.8",
+        "mongodb/laravel-mongodb": "^5.4",
         "predis/predis": "^2.2",
         "stripe/stripe-php": "^13.0"
     },
