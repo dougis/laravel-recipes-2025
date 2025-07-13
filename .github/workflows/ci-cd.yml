@@ -251,8 +251,9 @@ jobs:
       - name: Build production assets
         working-directory: src
         run: |
-          # Fix for rollup linux binary issue
-          npm run build || (npm rebuild && npm run build)
+          # Force install correct rollup binary
+          npm install @rollup/rollup-linux-x64-gnu --save-dev --force
+          npm run build
       
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
