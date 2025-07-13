@@ -4,7 +4,6 @@ namespace Tests\Unit\Database;
 
 use Tests\TestCase;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use MongoDB\Laravel\Eloquent\Model;
 
 class MongoDBCompatibilityTest extends TestCase
@@ -15,7 +14,7 @@ class MongoDBCompatibilityTest extends TestCase
     public function test_mongodb_connection_works(): void
     {
         // Attempt to connect to MongoDB and ping
-        $connection = DB::connection('mongodb');
+        $connection = app('db')->connection('mongodb');
         $result = $connection->getMongoDB()->command(['ping' => 1]);
         
         $this->assertNotNull($result);
@@ -49,8 +48,10 @@ class MongoDBCompatibilityTest extends TestCase
      */
     public function test_laravel_mongodb_package_basic_operations(): void
     {
+        $userModel = app(User::class);
+        
         // Test Create operation
-        $user = User::create([
+        $user = $userModel->create([
             'name' => 'MongoDB Test User',
             'email' => 'mongodb.test@example.com',
             'password' => bcrypt('password'),
@@ -63,7 +64,7 @@ class MongoDBCompatibilityTest extends TestCase
         $this->assertEquals('mongodb.test@example.com', $user->email);
 
         // Test Read operation
-        $foundUser = User::where('email', 'mongodb.test@example.com')->first();
+        $foundUser = $userModel->where('email', 'mongodb.test@example.com')->first();
         $this->assertNotNull($foundUser);
         $this->assertEquals($user->_id, $foundUser->_id);
 
@@ -71,14 +72,14 @@ class MongoDBCompatibilityTest extends TestCase
         $foundUser->name = 'Updated MongoDB Test User';
         $foundUser->save();
         
-        $updatedUser = User::find($foundUser->_id);
+        $updatedUser = $userModel->find($foundUser->_id);
         $this->assertEquals('Updated MongoDB Test User', $updatedUser->name);
 
         // Test Delete operation
-        $deletedCount = User::where('_id', $user->_id)->delete();
+        $deletedCount = $userModel->where('_id', $user->_id)->delete();
         $this->assertEquals(1, $deletedCount);
         
-        $deletedUser = User::find($user->_id);
+        $deletedUser = $userModel->find($user->_id);
         $this->assertNull($deletedUser);
     }
 
@@ -87,10 +88,12 @@ class MongoDBCompatibilityTest extends TestCase
      */
     public function test_mongodb_aggregation_operations(): void
     {
+        $userModel = app(User::class);
+        
         // Create multiple test users
         $users = [];
         for ($i = 1; $i <= 5; $i++) {
-            $users[] = User::create([
+            $users[] = $userModel->create([
                 'name' => "Test User {$i}",
                 'email' => "test{$i}@example.com",
                 'password' => bcrypt('password'),
@@ -108,7 +111,7 @@ class MongoDBCompatibilityTest extends TestCase
             ['$sort' => ['_id' => 1]]
         ];
 
-        $result = DB::connection('mongodb')
+        $result = app('db')->connection('mongodb')
             ->collection('users')
             ->aggregate($pipeline)
             ->toArray();
@@ -129,7 +132,7 @@ class MongoDBCompatibilityTest extends TestCase
      */
     public function test_mongodb_collection_operations(): void
     {
-        $collection = DB::connection('mongodb')->collection('test_compatibility');
+        $collection = app('db')->connection('mongodb')->collection('test_compatibility');
         
         // Test insertOne
         $insertResult = $collection->insertOne([
@@ -162,7 +165,9 @@ class MongoDBCompatibilityTest extends TestCase
      */
     public function test_model_mongodb_methods(): void
     {
-        $user = User::create([
+        $userModel = app(User::class);
+        
+        $user = $userModel->create([
             'name' => 'Model Test User',
             'email' => 'model.test@example.com',
             'password' => bcrypt('password'),
