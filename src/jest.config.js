@@ -29,5 +29,5 @@ module.exports = {
       statements: 80
     }
   },
-  // setupFilesAfterEnv: ['<rootDir>/tests/Frontend/setup.js']
+  setupFilesAfterEnv: ['<rootDir>/tests/Frontend/setup.js']
 };
