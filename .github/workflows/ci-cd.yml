@@ -181,6 +181,19 @@ jobs:
           file_put_contents('coverage-summary.txt', \$coverage);
           "
       
+      - name: Upload coverage to Codacy
+        working-directory: src
+        env:
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+        run: |
+          if [[ -n "$CODACY_PROJECT_TOKEN" ]]; then
+            chmod +x scripts/upload-coverage.sh
+            ./scripts/upload-coverage.sh upload
+          else
+            echo "Skipping Codacy upload: CODACY_PROJECT_TOKEN not set"
+          fi
+        continue-on-error: true
+      
       - name: Upload coverage reports
         uses: actions/upload-artifact@v4
         with:
@@ -211,9 +224,22 @@ jobs:
         working-directory: src
         run: npm ci --omit=optional
       
-      - name: Run JavaScript tests
+      - name: Run JavaScript tests with coverage
         working-directory: src
-        run: npm run test
+        run: npm run test:coverage
+        continue-on-error: true
+      
+      - name: Upload frontend coverage to Codacy
+        working-directory: src
+        env:
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+        run: |
+          if [[ -n "$CODACY_PROJECT_TOKEN" && -f "coverage/lcov.info" ]]; then
+            chmod +x scripts/upload-coverage.sh
+            ./scripts/upload-coverage.sh upload
+          else
+            echo "Skipping frontend Codacy upload: CODACY_PROJECT_TOKEN not set or coverage file missing"
+          fi
         continue-on-error: true
       
       - name: Build production assets

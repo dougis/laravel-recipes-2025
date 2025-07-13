@@ -118,3 +118,7 @@ Homestead.yaml
 auth.json
 /.fleet
 /.vscode
+
+
+#Ignore vscode AI rules
+.github/copilot-instructions.md
