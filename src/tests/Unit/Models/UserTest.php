@@ -424,4 +424,187 @@ class UserTest extends TestCase
         $this->assertEquals('mongodb', $user->getConnectionName());
         $this->assertEquals('users', $user->getTable());
     }
+
+    /**
+     * Test user with null subscription tier (edge case).
+     */
+    public function test_user_with_null_subscription_tier()
+    {
+        $user = User::create([
+            'name' => 'Null Tier User',
+            'email' => 'null@example.com',
+            'password' => 'password123',
+            'subscription_tier' => null,
+            'admin_override' => false,
+        ]);
+
+        // Null tier should be treated as free tier (0)
+        $this->assertFalse($user->isAdmin());
+        $this->assertFalse($user->hasTier1Access());
+        $this->assertFalse($user->hasTier2Access());
+        $this->assertTrue($user->canCreateRecipe()); // Initially true
+        $this->assertTrue($user->canCreateCookbook()); // Initially true
+    }
+
+    /**
+     * Test exactly at recipe limit boundary (25th recipe).
+     */
+    public function test_free_user_exactly_at_recipe_limit()
+    {
+        $user = $this->createFreeUser();
+        
+        // Create exactly 24 recipes
+        for ($i = 0; $i < 24; $i++) {
+            $this->createRecipe($user);
+        }
+        
+        // Should still be able to create the 25th recipe
+        $this->assertTrue($user->canCreateRecipe());
+        
+        // Create the 25th recipe
+        $this->createRecipe($user);
+        
+        // Now should not be able to create more
+        $this->assertFalse($user->canCreateRecipe());
+    }
+
+    /**
+     * Test exactly at cookbook limit boundary for Tier 1 user.
+     */
+    public function test_tier_1_user_exactly_at_cookbook_limit()
+    {
+        $user = $this->createTier1User();
+        
+        // Create exactly 9 cookbooks
+        for ($i = 0; $i < 9; $i++) {
+            $this->createCookbook($user);
+        }
+        
+        // Should still be able to create the 10th cookbook
+        $this->assertTrue($user->canCreateCookbook());
+        
+        // Create the 10th cookbook
+        $this->createCookbook($user);
+        
+        // Now should not be able to create more
+        $this->assertFalse($user->canCreateCookbook());
+    }
+
+    /**
+     * Test subscription tier changes affecting permissions.
+     */
+    public function test_subscription_tier_changes_affect_permissions()
+    {
+        // Start as free user
+        $user = User::create([
+            'name' => 'Changing User',
+            'email' => 'changing@example.com',
+            'password' => 'password123',
+            'subscription_tier' => 0,
+            'admin_override' => false,
+        ]);
+
+        $this->assertFalse($user->hasTier1Access());
+        $this->assertFalse($user->hasTier2Access());
+
+        // Upgrade to Tier 1
+        $user->subscription_tier = 1;
+        $user->save();
+
+        $this->assertTrue($user->hasTier1Access());
+        $this->assertFalse($user->hasTier2Access());
+
+        // Upgrade to Tier 2
+        $user->subscription_tier = 2;
+        $user->save();
+
+        $this->assertTrue($user->hasTier1Access());
+        $this->assertTrue($user->hasTier2Access());
+
+        // Upgrade to Admin
+        $user->subscription_tier = 100;
+        $user->save();
+
+        $this->assertTrue($user->isAdmin());
+        $this->assertTrue($user->hasTier1Access());
+        $this->assertTrue($user->hasTier2Access());
+    }
+
+    /**
+     * Test privacy toggle functionality for different tiers.
+     */
+    public function test_privacy_toggle_permissions_by_tier()
+    {
+        // Free user cannot use privacy features
+        $freeUser = $this->createFreeUser();
+        $this->assertFalse($freeUser->hasTier2Access());
+
+        // Tier 1 user cannot use privacy features
+        $tier1User = $this->createTier1User();
+        $this->assertFalse($tier1User->hasTier2Access());
+
+        // Tier 2 user can use privacy features
+        $tier2User = $this->createTier2User();
+        $this->assertTrue($tier2User->hasTier2Access());
+
+        // Admin user can use privacy features
+        $adminUser = $this->createAdminUser();
+        $this->assertTrue($adminUser->hasTier2Access());
+    }
+
+    /**
+     * Test admin override with low tier user.
+     */
+    public function test_admin_override_with_free_tier_user()
+    {
+        $user = User::create([
+            'name' => 'Override Free User',
+            'email' => 'override-free@example.com',
+            'password' => 'password123',
+            'subscription_tier' => 0, // Free tier
+            'admin_override' => true, // But has admin override
+        ]);
+
+        // Should have access to all tier features despite being free tier
+        $this->assertTrue($user->hasTier1Access());
+        $this->assertTrue($user->hasTier2Access());
+        $this->assertFalse($user->isAdmin()); // Not admin tier, just override
+
+        // Should bypass all limits
+        for ($i = 0; $i < 30; $i++) {
+            $this->assertTrue($user->canCreateRecipe());
+            $this->createRecipe($user);
+        }
+
+        for ($i = 0; $i < 15; $i++) {
+            $this->assertTrue($user->canCreateCookbook());
+            $this->createCookbook($user);
+        }
+    }
+
+    /**
+     * Test edge case: user with 0 vs null subscription tier.
+     */
+    public function test_zero_vs_null_subscription_tier()
+    {
+        $userWithZero = User::create([
+            'name' => 'Zero Tier User',
+            'email' => 'zero@example.com',
+            'password' => 'password123',
+            'subscription_tier' => 0,
+        ]);
+
+        $userWithNull = User::create([
+            'name' => 'Null Tier User',
+            'email' => 'null@example.com',
+            'password' => 'password123',
+            'subscription_tier' => null,
+        ]);
+
+        // Both should behave the same (as free tier)
+        $this->assertEquals($userWithZero->hasTier1Access(), $userWithNull->hasTier1Access());
+        $this->assertEquals($userWithZero->hasTier2Access(), $userWithNull->hasTier2Access());
+        $this->assertEquals($userWithZero->canCreateRecipe(), $userWithNull->canCreateRecipe());
+        $this->assertEquals($userWithZero->canCreateCookbook(), $userWithNull->canCreateCookbook());
+    }
 }
