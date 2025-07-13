@@ -1,21 +1,18 @@
 // Jest setup file for Vue.js testing
-const { config } = require('@vue/test-utils');
 
-// Global test configuration
-config.global.mocks = {
-  // Add any global mocks here
-  $router: {
-    push: jest.fn(),
-    replace: jest.fn(),
-    back: jest.fn(),
-    forward: jest.fn()
-  },
-  $route: {
-    params: {},
-    query: {},
-    path: '/',
-    meta: {}
-  }
+// Global test configuration - router mocks
+global.$router = {
+  push: jest.fn(),
+  replace: jest.fn(),
+  back: jest.fn(),
+  forward: jest.fn()
+};
+
+global.$route = {
+  params: {},
+  query: {},
+  path: '/',
+  meta: {}
 };
 
 // Mock window.matchMedia for CSS media queries
