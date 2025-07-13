@@ -10,8 +10,7 @@
          failOnRisky="true"
          failOnEmptyTestSuite="true"
          beStrictAboutOutputDuringTests="true"
-         cacheDirectory=".phpunit.cache"
-         backupStaticAttributes="false">
+         cacheDirectory=".phpunit.cache">
     <testsuites>
         <testsuite name="Unit">
             <directory>tests/Unit</directory>
