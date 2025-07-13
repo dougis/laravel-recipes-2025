@@ -40,6 +40,7 @@ window.axios.interceptors.response.use(
 const token = document.head.querySelector('meta[name="csrf-token"]');
 if (token) {
     window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
-} else {
+} else if (process.env.NODE_ENV === 'development') {
+    // Only log in development environment
     console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
