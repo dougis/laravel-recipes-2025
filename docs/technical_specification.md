@@ -3,12 +3,14 @@
 ## System Architecture
 
 ### Overview
+
 Laravel Recipes 2025 is a web application built on the Laravel framework with MongoDB as the persistence layer. The application follows a model-view-controller (MVC) architecture with additional service layers for business logic and repository patterns for data access.
 
 ### Technology Stack
+
 - **Backend Framework**: Laravel 11.x
 - **Database**: MongoDB 7.x
-- **Frontend**: 
+- **Frontend**:
   - HTML5, CSS3, JavaScript (ES2022+)
   - Vue.js 3.x for reactive components
   - Tailwind CSS 4.x for responsive styling
@@ -22,6 +24,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ### System Components
 
 #### Backend Components
+
 1. **Models**: MongoDB document models for all entities
 2. **Controllers**: Handle HTTP requests and responses
 3. **Services**: Encapsulate business logic
@@ -33,6 +36,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 9. **API Versions**: Separate namespaces for each API version
 
 #### Frontend Components
+
 1. **Layouts**: Base templates for consistent UI
 2. **Views**: Blade templates for server-rendered pages
 3. **Components**: Vue.js components for interactive elements
@@ -40,6 +44,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 5. **Service Workers**: Offline functionality support
 
 #### Infrastructure Components
+
 1. **Web Server**: Nginx
 2. **Application Server**: PHP-FPM
 3. **Database**: MongoDB
@@ -52,6 +57,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ### MongoDB Collections
 
 #### Users Collection
+
 ```javascript
 {
   _id: ObjectId,
@@ -72,6 +78,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ```
 
 #### Recipes Collection
+
 ```javascript
 {
   _id: ObjectId,
@@ -101,6 +108,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ```
 
 #### Cookbooks Collection
+
 ```javascript
 {
   _id: ObjectId,
@@ -121,6 +129,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ```
 
 #### Classifications Collection
+
 ```javascript
 {
   _id: ObjectId,
@@ -131,6 +140,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ```
 
 #### Sources Collection
+
 ```javascript
 {
   _id: ObjectId,
@@ -141,6 +151,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ```
 
 #### Meals Collection
+
 ```javascript
 {
   _id: ObjectId,
@@ -151,6 +162,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ```
 
 #### Courses Collection
+
 ```javascript
 {
   _id: ObjectId,
@@ -161,6 +173,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ```
 
 #### Preparations Collection
+
 ```javascript
 {
   _id: ObjectId,
@@ -171,6 +184,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ```
 
 #### Subscriptions Collection
+
 ```javascript
 {
   _id: ObjectId,
@@ -185,6 +199,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ```
 
 ### Indexes
+
 - Users: email (unique)
 - Recipes: user_id, name, tags (text index)
 - Cookbooks: user_id, name
@@ -193,6 +208,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ## API Versioning Implementation
 
 ### Version Management Strategy
+
 - **Versioning Approach**: URI Path Versioning (e.g., `/api/v1/recipes`)
 - **Initial Version**: v1 for all endpoints
 - **Version Lifecycle**:
@@ -202,23 +218,31 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
   - Sunset (no longer available)
 
 ### Directory Structure
+
 - Controllers organized by version:
+
   ```
   app/Http/Controllers/Api/V1/
   app/Http/Controllers/Api/V2/ (future)
   ```
+
 - Separate route files for each version:
+
   ```
   routes/api_v1.php
   routes/api_v2.php (future)
   ```
+
 - Version-specific request validation:
+
   ```
   app/Http/Requests/Api/V1/
   ```
 
 ### Implementation Details
+
 - **Route Registration**:
+
   ```php
   // In routes/api.php
   Route::prefix('v1')
@@ -229,10 +253,13 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 
 - **Version Headers**:
   - All API responses include version information in headers:
+
     ```
     API-Version: v1
     ```
+
   - Deprecated versions include sunset warning headers:
+
     ```
     API-Deprecated: true
     API-Sunset-Date: 2026-06-30
@@ -240,12 +267,14 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
     ```
 
 ### Version Transition Strategy
+
 - Minimum 6-month overlap period for major version changes
 - Documentation of breaking changes between versions
 - Migration guides for transitioning from v1 to future versions
 - API client SDK updates to support multiple versions
 
 ### Version Control Guidelines
+
 - **When to Create a New Version**:
   - Changes to endpoint URL structure
   - Removal of response fields
@@ -261,6 +290,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
   - Bug fixes
 
 ### Backward Compatibility
+
 - All deprecated fields marked in API documentation
 - Optional backward compatibility middleware for critical transitions
 - Legacy support adapters for important integrations
@@ -268,6 +298,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ## Authentication and Authorization
 
 ### Authentication
+
 - JWT-based authentication using Laravel Sanctum
 - Email verification upon registration
 - Password reset functionality
@@ -275,6 +306,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 - Session management with timeout
 
 ### Authorization
+
 - Role-based access control:
   - Guest: Public recipes and cookbooks only (read-only)
   - Free User: Access to own recipes and cookbooks (edit), all recipes are public
@@ -289,6 +321,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ## API Endpoints
 
 ### API Versioning Strategy
+
 - All API endpoints use versioning prefix (starting with v1)
 - Version is specified in the URL path (`/api/v1/...`)
 - New versions (v2, v3, etc.) will be created for breaking changes
@@ -297,6 +330,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 - API version documentation will be maintained for all supported versions
 
 ### Authentication Endpoints
+
 - `POST /api/v1/auth/register` - Register a new user
 - `POST /api/v1/auth/login` - User login
 - `POST /api/v1/auth/logout` - User logout
@@ -306,12 +340,14 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 - `POST /api/v1/auth/email/verify/{id}` - Verify email
 
 ### User Endpoints
+
 - `GET /api/v1/users/profile` - Get user profile
 - `PUT /api/v1/users/profile` - Update user profile
 - `GET /api/v1/users/subscription` - Get subscription details
 - `POST /api/v1/users/subscription` - Update subscription
 
 ### Recipe Endpoints
+
 - `GET /api/v1/recipes` - List user recipes
 - `GET /api/v1/recipes/public` - List all public recipes
 - `POST /api/v1/recipes` - Create a recipe
@@ -322,6 +358,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 - `GET /api/v1/recipes/search` - Search recipes with fuzzy matching
 
 ### Cookbook Endpoints
+
 - `GET /api/v1/cookbooks` - List user cookbooks
 - `GET /api/v1/cookbooks/public` - List all public cookbooks
 - `POST /api/v1/cookbooks` - Create a cookbook
@@ -334,12 +371,14 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 - `PUT /api/v1/cookbooks/{id}/recipes/order` - Reorder recipes in cookbook
 
 ### Print/Export Endpoints
+
 - `GET /api/v1/recipes/{id}/print` - Get printable recipe
 - `GET /api/v1/cookbooks/{id}/print` - Get printable cookbook
 - `GET /api/v1/recipes/{id}/export/{format}` - Export recipe
 - `GET /api/v1/cookbooks/{id}/export/{format}` - Export cookbook
 
 ### Admin Endpoints
+
 - `GET /api/v1/admin/users` - List all users
 - `GET /api/v1/admin/users/{id}` - Get user details
 - `PUT /api/v1/admin/users/{id}` - Update user
@@ -348,6 +387,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 - `GET /api/v1/admin/statistics` - Get system statistics
 
 ### Metadata Endpoints
+
 - `GET /api/v1/classifications` - List classifications
 - `GET /api/v1/sources` - List sources
 - `GET /api/v1/meals` - List meals
@@ -357,6 +397,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ## Security Implementation
 
 ### Authentication Security
+
 - Password hashing using bcrypt
 - CSRF token validation
 - Rate limiting for login attempts
@@ -364,6 +405,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 - Remember token rotation
 
 ### Data Security
+
 - Input validation
 - MongoDB injection prevention
 - XSS prevention
@@ -373,6 +415,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 - Sensitive data encryption
 
 ### Payment Security
+
 - PCI-compliant payment processing via Stripe
 - No storage of credit card information
 - Secure webhook handling
@@ -381,12 +424,14 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ## Subscription and Payment Processing
 
 ### Subscription Tiers
+
 - Implementation of three-tier subscription model
 - Feature toggling based on subscription level
 - Upgrading/downgrading subscription logic
 - Subscription expiration handling
 
 ### Payment Integration
+
 - Stripe API integration
 - Payment webhook handling
 - Invoice generation
@@ -397,10 +442,12 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ## Search Implementation
 
 ### Fuzzy Search Architecture
+
 - **Search Engine**: MongoDB Atlas Search with fuzzy matching capabilities
 - **Alternative Implementation**: Elasticsearch for more advanced search capabilities if needed
 
 ### Search Features
+
 - **Fuzzy Matching**: Tolerance for typos and misspellings
   - Edit distance (Levenshtein distance) of 1-2 characters
   - Phonetic matching for similar-sounding words
@@ -425,7 +472,9 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
   - Incremental index updates
 
 ### Search Implementation Details
+
 - **Indexing Strategy**:
+
   ```javascript
   db.recipes.createIndex({
     name: "text",
@@ -466,6 +515,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ## PDF Generation
 
 ### Recipe PDF
+
 - Custom template for individual recipes
 - Consistent styling with web view
 - Header and footer with metadata
@@ -473,6 +523,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 - Optional image inclusion
 
 ### Cookbook PDF
+
 - Cover page with title and description
 - Table of contents generation
 - Section dividers by classification
@@ -484,6 +535,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ## Mobile-First Implementation
 
 ### Responsive Design
+
 - Mobile-first CSS architecture
 - Progressive enhancement approach
 - Breakpoints for various device sizes
@@ -492,6 +544,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 - Responsive images and media
 
 ### Performance Optimization
+
 - Lazy loading of images
 - Critical CSS loading
 - Code splitting for JavaScript
@@ -505,6 +558,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ### MySQL to MongoDB Migration Plan
 
 #### 1. Preparation Phase
+
 - **Database Analysis**
   - Map current MySQL schemas and relationships
   - Identify data volumes and complexity
@@ -523,6 +577,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
   - Create database snapshots for recovery points
 
 #### 2. Schema Design and Mapping
+
 - **Document Model Design**
   - Convert normalized MySQL tables to document collections:
     - Users table → users collection
@@ -543,11 +598,14 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
   - MySQL `JSON` → MongoDB native JSON
 
 #### 3. Extraction Process
+
 - **Data Export from MySQL**
   - Develop Artisan command to extract data in batches:
+
     ```php
     php artisan migration:extract-data --table=recipes --batch-size=1000
     ```
+
   - Export reference tables first (classifications, sources, etc.)
   - Export main tables with transformed foreign keys
   - Export relationship tables last
@@ -561,6 +619,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
   - Generate MongoDB-compatible IDs
 
 #### 4. Transformation Process
+
 - **ID Transformation**
   - Map MySQL auto-increment IDs to MongoDB ObjectIDs
   - Create and maintain ID mapping tables for reference
@@ -578,11 +637,14 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
   - Add metadata fields for migration tracking
 
 #### 5. Loading Process
+
 - **Batch Import to MongoDB**
   - Develop Artisan command for incremental loading:
+
     ```php
     php artisan migration:load-data --collection=recipes --source=recipes_data.json
     ```
+
   - Import reference collections first
   - Import main collections with transformed relationships
   - Implement retry logic for failed imports
@@ -595,6 +657,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
   - Create unique indexes where needed
 
 #### 6. Validation and Verification
+
 - **Data Integrity Checks**
   - Validate record counts match between MySQL and MongoDB
   - Verify sample records for accurate transformation
@@ -613,6 +676,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
   - Address issues before final migration
 
 #### 7. Switchover Strategy
+
 - **Pre-Migration Freeze**
   - Implement temporary read-only mode for MySQL database
   - Perform final data sync before cutover
@@ -630,6 +694,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
   - Maintain MySQL database in read-only mode for quick rollback if needed
 
 #### 8. Rollback Plan
+
 - **Criteria for Rollback**
   - Define specific thresholds for triggering rollback
   - Establish decision-making authority for rollback process
@@ -641,6 +706,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
   - Roll back application code changes
 
 #### 9. Post-Migration Tasks
+
 - **Performance Optimization**
   - Fine-tune MongoDB indexes based on actual usage patterns
   - Optimize query performance for frequent operations
@@ -653,6 +719,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
   - Update data dictionary and API documentation
 
 #### 10. MySQL Decommissioning
+
 - **Archival Strategy**
   - Create final archive of MySQL database
   - Store backups according to data retention policy
@@ -664,6 +731,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
   - Update infrastructure documentation
 
 ### MongoDB Optimization
+
 - **Indexing Strategy**
   - Single-field indexes for frequent queries
   - Compound indexes for queries with multiple conditions
@@ -698,23 +766,27 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ## Testing Strategy
 
 ### Unit Testing
+
 - Model validation tests
 - Service layer logic tests
 - Repository pattern tests
 - Helper function tests
 
 ### Integration Testing
+
 - API endpoint tests
 - Authentication flow tests
 - Subscription management tests
 - PDF generation tests
 
 ### End-to-End Testing
+
 - User journey tests with Laravel Dusk
 - Mobile and desktop viewport testing
 - Cross-browser compatibility testing
 
 ### Performance Testing
+
 - Load testing with simulated users
 - Database query performance testing
 - API response time testing
@@ -723,12 +795,14 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ## Deployment Strategy
 
 ### Environment Setup
+
 - Development environment
 - Staging environment
 - Production environment
 - CI/CD pipeline configuration
 
 ### Deployment Process
+
 - Version control with Git
 - Automated testing before deployment
 - Zero-downtime deployment
@@ -736,6 +810,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 - Monitoring and alerting setup
 
 ### Backup and Recovery
+
 - MongoDB backup strategy
 - Automated daily backups
 - Point-in-time recovery
@@ -744,18 +819,21 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ## Monitoring and Maintenance
 
 ### Application Monitoring
+
 - Error logging and tracking
 - Performance monitoring
 - User activity monitoring
 - Subscription status monitoring
 
 ### System Health Monitoring
+
 - Server resource utilization
 - Database performance metrics
 - Cache hit/miss rates
 - Queue processing metrics
 
 ### Maintenance Procedures
+
 - Regular security updates
 - Database maintenance
 - Cache clearing routines
@@ -764,6 +842,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 ## Appendix
 
 ### Technology Dependencies
+
 - PHP 8.3+
 - Composer 2.x
 - Node.js 20.x
@@ -772,6 +851,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 - Redis 7.x
 
 ### Development Tools
+
 - Laravel Sail for local development
 - MongoDB Compass for database management
 - Laravel Telescope for debugging
@@ -779,6 +859,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 - PHPStorm or VS Code for development
 
 ### Coding Standards
+
 - PSR-12 coding style
 - Laravel best practices
 - Vue.js style guide
@@ -786,6 +867,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 - Git flow branching strategy
 
 ### Documentation
+
 - API documentation with OpenAPI/Swagger
 - Separate documentation for each API version
 - Code documentation with PHPDoc
@@ -793,6 +875,7 @@ Laravel Recipes 2025 is a web application built on the Laravel framework with Mo
 - Deployment and maintenance documentation
 
 ### Project Structure
+
 ```
 laravel-recipes-2025/
 ├── app/

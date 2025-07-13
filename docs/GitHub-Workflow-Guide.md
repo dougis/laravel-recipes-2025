@@ -1,9 +1,11 @@
 # GitHub Issue Implementation Workflow Guide
 
 ## Overview
+
 This document outlines the standardized process for implementing GitHub issues in the Laravel Recipes 2025 project. Following this workflow ensures consistent, high-quality development practices and maintainable code.
 
 ## Prerequisites
+
 - Git configured with appropriate credentials
 - Local development environment set up
 - Access to the GitHub repository: `dougis/laravel-recipes-2025`
@@ -14,12 +16,14 @@ This document outlines the standardized process for implementing GitHub issues i
 ### Step 1: Issue Analysis and Preparation
 
 #### 1.1 Read and Understand the Issue
+
 ```bash
 # Connect to GitHub and fetch issue details
 GET /repos/dougis/laravel-recipes-2025/issues/{issue_number}
 ```
 
 **Key Information to Extract:**
+
 - Issue title and description
 - Acceptance criteria (checklist items)
 - Scope and technical requirements
@@ -27,6 +31,7 @@ GET /repos/dougis/laravel-recipes-2025/issues/{issue_number}
 - Labels and priority level
 
 #### 1.2 Verify Issue Status
+
 - Ensure issue is open and not already assigned
 - Check for any dependencies on other issues
 - Confirm issue is ready for implementation
@@ -34,6 +39,7 @@ GET /repos/dougis/laravel-recipes-2025/issues/{issue_number}
 ### Step 2: Branch Creation and Setup
 
 #### 2.1 Prepare Local Repository
+
 ```bash
 # Ensure we're on main branch and up to date
 cd "Z:\dev\Code\laravel-recipes-2025"
@@ -42,6 +48,7 @@ git pull origin main
 ```
 
 #### 2.2 Create Feature Branch
+
 ```bash
 # Create descriptive branch name following convention
 git checkout -b feature/issue-{number}-{short-description}
@@ -51,12 +58,14 @@ git checkout -b feature/issue-2-service-unit-tests
 ```
 
 #### 2.3 Push Branch to Remote
+
 ```bash
 # Push branch to establish remote tracking
 git push -u origin feature/issue-{number}-{short-description}
 ```
 
 **Branch Naming Convention:**
+
 - `feature/issue-{number}-{kebab-case-description}`
 - `bugfix/issue-{number}-{kebab-case-description}`
 - `enhancement/issue-{number}-{kebab-case-description}`
@@ -64,6 +73,7 @@ git push -u origin feature/issue-{number}-{short-description}
 ### Step 3: Implementation Process
 
 #### 3.1 Examine Existing Code Structure
+
 ```bash
 # Understand current project structure
 list_directory("path/to/relevant/code")
@@ -73,12 +83,14 @@ read_file("path/to/key/files", length=50)  # Read key files to understand contex
 #### 3.2 Implement Changes Incrementally
 
 **Implementation Principles:**
+
 - **Single Responsibility**: Each commit should address one logical change
 - **Test-Driven**: Write tests before or alongside implementation
 - **Documentation**: Include comments and documentation for complex logic
 - **Error Handling**: Account for edge cases and error conditions
 
 #### 3.3 Regular Commits
+
 ```bash
 # Commit frequently with descriptive messages
 git add [specific-files]
@@ -90,6 +102,7 @@ git commit -m "Add [specific functionality]
 ```
 
 **Commit Message Format:**
+
 ```
 [Action] [Component/Feature] with [brief description]
 
@@ -99,6 +112,7 @@ git commit -m "Add [specific functionality]
 ```
 
 **Example:**
+
 ```
 Add RecipeServiceTest with comprehensive unit tests
 
@@ -111,12 +125,14 @@ Add RecipeServiceTest with comprehensive unit tests
 ### Step 4: Code Quality Standards
 
 #### 4.1 Testing Requirements
+
 - **Unit Tests**: Mock dependencies, test business logic in isolation
 - **Feature Tests**: Test API endpoints with real database interactions
 - **Component Tests**: Test Vue components with proper mocking
 - **Edge Cases**: Test error conditions and boundary cases
 
 #### 4.2 Code Organization
+
 ```php
 // PHP/Laravel Standards
 - Follow PSR-12 coding standards
@@ -136,6 +152,7 @@ Add RecipeServiceTest with comprehensive unit tests
 ```
 
 #### 4.3 Documentation Standards
+
 - PHPDoc comments for all public methods
 - README updates for new features
 - API endpoint documentation
@@ -144,18 +161,21 @@ Add RecipeServiceTest with comprehensive unit tests
 ### Step 5: Pull Request Creation
 
 #### 5.1 Final Push
+
 ```bash
 # Ensure all changes are committed and pushed
 git push origin feature/issue-{number}-{short-description}
 ```
 
 #### 5.2 Create Pull Request
+
 ```bash
 # Use GitHub API to create PR
 POST /repos/dougis/laravel-recipes-2025/pulls
 ```
 
 **PR Template:**
+
 ```markdown
 ## Summary
 Brief description of what this PR implements.
@@ -190,6 +210,7 @@ Closes #{issue_number}
 ### Step 6: Review and Merge
 
 #### 6.1 Self-Review Checklist
+
 - [ ] All acceptance criteria met
 - [ ] Code follows project standards
 - [ ] Tests pass and provide good coverage
@@ -198,12 +219,14 @@ Closes #{issue_number}
 - [ ] No hardcoded values or security issues
 
 #### 6.2 Merge Process
+
 ```bash
 # Merge the pull request
 PUT /repos/dougis/laravel-recipes-2025/pulls/{pull_number}/merge
 ```
 
 #### 6.3 Issue Closure
+
 ```bash
 # Close the related issue
 PATCH /repos/dougis/laravel-recipes-2025/issues/{issue_number}
@@ -211,6 +234,7 @@ PATCH /repos/dougis/laravel-recipes-2025/issues/{issue_number}
 ```
 
 #### 6.4 Local Cleanup
+
 ```bash
 # Switch back to main and pull latest changes
 git checkout main
@@ -225,6 +249,7 @@ git branch -d feature/issue-{number}-{short-description}
 ### Laravel Recipes 2025 Standards
 
 #### File Structure
+
 ```
 src/
 ├── app/
@@ -243,6 +268,7 @@ src/
 ```
 
 #### Technology Stack
+
 - **Backend**: Laravel 11.x with MongoDB
 - **Frontend**: Vue 3 with Composition API
 - **Styling**: Tailwind CSS with custom design system
@@ -250,6 +276,7 @@ src/
 - **Database**: MongoDB with jenssegers/mongodb package
 
 #### Subscription Tier Implementation
+
 ```php
 // Always check subscription access in controllers
 if (!$user->canCreateRecipe()) {
@@ -266,6 +293,7 @@ $user->isAdmin()           // Admin override
 ```
 
 #### API Versioning
+
 - All API endpoints use `/api/v1/` prefix
 - Controllers organized in `Api/V1/` namespace
 - Separate route files for each version
@@ -274,16 +302,19 @@ $user->isAdmin()           // Admin override
 ### Common Issue Types
 
 #### Testing Issues
+
 - **Unit Tests**: Focus on mocking dependencies and testing business logic
 - **Feature Tests**: Test complete API workflows with database
 - **Component Tests**: Test Vue components with proper props/events
 
 #### Feature Implementation
+
 - **CRUD Operations**: Follow repository pattern with service layer
 - **API Endpoints**: Include proper validation, authorization, and error handling
 - **Frontend Components**: Use Composition API with proper state management
 
 #### Infrastructure Issues
+
 - **Docker**: Multi-container setup with PHP, MongoDB, Redis, Nginx
 - **CI/CD**: GitHub Actions with automated testing and deployment
 - **Documentation**: OpenAPI/Swagger for API, README for setup
@@ -291,6 +322,7 @@ $user->isAdmin()           // Admin override
 ## Troubleshooting
 
 ### Common Git Issues
+
 ```bash
 # If branch push fails due to authentication
 # Check GitHub token permissions
@@ -305,6 +337,7 @@ git rebase --continue
 ```
 
 ### Development Environment Issues
+
 ```bash
 # If MongoDB connection fails
 # Check .env configuration:
@@ -319,6 +352,7 @@ npm install
 ```
 
 ### Code Quality Issues
+
 - Run `php artisan test` before committing
 - Use `npm run lint` for frontend code checking
 - Ensure proper PHPDoc comments on all public methods
@@ -337,6 +371,7 @@ npm install
 ## Templates
 
 ### Issue Analysis Template
+
 ```markdown
 ## Issue: #{number} - {title}
 
@@ -358,6 +393,7 @@ npm install
 ```
 
 ### Commit Message Template
+
 ```
 {Action} {component} {brief description}
 
@@ -367,6 +403,7 @@ npm install
 ```
 
 ### PR Description Template
+
 ```markdown
 ## Summary
 {Brief description of changes}

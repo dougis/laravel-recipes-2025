@@ -18,12 +18,14 @@ The project uses **Codacy** for automated code quality analysis and test coverag
 ## Prerequisites
 
 ### Required Tools
+
 - **PHP 8.3+** with Xdebug extension for coverage collection
 - **Node.js 20.x** with npm for frontend dependencies
 - **Codacy Account** with project configured
 - **GitHub Secrets** configured with Codacy project token
 
 ### Environment Setup
+
 ```bash
 # Ensure Xdebug is installed and enabled for PHP coverage
 php -m | grep -i xdebug
@@ -64,6 +66,7 @@ cat coverage-summary.txt
 ```
 
 ### Coverage Files Generated
+
 - `coverage-unit.xml` - Unit test coverage in Clover format
 - `coverage-feature.xml` - Feature test coverage in Clover format  
 - `coverage.xml` - Combined coverage report
@@ -108,6 +111,7 @@ open coverage/index.html
 ```
 
 ### Coverage Files Generated
+
 - `coverage/lcov.info` - LCOV format for Codacy upload
 - `coverage/index.html` - Interactive HTML report
 - `coverage/coverage-final.json` - JSON format coverage data
@@ -152,6 +156,7 @@ bash <(curl -Ls https://coverage.codacy.com/get.sh) final
 The CI/CD pipeline automatically handles coverage reporting:
 
 **Backend Coverage Upload**
+
 ```yaml
 - name: Upload coverage to Codacy
   working-directory: src
@@ -168,6 +173,7 @@ The CI/CD pipeline automatically handles coverage reporting:
 ```
 
 **Frontend Coverage Upload**
+
 ```yaml
 - name: Upload frontend coverage to Codacy
   working-directory: src
@@ -192,11 +198,13 @@ Configure the following in your GitHub repository secrets:
 ## Coverage Thresholds
 
 ### Backend Thresholds
+
 - **Unit Tests**: 80% minimum coverage required
 - **Feature Tests**: 80% minimum coverage required
 - **Combined Coverage**: 80% minimum for overall project
 
 ### Frontend Thresholds
+
 - **Statements**: 80% minimum coverage
 - **Branches**: 80% minimum coverage
 - **Functions**: 80% minimum coverage
@@ -207,6 +215,7 @@ Configure the following in your GitHub repository secrets:
 ### Common Issues
 
 **Coverage Not Generated**
+
 ```bash
 # Check if Xdebug is enabled
 php -m | grep -i xdebug
@@ -219,6 +228,7 @@ php artisan test --coverage --verbose
 ```
 
 **Upload Failures**
+
 ```bash
 # Check environment variable
 echo $CODACY_PROJECT_TOKEN
@@ -231,6 +241,7 @@ ls -la coverage*.xml coverage/lcov.info
 ```
 
 **Permission Issues**
+
 ```bash
 # Make upload script executable
 chmod +x scripts/upload-coverage.sh
@@ -256,7 +267,7 @@ export CODACY_DEBUG=true
 ### 1. Codacy Project Configuration
 
 1. **Login to Codacy Dashboard**
-   - Go to https://app.codacy.com
+   - Go to <https://app.codacy.com>
    - Connect your GitHub repository
 
 2. **Generate Project Token**
@@ -299,12 +310,14 @@ npm run test:coverage
 ## Monitoring and Maintenance
 
 ### Regular Checks
+
 - Monitor coverage trends in Codacy dashboard
 - Review coverage reports for uncovered code
 - Update coverage thresholds as project matures
 - Maintain Jest and PHPUnit configurations
 
 ### Coverage Reports
+
 - **Daily**: Automatic uploads via CI/CD
 - **Weekly**: Review coverage trends and quality gates
 - **Monthly**: Analyze uncovered code and update tests

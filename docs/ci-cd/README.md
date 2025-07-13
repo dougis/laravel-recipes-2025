@@ -49,6 +49,7 @@ graph TB
 ### 1. Main CI/CD Workflow (`ci-cd.yml`)
 
 **Triggers:**
+
 - Push to `main` or `develop` branches
 - Pull requests to `main` or `develop`
 - Manual trigger via `workflow_dispatch`
@@ -56,6 +57,7 @@ graph TB
 **Jobs:**
 
 #### Code Quality & Security
+
 ```yaml
 - PHP CodeSniffer (PSR-12 compliance)
 - PHPStan (static analysis)
@@ -64,6 +66,7 @@ graph TB
 ```
 
 #### Backend Testing
+
 ```yaml
 - Unit tests with coverage
 - Feature tests with API validation
@@ -72,6 +75,7 @@ graph TB
 ```
 
 #### Frontend Testing
+
 ```yaml
 - JavaScript/Vue component tests
 - Asset compilation verification
@@ -79,6 +83,7 @@ graph TB
 ```
 
 #### Integration Testing
+
 ```yaml
 - Docker container testing
 - End-to-end API testing
@@ -87,6 +92,7 @@ graph TB
 ```
 
 #### Security Scanning
+
 ```yaml
 - Trivy vulnerability scanner
 - Dependency vulnerability checks
@@ -95,6 +101,7 @@ graph TB
 ```
 
 #### Deployment
+
 ```yaml
 - Staging deployment (develop branch)
 - Production deployment (main branch)
@@ -107,6 +114,7 @@ graph TB
 **Schedule:** Daily at 2 AM UTC
 
 **Features:**
+
 - Automated Composer dependency updates
 - NPM package security updates
 - Automated pull request creation
@@ -117,6 +125,7 @@ graph TB
 **Schedule:** Every 6 hours
 
 **Components:**
+
 - Lighthouse CI performance testing
 - Load testing with Artillery
 - Database performance benchmarks
@@ -129,6 +138,7 @@ graph TB
 Configure these secrets in your GitHub repository settings:
 
 #### Container Registry
+
 ```
 REGISTRY_URL=your-registry.com
 REGISTRY_USERNAME=deploy-user
@@ -136,6 +146,7 @@ REGISTRY_PASSWORD=secure-password
 ```
 
 #### Staging Environment
+
 ```
 STAGING_HOST=staging.laravel-recipes.com
 STAGING_USERNAME=deploy
@@ -143,6 +154,7 @@ STAGING_SSH_KEY=-----BEGIN OPENSSH PRIVATE KEY-----
 ```
 
 #### Production Environment
+
 ```
 PRODUCTION_HOST=laravel-recipes.com
 PRODUCTION_USERNAME=deploy
@@ -150,6 +162,7 @@ PRODUCTION_SSH_KEY=-----BEGIN OPENSSH PRIVATE KEY-----
 ```
 
 #### Monitoring & Notifications
+
 ```
 SLACK_WEBHOOK_URL=https://hooks.slack.com/...
 LHCI_GITHUB_APP_TOKEN=github_token_here
@@ -160,6 +173,7 @@ LHCI_GITHUB_APP_TOKEN=github_token_here
 Each environment requires specific configuration:
 
 #### Development (.env.dev)
+
 ```env
 APP_ENV=local
 APP_DEBUG=true
@@ -168,6 +182,7 @@ QUEUE_CONNECTION=sync
 ```
 
 #### Staging (.env.staging)
+
 ```env
 APP_ENV=staging
 APP_DEBUG=true
@@ -176,6 +191,7 @@ QUEUE_CONNECTION=redis
 ```
 
 #### Production (.env.production)
+
 ```env
 APP_ENV=production
 APP_DEBUG=false
@@ -190,6 +206,7 @@ QUEUE_CONNECTION=redis
 **Trigger:** Push to `develop` branch
 
 **Process:**
+
 1. Code quality and security checks
 2. Automated testing suite
 3. Docker image building
@@ -200,7 +217,8 @@ QUEUE_CONNECTION=redis
 8. Slack notification
 
 **Access:**
-- URL: https://staging.laravel-recipes.com
+
+- URL: <https://staging.laravel-recipes.com>
 - Duration: ~10-15 minutes
 - Rollback: Automatic on failure
 
@@ -209,6 +227,7 @@ QUEUE_CONNECTION=redis
 **Trigger:** Push to `main` branch
 
 **Process:**
+
 1. All staging deployment steps
 2. Additional security validation
 3. Production Docker image building
@@ -220,7 +239,8 @@ QUEUE_CONNECTION=redis
 9. Monitoring alerts setup
 
 **Access:**
-- URL: https://laravel-recipes.com
+
+- URL: <https://laravel-recipes.com>
 - Duration: ~15-20 minutes
 - Rollback: Manual with automated scripts
 
@@ -244,18 +264,21 @@ gh run view [run-id] --log
 ### Automated Monitoring
 
 #### Application Health
+
 - API endpoint availability
 - Database connectivity
 - Redis cache functionality
 - Queue worker status
 
 #### Performance Metrics
+
 - Response time monitoring
 - Lighthouse performance scores
 - Database query performance
 - Load testing results
 
 #### Security Monitoring
+
 - Vulnerability scanning
 - Dependency security alerts
 - SSL certificate expiration
@@ -264,6 +287,7 @@ gh run view [run-id] --log
 ### Alert Channels
 
 #### Slack Integration
+
 ```json
 {
   "deployment_success": "#deployments",
@@ -274,6 +298,7 @@ gh run view [run-id] --log
 ```
 
 #### GitHub Issues
+
 - Automatic issue creation for failures
 - Performance regression reports
 - Security vulnerability reports
@@ -282,18 +307,21 @@ gh run view [run-id] --log
 ### Health Check Endpoints
 
 #### Application Health
+
 ```
 GET /health
 Response: { "status": "ok", "timestamp": "..." }
 ```
 
 #### Database Health
+
 ```
 GET /health/database
 Response: { "mongodb": "connected", "redis": "connected" }
 ```
 
 #### Detailed Health
+
 ```
 GET /health/detailed
 Response: {
@@ -312,10 +340,12 @@ Response: {
 #### Test Failures
 
 **Symptoms:**
+
 - CI pipeline fails at testing stage
 - Specific test cases failing
 
 **Resolution:**
+
 ```bash
 # Run tests locally
 ./setup-dev.sh
@@ -331,10 +361,12 @@ docker-compose -f docker-compose.dev.yml exec app php artisan test --verbose
 #### Deployment Failures
 
 **Symptoms:**
+
 - Deployment pipeline fails
 - Application not accessible after deployment
 
 **Resolution:**
+
 ```bash
 # Check deployment logs
 gh run view [run-id] --log
@@ -352,10 +384,12 @@ docker-compose up -d
 #### Database Migration Issues
 
 **Symptoms:**
+
 - Migration fails during deployment
 - Database schema inconsistencies
 
 **Resolution:**
+
 ```bash
 # Check migration status
 docker-compose exec app php artisan migrate:status
@@ -371,10 +405,12 @@ git push origin main
 #### Performance Degradation
 
 **Symptoms:**
+
 - Lighthouse scores below threshold
 - Load test failures
 
 **Resolution:**
+
 ```bash
 # Check current performance
 npm run lighthouse
@@ -392,6 +428,7 @@ docker-compose exec app php artisan route:cache
 ### Debug Commands
 
 #### Pipeline Debugging
+
 ```bash
 # View workflow runs
 gh run list
@@ -407,6 +444,7 @@ gh run cancel [run-id]
 ```
 
 #### Application Debugging
+
 ```bash
 # Access application container
 docker-compose exec app bash
@@ -425,6 +463,7 @@ docker-compose exec app php artisan queue:monitor
 ### Performance Optimization
 
 #### Database Optimization
+
 ```bash
 # Analyze slow queries
 docker-compose exec mongodb mongo --eval "db.setProfilingLevel(2)"
@@ -438,6 +477,7 @@ docker-compose exec app php artisan migrate:fresh
 ```
 
 #### Application Optimization
+
 ```bash
 # Enable OPcache
 docker-compose exec app php -m | grep OPcache
@@ -456,6 +496,7 @@ docker-compose exec app composer dump-autoload --optimize
 ### Code Quality
 
 #### Pre-commit Checks
+
 ```bash
 # Install pre-commit hooks
 composer require --dev phpstan/phpstan
@@ -468,6 +509,7 @@ php artisan test
 ```
 
 #### Branch Strategy
+
 ```
 main (production)
 ├── develop (staging)
@@ -479,11 +521,13 @@ main (production)
 ### Testing Strategy
 
 #### Test Coverage
+
 - Minimum 80% code coverage
 - All new features must include tests
 - Critical paths require integration tests
 
 #### Test Types
+
 ```php
 // Unit Tests
 tests/Unit/Services/RecipeServiceTest.php
@@ -498,11 +542,13 @@ tests/Browser/RecipeManagementTest.php
 ### Deployment Strategy
 
 #### Environment Promotion
+
 ```
 Development → Staging → Production
 ```
 
 #### Rollback Strategy
+
 ```bash
 # Automated rollback triggers
 - Health check failures
@@ -516,11 +562,13 @@ Development → Staging → Production
 ### Security Practices
 
 #### Dependency Management
+
 - Automated security updates
 - Regular dependency audits
 - Vulnerability scanning in CI
 
 #### Secret Management
+
 ```bash
 # Use GitHub Secrets for sensitive data
 # Never commit secrets to repository
@@ -531,12 +579,14 @@ Development → Staging → Production
 ### Monitoring Best Practices
 
 #### Key Metrics
+
 - Response time (< 2 seconds)
 - Error rate (< 1%)
 - Availability (> 99.9%)
 - Database performance (< 100ms queries)
 
 #### Alerting Rules
+
 ```yaml
 Critical: 
   - Application down > 1 minute
@@ -554,16 +604,19 @@ Warning:
 ### Regular Reviews
 
 #### Weekly
+
 - Review failed deployments
 - Analyze performance trends
 - Update dependencies
 
 #### Monthly
+
 - Review security alerts
 - Optimize pipeline performance
 - Update documentation
 
 #### Quarterly
+
 - Security audit
 - Performance baseline review
 - Infrastructure cost analysis
@@ -572,6 +625,7 @@ Warning:
 ### Pipeline Evolution
 
 #### Planned Improvements
+
 - [ ] Advanced blue-green deployment
 - [ ] Canary deployment strategy
 - [ ] A/B testing integration
@@ -581,6 +635,7 @@ Warning:
 ---
 
 For questions about the CI/CD pipeline, please:
+
 1. Check this documentation
 2. Review workflow logs in GitHub Actions
 3. Create an issue with the `ci-cd` label
