@@ -284,21 +284,21 @@ jobs:
             echo "DB_HOST=mongodb" >> .env
             echo "REDIS_HOST=redis" >> .env
           fi
-          docker-compose -f docker-compose.dev.yml up -d --build
+          docker compose -f docker-compose.dev.yml up -d --build
           sleep 30
           
           # Wait for services to be ready
-          docker-compose -f docker-compose.dev.yml exec -T app php artisan migrate --force
-          docker-compose -f docker-compose.dev.yml exec -T app php artisan db:seed --force
+          docker compose -f docker-compose.dev.yml exec -T app php artisan migrate --force
+          docker compose -f docker-compose.dev.yml exec -T app php artisan db:seed --force
           
           # Run integration tests
-          docker-compose -f docker-compose.dev.yml exec -T app php artisan test --testsuite=Feature
+          docker compose -f docker-compose.dev.yml exec -T app php artisan test --testsuite=Feature
           
           # Test API endpoints
           curl -f http://localhost:8080/api/v1/recipes/public || exit 1
           
           # Cleanup
-          docker-compose -f docker-compose.dev.yml down
+          docker compose -f docker-compose.dev.yml down
 
   # Security Scanning
   security-scan:
