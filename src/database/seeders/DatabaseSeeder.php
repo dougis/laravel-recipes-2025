@@ -15,8 +15,6 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             MetadataSeeder::class,
             SubscriptionSeeder::class,
-            RecipeSeeder::class,
-            CookbookSeeder::class,
         ]);
     }
 }

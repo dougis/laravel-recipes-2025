@@ -1,0 +1,54 @@
+exclude_paths:
+  - vendor/**
+  - node_modules/**
+  - bootstrap/cache/**
+  - storage/**
+  - .phpunit.cache/**
+  - coverage/**
+  - public/build/**
+  - "**/*.min.js"
+  - "**/dist/**"
+  - "**/build/**"
+
+engines:
+  eslint:
+    enabled: true
+    exclude_paths:
+      - vendor/**
+      - node_modules/**
+      - "**/*.min.js"
+  phpcs:
+    enabled: true
+    exclude_paths:
+      - vendor/**
+      - bootstrap/cache/**
+      - storage/**
+  phpmd:
+    enabled: true
+    exclude_paths:
+      - vendor/**
+      - bootstrap/cache/**
+      - storage/**
+  duplication:
+    enabled: true
+    exclude_paths:
+      - vendor/**
+      - node_modules/**
+      - bootstrap/cache/**
+      - storage/**
+      - tests/**
+  metrics:
+    enabled: true
+    exclude_paths:
+      - vendor/**
+      - node_modules/**
+      - tests/**
+
+coverage:
+  enabled: true
+  exclude_paths:
+    - vendor/**
+    - node_modules/**
+    - bootstrap/cache/**
+    - storage/**
+    - tests/**

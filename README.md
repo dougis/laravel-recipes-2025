@@ -312,12 +312,48 @@ php artisan test --testsuite=Unit
 
 # Run with coverage
 php artisan test --coverage
+
+# Run frontend tests
+npm run test
+
+# Run frontend tests with coverage
+npm run test:coverage
 ```
 
-### Test Structure (Planned)
-- **Unit Tests**: Model validation, service logic, repository methods
+### Coverage Reporting
+This project integrates with **Codacy** for automated code quality and coverage analysis.
+
+**Backend Coverage (PHP)**
+```bash
+# Generate coverage reports
+php artisan test --testsuite=Unit --coverage-clover=coverage-unit.xml
+php artisan test --testsuite=Feature --coverage-clover=coverage-feature.xml
+
+# Upload to Codacy (requires CODACY_PROJECT_TOKEN)
+./scripts/upload-coverage.sh upload
+```
+
+**Frontend Coverage (JavaScript/Vue.js)**
+```bash
+# Generate frontend coverage
+npm run test:coverage
+
+# Coverage files are generated in coverage/ directory
+# - coverage/lcov.info (LCOV format for Codacy)
+# - coverage/index.html (HTML report for local viewing)
+```
+
+**CI/CD Integration**
+- Coverage reports are automatically generated during CI/CD pipeline
+- Results are uploaded to Codacy for quality analysis
+- Coverage thresholds enforce minimum 80% coverage for new code
+- Pull requests are blocked if coverage drops below thresholds
+
+### Test Structure
+- **Unit Tests**: Model validation, service logic, repository methods, coverage configuration
 - **Feature Tests**: API endpoints, authentication flows, subscription management
-- **Browser Tests**: End-to-end user journeys with Laravel Dusk
+- **Frontend Tests**: Vue.js components, utility functions, user interactions
+- **Coverage Tests**: Verification of coverage reporting setup and integration
 
 ## 🚢 Deployment
 

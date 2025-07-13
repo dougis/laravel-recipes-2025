@@ -1,36 +1,39 @@
 module.exports = {
-    env: {
-        browser: true,
-        es2021: true,
+  env: {
+    browser: true,
+    node: true,
+    es2021: true,
+    jest: true
+  },
+  extends: [
+    'eslint:recommended'
+  ],
+  parserOptions: {
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+    parser: '@babel/eslint-parser',
+    requireConfigFile: false
+  },
+  plugins: [],
+  rules: {
+    // Add custom rules here
+    'no-console': 'warn',
+    'no-debugger': 'error',
+    // Add more rules as needed
+  },
+  overrides: [
+    {
+      files: ['*.config.js', '*.config.cjs'],
+      env: {
         node: true
+      }
     },
-    extends: [
-        'eslint:recommended'
-    ],
-    plugins: ['vue'],
-    parser: 'vue-eslint-parser',
-    parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module'
-    },
-    globals: {
-        window: 'readonly',
-        document: 'readonly',
-        localStorage: 'readonly',
-        console: 'readonly',
-        require: 'readonly',
-        navigator: 'readonly',
-        setTimeout: 'readonly',
-        clearTimeout: 'readonly'
-    },
-    ignorePatterns: [
-        'vendor/**/*',
-        'node_modules/**/*',
-        'bootstrap/cache/**/*',
-        'storage/**/*'
-    ],
-    rules: {
-        'no-unused-vars': 'warn',
-        'no-console': 'warn'
+    {
+      files: ['tests/**/*.js'],
+      env: {
+        jest: true,
+        node: true
+      }
     }
+  ]
 };
