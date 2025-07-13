@@ -1,5 +1,5 @@
 // Jest setup file for Vue.js testing
-import { config } from '@vue/test-utils';
+const { config } = require('@vue/test-utils');
 
 // Global test configuration
 config.global.mocks = {

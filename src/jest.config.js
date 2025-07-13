@@ -6,11 +6,11 @@ module.exports = {
     '**/*.(test|spec).{js,vue}'
   ],
   transform: {
-    '^.+\\.vue$': 'vue-jest',
+    '^.+\\.vue$': '@vue/vue3-jest',
     '^.+\\.js$': 'babel-jest'
   },
   moduleFileExtensions: ['js', 'vue', 'json'],
-  moduleNameMapping: {
+  moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/resources/js/$1'
   },
   collectCoverageFrom: [
@@ -29,5 +29,5 @@ module.exports = {
       statements: 80
     }
   },
-  setupFilesAfterEnv: ['<rootDir>/tests/Frontend/setup.js']
+  // setupFilesAfterEnv: ['<rootDir>/tests/Frontend/setup.js']
 };
