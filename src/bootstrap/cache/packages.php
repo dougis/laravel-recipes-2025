@@ -51,8 +51,7 @@
     'providers' => 
     array (
       0 => 'MongoDB\\Laravel\\MongoDBServiceProvider',
-      1 => 'MongoDB\\Laravel\\MongoDBQueueServiceProvider',
-      2 => 'MongoDB\\Laravel\\MongoDBBusServiceProvider',
+      1 => 'MongoDB\\Laravel\\MongoDBBusServiceProvider',
     ),
   ),
   'nesbot/carbon' => 
