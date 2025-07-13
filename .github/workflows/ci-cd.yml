@@ -51,6 +51,8 @@ jobs:
         run: |
           rm -rf node_modules package-lock.json
           npm install --omit=optional
+          # Ensure platform-specific binaries are installed
+          npm rebuild
       
       - name: Run PHP CodeSniffer
         working-directory: src
@@ -225,6 +227,8 @@ jobs:
         run: |
           rm -rf node_modules package-lock.json
           npm install --omit=optional
+          # Ensure platform-specific binaries are installed
+          npm rebuild
       
       - name: Run JavaScript tests with coverage
         working-directory: src
@@ -246,7 +250,9 @@ jobs:
       
       - name: Build production assets
         working-directory: src
-        run: npm run build
+        run: |
+          # Fix for rollup linux binary issue
+          npm run build || (npm rebuild && npm run build)
       
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
