@@ -94,19 +94,14 @@ install_codacy_reporter() {
 # Function to upload coverage file
 upload_coverage_file() {
     local file_path="$1"
-    local file_format="$2"
-    
-    print_info "Uploading coverage file: $file_path (format: $file_format)"
-    
-    # Determine the appropriate upload command based on format
-    if [[ "$file_format" == "lcov" ]]; then
-        bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l LCOV -r "$file_path"
-    else
-        bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l "$(echo "$file_format" | tr '[:lower:]' '[:upper:]')" -r "$file_path"
-    fi
-    
+    local language="$2"
+
+    print_info "Uploading coverage file: $file_path (language: $language)"
+
+    bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l "$language" -r "$file_path"
+
     local upload_result=$?
-    
+
     if [[ $upload_result -eq 0 ]]; then
         print_info "Successfully uploaded $file_path"
     else
@@ -120,26 +115,29 @@ upload_coverage() {
     local coverage_files=($1)
     local upload_success=0
     local upload_failures=0
-    
+
     for file in "${coverage_files[@]}"; do
-        local format="clover"
-        
-        # Determine format based on file extension/path
+        local language=""
+
+        # Determine language based on file extension/path
         if [[ "$file" == *"lcov.info" ]]; then
-            format="lcov"
+            language="javascript"
         elif [[ "$file" == *".xml" ]]; then
-            format="clover"
+            language="php"
+        else
+            print_warning "Unrecognized coverage file format: $file. Skipping."
+            continue
         fi
-        
-        if upload_coverage_file "$file" "$format"; then
+
+        if upload_coverage_file "$file" "$language"; then
             ((upload_success++))
         else
             ((upload_failures++))
         fi
     done
-    
+
     print_info "Coverage upload summary: $upload_success successful, $upload_failures failed"
-    
+
     if [[ $upload_failures -gt 0 ]]; then
         print_error "Some coverage uploads failed"
         exit 1

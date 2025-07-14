@@ -13,7 +13,6 @@ class RecipeService
     /**
      * Create a new service instance.
      *
-     * @param  \App\Repositories\Interfaces\RecipeRepositoryInterface  $recipeRepository
      * @return void
      */
     public function __construct(RecipeRepositoryInterface $recipeRepository)
@@ -57,13 +56,12 @@ class RecipeService
      * Create a new recipe.
      *
      * @param  string  $userId
-     * @param  array  $data
      * @return \App\Models\Recipe
      */
     public function createRecipe($userId, array $data)
     {
         $data['user_id'] = $userId;
-        
+
         return $this->recipeRepository->create($data);
     }
 
@@ -71,7 +69,6 @@ class RecipeService
      * Update an existing recipe.
      *
      * @param  string  $id
-     * @param  array  $data
      * @return \App\Models\Recipe
      */
     public function updateRecipe($id, array $data)
@@ -99,14 +96,14 @@ class RecipeService
     public function toggleRecipePrivacy($id)
     {
         $recipe = $this->getRecipe($id);
-        
-        if (!$recipe) {
+
+        if (! $recipe) {
             return null;
         }
-        
-        $recipe->is_private = !$recipe->is_private;
+
+        $recipe->is_private = ! $recipe->is_private;
         $recipe->save();
-        
+
         return $recipe;
     }
 
@@ -135,18 +132,18 @@ class RecipeService
         if (empty($recipe->is_private)) {
             return true;
         }
-        
+
         // Owner can access their own recipes
         if ($recipe->user_id == $userId) {
             return true;
         }
-        
+
         // Admins can access all recipes
         $user = Auth::user();
         if ($user && $user->isAdmin()) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -162,73 +159,73 @@ class RecipeService
         $text .= $this->generateRecipeMetadata($recipe);
         $text .= $this->generateRecipeContent($recipe);
         $text .= $this->generateRecipeNutrition($recipe);
-        
+
         return $text;
     }
 
     private function generateRecipeMetadata($recipe)
     {
         $text = '';
-        
+
         if ($recipe->source && $recipe->source->name) {
             $text .= "Source: {$recipe->source->name}\n";
         }
-        
+
         if ($recipe->classification && $recipe->classification->name) {
             $text .= "Classification: {$recipe->classification->name}\n";
         }
-        
+
         if ($recipe->servings) {
             $text .= "Servings: {$recipe->servings}\n";
         }
-        
+
         return $text;
     }
 
     private function generateRecipeContent($recipe)
     {
         $text = "\nINGREDIENTS:\n";
-        $text .= $recipe->ingredients . "\n\n";
-        
+        $text .= $recipe->ingredients."\n\n";
+
         $text .= "INSTRUCTIONS:\n";
-        $text .= $recipe->instructions . "\n\n";
-        
+        $text .= $recipe->instructions."\n\n";
+
         if ($recipe->notes) {
             $text .= "NOTES:\n";
-            $text .= $recipe->notes . "\n\n";
+            $text .= $recipe->notes."\n\n";
         }
-        
+
         return $text;
     }
 
     private function generateRecipeNutrition($recipe)
     {
-        if (!$this->hasNutritionalData($recipe)) {
+        if (! $this->hasNutritionalData($recipe)) {
             return '';
         }
-        
+
         $text = "NUTRITIONAL INFORMATION:\n";
-        
+
         if ($recipe->calories) {
             $text .= "Calories: {$recipe->calories}\n";
         }
-        
+
         if ($recipe->fat) {
             $text .= "Fat: {$recipe->fat}g\n";
         }
-        
+
         if ($recipe->cholesterol) {
             $text .= "Cholesterol: {$recipe->cholesterol}mg\n";
         }
-        
+
         if ($recipe->sodium) {
             $text .= "Sodium: {$recipe->sodium}mg\n";
         }
-        
+
         if ($recipe->protein) {
             $text .= "Protein: {$recipe->protein}g\n";
         }
-        
+
         return $text;
     }
 

@@ -26,7 +26,7 @@ class UserProfileRequest extends FormRequest
     {
         return [
             'name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . Auth::id(),
+            'email' => 'sometimes|required|string|email|max:255|unique:users,email,'.Auth::id(),
             'password' => 'sometimes|required|string|min:8|confirmed',
         ];
     }

@@ -2,26 +2,27 @@
 
 namespace Tests\Unit\Services;
 
-use Tests\TestCase;
-use App\Services\SubscriptionService;
 use App\Models\Subscription;
 use App\Models\User;
-use Stripe\StripeClient;
+use App\Services\SubscriptionService;
 use Mockery;
+use Stripe\StripeClient;
+use Tests\TestCase;
 
 class SubscriptionServiceTest extends TestCase
 {
     protected $subscriptionService;
+
     protected $stripeClient;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Mock Stripe client
         $this->stripeClient = Mockery::mock(StripeClient::class);
-        $this->subscriptionService = new SubscriptionService();
-        
+        $this->subscriptionService = new SubscriptionService;
+
         // Replace the stripe client with our mock
         $reflection = new \ReflectionClass($this->subscriptionService);
         $stripeProperty = $reflection->getProperty('stripe');
@@ -58,14 +59,14 @@ class SubscriptionServiceTest extends TestCase
             'subscription_tier' => 1,
             'subscription_status' => 'active',
             'subscription_expires_at' => '2024-12-31 23:59:59',
-            'admin_override' => false
+            'admin_override' => false,
         ]);
 
         $subscription = new Subscription([
             'name' => 'Test Subscription',
             'description' => 'Test Description',
             'tier' => 1,
-            'features' => ['Feature 1', 'Feature 2']
+            'features' => ['Feature 1', 'Feature 2'],
         ]);
 
         User::shouldReceive('find')
@@ -102,7 +103,7 @@ class SubscriptionServiceTest extends TestCase
             'subscription_tier' => 0,
             'subscription_status' => 'active',
             'subscription_expires_at' => null,
-            'admin_override' => false
+            'admin_override' => false,
         ]);
 
         User::shouldReceive('find')

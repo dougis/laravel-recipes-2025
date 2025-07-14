@@ -13,13 +13,12 @@ use Illuminate\Support\Facades\Auth;
 class CookbookController extends Controller
 {
     protected $cookbookService;
+
     protected $pdfService;
 
     /**
      * Create a new controller instance.
      *
-     * @param  \App\Services\CookbookService  $cookbookService
-     * @param  \App\Services\PDFService  $pdfService
      * @return void
      */
     public function __construct(CookbookService $cookbookService, PDFService $pdfService)
@@ -40,7 +39,7 @@ class CookbookController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data' => $cookbooks
+            'data' => $cookbooks,
         ]);
     }
 
@@ -55,14 +54,13 @@ class CookbookController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data' => $cookbooks
+            'data' => $cookbooks,
         ]);
     }
 
     /**
      * Store a newly created cookbook in storage.
      *
-     * @param  \App\Http\Requests\Api\V1\CookbookRequest  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(CookbookRequest $request)
@@ -70,10 +68,10 @@ class CookbookController extends Controller
         $user = Auth::user();
 
         // Check if user can create more cookbooks
-        if (!$user->canCreateCookbook()) {
+        if (! $user->canCreateCookbook()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'You have reached your cookbook limit. Please upgrade your subscription to create more cookbooks.'
+                'message' => 'You have reached your cookbook limit. Please upgrade your subscription to create more cookbooks.',
             ], 403);
         }
 
@@ -82,7 +80,7 @@ class CookbookController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Cookbook created successfully',
-            'data' => $cookbook
+            'data' => $cookbook,
         ], 201);
     }
 
@@ -97,31 +95,30 @@ class CookbookController extends Controller
         $cookbook = $this->cookbookService->getCookbook($id);
 
         // Check if cookbook exists
-        if (!$cookbook) {
+        if (! $cookbook) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Cookbook not found'
+                'message' => 'Cookbook not found',
             ], 404);
         }
 
         // Check if user has access to this cookbook
-        if (!$this->cookbookService->userCanAccessCookbook(Auth::id(), $cookbook)) {
+        if (! $this->cookbookService->userCanAccessCookbook(Auth::id(), $cookbook)) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'You do not have permission to view this cookbook'
+                'message' => 'You do not have permission to view this cookbook',
             ], 403);
         }
 
         return response()->json([
             'status' => 'success',
-            'data' => $cookbook
+            'data' => $cookbook,
         ]);
     }
 
     /**
      * Update the specified cookbook in storage.
      *
-     * @param  \App\Http\Requests\Api\V1\CookbookRequest  $request
      * @param  string  $id
      * @return \Illuminate\Http\JsonResponse
      */
@@ -130,18 +127,18 @@ class CookbookController extends Controller
         $cookbook = Cookbook::find($id);
 
         // Check if cookbook exists
-        if (!$cookbook) {
+        if (! $cookbook) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Cookbook not found'
+                'message' => 'Cookbook not found',
             ], 404);
         }
 
         // Check if user owns this cookbook
-        if ($cookbook->user_id != Auth::id() && !Auth::user()->isAdmin()) {
+        if ($cookbook->user_id != Auth::id() && ! Auth::user()->isAdmin()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'You do not have permission to update this cookbook'
+                'message' => 'You do not have permission to update this cookbook',
             ], 403);
         }
 
@@ -150,7 +147,7 @@ class CookbookController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Cookbook updated successfully',
-            'data' => $cookbook
+            'data' => $cookbook,
         ]);
     }
 
@@ -165,18 +162,18 @@ class CookbookController extends Controller
         $cookbook = Cookbook::find($id);
 
         // Check if cookbook exists
-        if (!$cookbook) {
+        if (! $cookbook) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Cookbook not found'
+                'message' => 'Cookbook not found',
             ], 404);
         }
 
         // Check if user owns this cookbook
-        if ($cookbook->user_id != Auth::id() && !Auth::user()->isAdmin()) {
+        if ($cookbook->user_id != Auth::id() && ! Auth::user()->isAdmin()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'You do not have permission to delete this cookbook'
+                'message' => 'You do not have permission to delete this cookbook',
             ], 403);
         }
 
@@ -184,7 +181,7 @@ class CookbookController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Cookbook deleted successfully'
+            'message' => 'Cookbook deleted successfully',
         ]);
     }
 
@@ -200,26 +197,26 @@ class CookbookController extends Controller
         $user = Auth::user();
 
         // Check if cookbook exists
-        if (!$cookbook) {
+        if (! $cookbook) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Cookbook not found'
+                'message' => 'Cookbook not found',
             ], 404);
         }
 
         // Check if user owns this cookbook
-        if ($cookbook->user_id != $user->id && !$user->isAdmin()) {
+        if ($cookbook->user_id != $user->id && ! $user->isAdmin()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'You do not have permission to update this cookbook'
+                'message' => 'You do not have permission to update this cookbook',
             ], 403);
         }
 
         // Check if user has Tier 2 access for privacy control
-        if (!$user->hasTier2Access() && !$user->isAdmin()) {
+        if (! $user->hasTier2Access() && ! $user->isAdmin()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Privacy control is only available for Tier 2 subscribers'
+                'message' => 'Privacy control is only available for Tier 2 subscribers',
             ], 403);
         }
 
@@ -228,14 +225,13 @@ class CookbookController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Cookbook privacy updated successfully',
-            'data' => $cookbook
+            'data' => $cookbook,
         ]);
     }
 
     /**
      * Add recipes to cookbook.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  string  $id
      * @return \Illuminate\Http\JsonResponse
      */
@@ -249,18 +245,18 @@ class CookbookController extends Controller
         $cookbook = Cookbook::find($id);
 
         // Check if cookbook exists
-        if (!$cookbook) {
+        if (! $cookbook) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Cookbook not found'
+                'message' => 'Cookbook not found',
             ], 404);
         }
 
         // Check if user owns this cookbook
-        if ($cookbook->user_id != Auth::id() && !Auth::user()->isAdmin()) {
+        if ($cookbook->user_id != Auth::id() && ! Auth::user()->isAdmin()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'You do not have permission to update this cookbook'
+                'message' => 'You do not have permission to update this cookbook',
             ], 403);
         }
 
@@ -269,7 +265,7 @@ class CookbookController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Recipes added to cookbook successfully',
-            'data' => $cookbook
+            'data' => $cookbook,
         ]);
     }
 
@@ -285,18 +281,18 @@ class CookbookController extends Controller
         $cookbook = Cookbook::find($id);
 
         // Check if cookbook exists
-        if (!$cookbook) {
+        if (! $cookbook) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Cookbook not found'
+                'message' => 'Cookbook not found',
             ], 404);
         }
 
         // Check if user owns this cookbook
-        if ($cookbook->user_id != Auth::id() && !Auth::user()->isAdmin()) {
+        if ($cookbook->user_id != Auth::id() && ! Auth::user()->isAdmin()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'You do not have permission to update this cookbook'
+                'message' => 'You do not have permission to update this cookbook',
             ], 403);
         }
 
@@ -305,14 +301,13 @@ class CookbookController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Recipe removed from cookbook successfully',
-            'data' => $cookbook
+            'data' => $cookbook,
         ]);
     }
 
     /**
      * Reorder recipes in cookbook.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  string  $id
      * @return \Illuminate\Http\JsonResponse
      */
@@ -325,18 +320,18 @@ class CookbookController extends Controller
         $cookbook = Cookbook::find($id);
 
         // Check if cookbook exists
-        if (!$cookbook) {
+        if (! $cookbook) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Cookbook not found'
+                'message' => 'Cookbook not found',
             ], 404);
         }
 
         // Check if user owns this cookbook
-        if ($cookbook->user_id != Auth::id() && !Auth::user()->isAdmin()) {
+        if ($cookbook->user_id != Auth::id() && ! Auth::user()->isAdmin()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'You do not have permission to update this cookbook'
+                'message' => 'You do not have permission to update this cookbook',
             ], 403);
         }
 
@@ -345,7 +340,7 @@ class CookbookController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Recipes reordered successfully',
-            'data' => $cookbook
+            'data' => $cookbook,
         ]);
     }
 
@@ -360,35 +355,35 @@ class CookbookController extends Controller
         $cookbook = $this->cookbookService->getCookbookWithRecipes($id);
 
         // Check if cookbook exists
-        if (!$cookbook) {
+        if (! $cookbook) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Cookbook not found'
+                'message' => 'Cookbook not found',
             ], 404);
         }
 
         // Check if user has access to this cookbook
-        if (!$this->cookbookService->userCanAccessCookbook(Auth::id(), $cookbook)) {
+        if (! $this->cookbookService->userCanAccessCookbook(Auth::id(), $cookbook)) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'You do not have permission to view this cookbook'
+                'message' => 'You do not have permission to view this cookbook',
             ], 403);
         }
 
         // Check if user has Tier 1 access for cookbook printing
         $user = Auth::user();
-        if (!$user && !$cookbook->is_private) {
+        if (! $user && ! $cookbook->is_private) {
             // Allow public access to public cookbooks without login
-        } else if (!$user->hasTier1Access() && !$user->isAdmin()) {
+        } elseif (! $user->hasTier1Access() && ! $user->isAdmin()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Cookbook printing is only available for Tier 1 and Tier 2 subscribers'
+                'message' => 'Cookbook printing is only available for Tier 1 and Tier 2 subscribers',
             ], 403);
         }
 
         $pdf = $this->pdfService->generateCookbookPDF($cookbook);
 
-        return $pdf->download('cookbook-' . $cookbook->id . '.pdf');
+        return $pdf->download('cookbook-'.$cookbook->id.'.pdf');
     }
 
     /**
@@ -412,17 +407,17 @@ class CookbookController extends Controller
 
     private function validateExportRequest($cookbook, $format)
     {
-        if (!$cookbook) {
+        if (! $cookbook) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Cookbook not found'
+                'message' => 'Cookbook not found',
             ], 404);
         }
 
-        if (!$this->cookbookService->userCanAccessCookbook(Auth::id(), $cookbook)) {
+        if (! $this->cookbookService->userCanAccessCookbook(Auth::id(), $cookbook)) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'You do not have permission to view this cookbook'
+                'message' => 'You do not have permission to view this cookbook',
             ], 403);
         }
 
@@ -431,10 +426,10 @@ class CookbookController extends Controller
             return $tierValidationResult;
         }
 
-        if (!in_array($format, ['pdf', 'txt'])) {
+        if (! in_array($format, ['pdf', 'txt'])) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Unsupported export format'
+                'message' => 'Unsupported export format',
             ], 400);
         }
 
@@ -444,18 +439,18 @@ class CookbookController extends Controller
     private function validateUserTierForExport($cookbook)
     {
         $user = Auth::user();
-        
-        if (!$user && !$cookbook->is_private) {
+
+        if (! $user && ! $cookbook->is_private) {
             return null;
         }
-        
+
         if ($user && ($user->hasTier1Access() || $user->isAdmin())) {
             return null;
         }
 
         return response()->json([
             'status' => 'error',
-            'message' => 'Export functionality is only available for Tier 1 and Tier 2 subscribers'
+            'message' => 'Export functionality is only available for Tier 1 and Tier 2 subscribers',
         ], 403);
     }
 
@@ -464,12 +459,14 @@ class CookbookController extends Controller
         switch ($format) {
             case 'pdf':
                 $pdf = $this->pdfService->generateCookbookPDF($cookbook);
-                return $pdf->download('cookbook-' . $cookbook->id . '.pdf');
+
+                return $pdf->download('cookbook-'.$cookbook->id.'.pdf');
             case 'txt':
                 $content = $this->cookbookService->generateCookbookText($cookbook);
+
                 return response($content)
                     ->header('Content-Type', 'text/plain')
-                    ->header('Content-Disposition', 'attachment; filename="cookbook-' . $cookbook->id . '.txt"');
+                    ->header('Content-Disposition', 'attachment; filename="cookbook-'.$cookbook->id.'.txt"');
         }
     }
 }

@@ -21,7 +21,6 @@ class AuthController extends Controller
     /**
      * Register a new user.
      *
-     * @param  \App\Http\Requests\Api\V1\RegisterRequest  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function register(RegisterRequest $request)
@@ -42,19 +41,18 @@ class AuthController extends Controller
             'status' => 'success',
             'message' => 'User registered successfully',
             'user' => $user,
-            'token' => $token
+            'token' => $token,
         ], 201);
     }
 
     /**
      * Authenticate user and generate token.
      *
-     * @param  \App\Http\Requests\Api\V1\LoginRequest  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(LoginRequest $request)
     {
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        if (! Auth::attempt($request->only('email', 'password'))) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -67,14 +65,13 @@ class AuthController extends Controller
             'status' => 'success',
             'message' => 'Login successful',
             'user' => $user,
-            'token' => $token
+            'token' => $token,
         ]);
     }
 
     /**
      * Logout user and revoke token.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout(Request $request)
@@ -83,28 +80,26 @@ class AuthController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Logged out successfully'
+            'message' => 'Logged out successfully',
         ]);
     }
 
     /**
      * Get authenticated user information.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function user(Request $request)
     {
         return response()->json([
             'status' => 'success',
-            'user' => $request->user()
+            'user' => $request->user(),
         ]);
     }
 
     /**
      * Send password reset email.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function sendPasswordResetEmail(Request $request)
@@ -123,7 +118,6 @@ class AuthController extends Controller
     /**
      * Reset user password.
      *
-     * @param  \App\Http\Requests\Api\V1\ResetPasswordRequest  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function resetPassword(ResetPasswordRequest $request)
@@ -146,7 +140,6 @@ class AuthController extends Controller
     /**
      * Verify user email.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
@@ -154,11 +147,11 @@ class AuthController extends Controller
     {
         $user = User::findOrFail($id);
 
-        if (!hash_equals((string) $request->route('id'), (string) $user->getKey())) {
+        if (! hash_equals((string) $request->route('id'), (string) $user->getKey())) {
             return response()->json(['status' => 'error', 'message' => 'Invalid user ID'], 403);
         }
 
-        if (!hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
+        if (! hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
             return response()->json(['status' => 'error', 'message' => 'Invalid hash'], 403);
         }
 

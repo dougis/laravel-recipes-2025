@@ -2,6 +2,40 @@
   "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
   "runs": [
     {
+      "tool": {
+        "driver": {
+          "informationUri": "https://github.com/mgechev/revive",
+          "name": "revive",
+          "rules": null
+        }
+      }
+    },
+    {
+      "invocations": [
+        {
+          "executionSuccessful": true,
+          "toolExecutionNotifications": []
+        }
+      ],
+      "results": [],
+      "tool": {
+        "driver": {
+          "name": "Semgrep OSS",
+          "rules": null,
+          "semanticVersion": "1.78.0"
+        }
+      }
+    },
+    {
+      "results": [],
+      "tool": {
+        "driver": {
+          "name": "dartanalyzer",
+          "rules": null
+        }
+      }
+    },
+    {
       "artifacts": [
         {
           "location": {
@@ -3038,40 +3072,6 @@
           "name": "Pylint",
           "rules": null,
           "version": "3.3.6"
-        }
-      }
-    },
-    {
-      "tool": {
-        "driver": {
-          "informationUri": "https://github.com/mgechev/revive",
-          "name": "revive",
-          "rules": null
-        }
-      }
-    },
-    {
-      "invocations": [
-        {
-          "executionSuccessful": true,
-          "toolExecutionNotifications": []
-        }
-      ],
-      "results": [],
-      "tool": {
-        "driver": {
-          "name": "Semgrep OSS",
-          "rules": null,
-          "semanticVersion": "1.78.0"
-        }
-      }
-    },
-    {
-      "results": [],
-      "tool": {
-        "driver": {
-          "name": "dartanalyzer",
-          "rules": null
         }
       }
     }

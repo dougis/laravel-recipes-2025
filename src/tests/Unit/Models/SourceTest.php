@@ -3,9 +3,8 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Source;
-use App\Models\Recipe;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class SourceTest extends TestCase
 {
@@ -31,7 +30,7 @@ class SourceTest extends TestCase
     {
         $fillable = ['name'];
 
-        $source = new Source();
+        $source = new Source;
         $this->assertEquals($fillable, $source->getFillable());
     }
 
@@ -40,7 +39,7 @@ class SourceTest extends TestCase
      */
     public function test_recipes_relationship()
     {
-        $source = new Source();
+        $source = new Source;
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\HasMany::class, $source->recipes());
     }
 
@@ -49,7 +48,7 @@ class SourceTest extends TestCase
      */
     public function test_mongodb_connection()
     {
-        $source = new Source();
+        $source = new Source;
         $this->assertEquals('mongodb', $source->getConnectionName());
         $this->assertEquals('sources', $source->getTable());
     }
@@ -60,9 +59,9 @@ class SourceTest extends TestCase
     public function test_source_creation()
     {
         $source = Source::create(['name' => 'Food Network']);
-        
+
         $this->assertDatabaseHas('sources', [
-            'name' => 'Food Network'
+            'name' => 'Food Network',
         ]);
     }
 
@@ -71,7 +70,7 @@ class SourceTest extends TestCase
      */
     public function test_has_factory_trait()
     {
-        $source = new Source();
+        $source = new Source;
         $this->assertTrue(method_exists($source, 'factory'));
     }
 }

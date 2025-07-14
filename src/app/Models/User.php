@@ -4,15 +4,16 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use MongoDB\Laravel\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use MongoDB\Laravel\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $connection = 'mongodb';
+
     protected $collection = 'users';
 
     /**
@@ -132,7 +133,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function canCreateRecipe()
     {
         // Free tier users are limited to 25 recipes
-        if ($this->subscription_tier === 0 && !$this->admin_override) {
+        if ($this->subscription_tier === 0 && ! $this->admin_override) {
             return $this->recipeCount() < 25;
         }
 
@@ -148,12 +149,12 @@ class User extends Authenticatable implements MustVerifyEmail
     public function canCreateCookbook()
     {
         // Free tier users are limited to 1 cookbook
-        if ($this->subscription_tier === 0 && !$this->admin_override) {
+        if ($this->subscription_tier === 0 && ! $this->admin_override) {
             return $this->cookbookCount() < 1;
         }
 
         // Tier 1 users are limited to 10 cookbooks
-        if ($this->subscription_tier === 1 && !$this->admin_override) {
+        if ($this->subscription_tier === 1 && ! $this->admin_override) {
             return $this->cookbookCount() < 10;
         }
 

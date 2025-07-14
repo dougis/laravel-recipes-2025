@@ -2,16 +2,12 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\Recipe;
-use App\Models\User;
-use App\Models\Source;
 use App\Models\Classification;
-use App\Models\Meal;
-use App\Models\Course;
-use App\Models\Preparation;
-use App\Models\Cookbook;
-use Tests\TestCase;
+use App\Models\Recipe;
+use App\Models\Source;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class RecipeTest extends TestCase
 {
@@ -85,7 +81,7 @@ class RecipeTest extends TestCase
             'is_private',
         ];
 
-        $recipe = new Recipe();
+        $recipe = new Recipe;
         $this->assertEquals($fillable, $recipe->getFillable());
     }
 
@@ -154,7 +150,7 @@ class RecipeTest extends TestCase
      */
     public function test_source_relationship()
     {
-        $recipe = new Recipe();
+        $recipe = new Recipe;
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsTo::class, $recipe->source());
     }
 
@@ -163,7 +159,7 @@ class RecipeTest extends TestCase
      */
     public function test_classification_relationship()
     {
-        $recipe = new Recipe();
+        $recipe = new Recipe;
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsTo::class, $recipe->classification());
     }
 
@@ -172,7 +168,7 @@ class RecipeTest extends TestCase
      */
     public function test_meals_relationship()
     {
-        $recipe = new Recipe();
+        $recipe = new Recipe;
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsToMany::class, $recipe->meals());
     }
 
@@ -181,7 +177,7 @@ class RecipeTest extends TestCase
      */
     public function test_courses_relationship()
     {
-        $recipe = new Recipe();
+        $recipe = new Recipe;
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsToMany::class, $recipe->courses());
     }
 
@@ -190,7 +186,7 @@ class RecipeTest extends TestCase
      */
     public function test_preparations_relationship()
     {
-        $recipe = new Recipe();
+        $recipe = new Recipe;
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsToMany::class, $recipe->preparations());
     }
 
@@ -199,7 +195,7 @@ class RecipeTest extends TestCase
      */
     public function test_cookbooks_relationship()
     {
-        $recipe = new Recipe();
+        $recipe = new Recipe;
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsToMany::class, $recipe->cookbooks());
     }
 
@@ -244,7 +240,7 @@ class RecipeTest extends TestCase
      */
     public function test_mongodb_connection()
     {
-        $recipe = new Recipe();
+        $recipe = new Recipe;
         $this->assertEquals('mongodb', $recipe->getConnectionName());
         $this->assertEquals('recipes', $recipe->getTable());
     }
@@ -254,7 +250,7 @@ class RecipeTest extends TestCase
      */
     public function test_searchable_trait()
     {
-        $recipe = new Recipe();
+        $recipe = new Recipe;
         $this->assertTrue(method_exists($recipe, 'toSearchableArray'));
         $this->assertTrue(method_exists($recipe, 'searchableAs'));
     }

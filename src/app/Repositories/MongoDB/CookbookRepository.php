@@ -31,7 +31,6 @@ class CookbookRepository implements CookbookRepositoryInterface
     /**
      * Create a new cookbook.
      *
-     * @param  array  $data
      * @return \App\Models\Cookbook
      */
     public function create(array $data)
@@ -43,19 +42,18 @@ class CookbookRepository implements CookbookRepositoryInterface
      * Update a cookbook.
      *
      * @param  string  $id
-     * @param  array  $data
      * @return \App\Models\Cookbook
      */
     public function update($id, array $data)
     {
         $cookbook = $this->find($id);
-        
-        if (!$cookbook) {
+
+        if (! $cookbook) {
             return null;
         }
-        
+
         $cookbook->update($data);
-        
+
         return $cookbook;
     }
 
@@ -68,11 +66,11 @@ class CookbookRepository implements CookbookRepositoryInterface
     public function delete($id)
     {
         $cookbook = $this->find($id);
-        
-        if (!$cookbook) {
+
+        if (! $cookbook) {
             return false;
         }
-        
+
         return $cookbook->delete();
     }
 

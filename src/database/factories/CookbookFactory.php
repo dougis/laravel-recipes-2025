@@ -16,7 +16,7 @@ class CookbookFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->words(2, true) . ' Cookbook',
+            'name' => $this->faker->words(2, true).' Cookbook',
             'description' => $this->faker->optional()->paragraph(),
             'user_id' => User::factory(),
             'is_private' => false,

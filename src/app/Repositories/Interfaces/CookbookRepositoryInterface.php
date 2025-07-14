@@ -22,7 +22,6 @@ interface CookbookRepositoryInterface
     /**
      * Create a new cookbook.
      *
-     * @param  array  $data
      * @return \App\Models\Cookbook
      */
     public function create(array $data);
@@ -31,7 +30,6 @@ interface CookbookRepositoryInterface
      * Update a cookbook.
      *
      * @param  string  $id
-     * @param  array  $data
      * @return \App\Models\Cookbook
      */
     public function update($id, array $data);

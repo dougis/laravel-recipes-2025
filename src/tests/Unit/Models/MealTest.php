@@ -3,9 +3,8 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Meal;
-use App\Models\Recipe;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class MealTest extends TestCase
 {
@@ -31,7 +30,7 @@ class MealTest extends TestCase
     {
         $fillable = ['name'];
 
-        $meal = new Meal();
+        $meal = new Meal;
         $this->assertEquals($fillable, $meal->getFillable());
     }
 
@@ -40,7 +39,7 @@ class MealTest extends TestCase
      */
     public function test_recipes_relationship()
     {
-        $meal = new Meal();
+        $meal = new Meal;
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsToMany::class, $meal->recipes());
     }
 
@@ -49,7 +48,7 @@ class MealTest extends TestCase
      */
     public function test_mongodb_connection()
     {
-        $meal = new Meal();
+        $meal = new Meal;
         $this->assertEquals('mongodb', $meal->getConnectionName());
         $this->assertEquals('meals', $meal->getTable());
     }
@@ -60,9 +59,9 @@ class MealTest extends TestCase
     public function test_meal_creation()
     {
         $meal = Meal::create(['name' => 'Lunch']);
-        
+
         $this->assertDatabaseHas('meals', [
-            'name' => 'Lunch'
+            'name' => 'Lunch',
         ]);
     }
 
@@ -87,7 +86,7 @@ class MealTest extends TestCase
      */
     public function test_has_factory_trait()
     {
-        $meal = new Meal();
+        $meal = new Meal;
         $this->assertTrue(method_exists($meal, 'factory'));
     }
 }

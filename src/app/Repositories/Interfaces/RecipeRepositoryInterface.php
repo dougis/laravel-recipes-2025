@@ -22,7 +22,6 @@ interface RecipeRepositoryInterface
     /**
      * Create a new recipe.
      *
-     * @param  array  $data
      * @return \App\Models\Recipe
      */
     public function create(array $data);
@@ -31,7 +30,6 @@ interface RecipeRepositoryInterface
      * Update a recipe.
      *
      * @param  string  $id
-     * @param  array  $data
      * @return \App\Models\Recipe
      */
     public function update($id, array $data);

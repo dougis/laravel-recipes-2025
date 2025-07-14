@@ -29,14 +29,14 @@ class SubscriptionService
     public function getUserSubscription($userId)
     {
         $user = User::find($userId);
-        
-        if (!$user) {
+
+        if (! $user) {
             return null;
         }
-        
+
         $subscription = Subscription::where('tier', $user->subscription_tier)->first();
-        
-        if (!$subscription) {
+
+        if (! $subscription) {
             // Create default subscription data if not found
             $subscription = [
                 'name' => $this->getTierName($user->subscription_tier),
@@ -45,7 +45,7 @@ class SubscriptionService
                 'features' => $this->getTierFeatures($user->subscription_tier),
             ];
         }
-        
+
         return [
             'user' => [
                 'subscription_tier' => $user->subscription_tier,
@@ -68,11 +68,11 @@ class SubscriptionService
     public function updateUserSubscription($userId, $tier, $paymentMethodId = null)
     {
         $user = User::find($userId);
-        
-        if (!$user) {
+
+        if (! $user) {
             throw new \Exception('User not found');
         }
-        
+
         // Handle downgrade to free tier
         if ($tier === 0) {
             // Cancel Stripe subscription if exists
@@ -81,35 +81,35 @@ class SubscriptionService
                     $this->stripe->subscriptions->cancel($user->stripe_subscription_id);
                 } catch (\Exception $e) {
                     // Log error but continue with downgrade
-                    \Log::error('Failed to cancel Stripe subscription: ' . $e->getMessage());
+                    \Log::error('Failed to cancel Stripe subscription: '.$e->getMessage());
                 }
             }
-            
+
             $user->subscription_tier = 0;
             $user->subscription_status = 'active';
             $user->stripe_subscription_id = null;
             $user->save();
-            
+
             return $this->getUserSubscription($userId);
         }
-        
+
         // Handle upgrade to paid tier
-        if (!$paymentMethodId) {
+        if (! $paymentMethodId) {
             throw new \Exception('Payment method ID is required for paid subscriptions');
         }
-        
+
         // Get price ID for the tier
         $priceId = $this->getTierPriceId($tier);
-        
+
         // Create or update Stripe customer
-        if (!$user->stripe_customer_id) {
+        if (! $user->stripe_customer_id) {
             $customer = $this->stripe->customers->create([
                 'email' => $user->email,
                 'name' => $user->name,
                 'payment_method' => $paymentMethodId,
                 'invoice_settings' => ['default_payment_method' => $paymentMethodId],
             ]);
-            
+
             $user->stripe_customer_id = $customer->id;
         } else {
             // Update default payment method
@@ -118,20 +118,20 @@ class SubscriptionService
                 'invoice_settings' => ['default_payment_method' => $paymentMethodId],
             ]);
         }
-        
+
         // Create or update subscription
-        if (!$user->stripe_subscription_id) {
+        if (! $user->stripe_subscription_id) {
             $subscription = $this->stripe->subscriptions->create([
                 'customer' => $user->stripe_customer_id,
                 'items' => [['price' => $priceId]],
                 'expand' => ['latest_invoice.payment_intent'],
             ]);
-            
+
             $user->stripe_subscription_id = $subscription->id;
         } else {
             // Update existing subscription
             $subscription = $this->stripe->subscriptions->retrieve($user->stripe_subscription_id);
-            
+
             if ($subscription->status === 'active') {
                 // Update subscription items
                 $this->stripe->subscriptions->update($user->stripe_subscription_id, [
@@ -149,17 +149,17 @@ class SubscriptionService
                     'items' => [['price' => $priceId]],
                     'expand' => ['latest_invoice.payment_intent'],
                 ]);
-                
+
                 $user->stripe_subscription_id = $subscription->id;
             }
         }
-        
+
         // Update user subscription details
         $user->subscription_tier = $tier;
         $user->subscription_status = $subscription->status;
         $user->subscription_expires_at = date('Y-m-d H:i:s', $subscription->current_period_end);
         $user->save();
-        
+
         return $this->getUserSubscription($userId);
     }
 

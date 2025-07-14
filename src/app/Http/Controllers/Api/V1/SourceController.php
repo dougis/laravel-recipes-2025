@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Source;
-use Illuminate\Http\Request;
 
 class SourceController extends Controller
 {
@@ -16,10 +15,10 @@ class SourceController extends Controller
     public function index()
     {
         $sources = Source::all();
-        
+
         return response()->json([
             'status' => 'success',
-            'data' => $sources
+            'data' => $sources,
         ]);
     }
 }

@@ -3,14 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use MongoDB\Laravel\Eloquent\Model;
 use Laravel\Scout\Searchable;
+use MongoDB\Laravel\Eloquent\Model;
 
 class Recipe extends Model
 {
     use HasFactory, Searchable;
 
     protected $connection = 'mongodb';
+
     protected $collection = 'recipes';
 
     /**

@@ -2,9 +2,8 @@
 
 namespace Tests;
 
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use MongoDB\Laravel\Eloquent\Model;
 
 abstract class TestCase extends BaseTestCase
@@ -14,10 +13,10 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Ensure we're using the test database
         Model::unguard();
-        
+
         // Clean database before each test (MongoDB compatible)
         $this->cleanDatabase();
     }
@@ -37,7 +36,7 @@ abstract class TestCase extends BaseTestCase
         try {
             // Clear all collections using deleteMany instead of truncate to avoid transactions
             $collections = ['users', 'recipes', 'cookbooks', 'classifications', 'courses', 'meals', 'preparations', 'sources', 'subscriptions'];
-            
+
             foreach ($collections as $collection) {
                 \DB::connection('mongodb')->collection($collection)->deleteMany([]);
             }
@@ -101,10 +100,11 @@ abstract class TestCase extends BaseTestCase
     /**
      * Authenticate as a user and return the user instance
      */
-    protected function actingAsUser(User $user = null): User
+    protected function actingAsUser(?User $user = null): User
     {
         $user = $user ?: $this->createUser();
         $this->actingAs($user, 'sanctum');
+
         return $user;
     }
 
@@ -115,16 +115,17 @@ abstract class TestCase extends BaseTestCase
     {
         $admin = $this->createAdminUser();
         $this->actingAs($admin, 'sanctum');
+
         return $admin;
     }
 
     /**
      * Create a recipe for testing
      */
-    protected function createRecipe(User $user = null, array $attributes = []): \App\Models\Recipe
+    protected function createRecipe(?User $user = null, array $attributes = []): \App\Models\Recipe
     {
         $user = $user ?: $this->createUser();
-        
+
         return \App\Models\Recipe::create(array_merge([
             'name' => 'Test Recipe',
             'ingredients' => 'Test ingredients',
@@ -138,10 +139,10 @@ abstract class TestCase extends BaseTestCase
     /**
      * Create a cookbook for testing
      */
-    protected function createCookbook(User $user = null, array $attributes = []): \App\Models\Cookbook
+    protected function createCookbook(?User $user = null, array $attributes = []): \App\Models\Cookbook
     {
         $user = $user ?: $this->createUser();
-        
+
         return \App\Models\Cookbook::create(array_merge([
             'name' => 'Test Cookbook',
             'description' => 'Test cookbook description',
@@ -211,7 +212,7 @@ abstract class TestCase extends BaseTestCase
     {
         return $this->json(
             $method,
-            '/api/v1' . $uri,
+            '/api/v1'.$uri,
             $data,
             array_merge($this->getApiHeaders(), $headers)
         );

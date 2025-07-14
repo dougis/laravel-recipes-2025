@@ -3,10 +3,10 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Cookbook;
-use App\Models\User;
 use App\Models\Recipe;
-use Tests\TestCase;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class CookbookTest extends TestCase
 {
@@ -31,7 +31,7 @@ class CookbookTest extends TestCase
             'cover_image' => 'test-cover.jpg',
             'recipe_ids' => [
                 ['recipe_id' => 'recipe1', 'order' => 1],
-                ['recipe_id' => 'recipe2', 'order' => 2]
+                ['recipe_id' => 'recipe2', 'order' => 2],
             ],
             'is_private' => false,
         ]);
@@ -57,7 +57,7 @@ class CookbookTest extends TestCase
             'is_private',
         ];
 
-        $cookbook = new Cookbook();
+        $cookbook = new Cookbook;
         $this->assertEquals($fillable, $cookbook->getFillable());
     }
 
@@ -89,7 +89,7 @@ class CookbookTest extends TestCase
      */
     public function test_recipes_relationship()
     {
-        $cookbook = new Cookbook();
+        $cookbook = new Cookbook;
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsToMany::class, $cookbook->recipes());
     }
 
@@ -157,7 +157,7 @@ class CookbookTest extends TestCase
         // Remove middle recipe
         $cookbook->removeRecipe('recipe2');
         $this->assertCount(2, $cookbook->recipe_ids);
-        
+
         // Check that recipe2 is removed and array is reindexed
         $recipeIds = array_column($cookbook->recipe_ids, 'recipe_id');
         $this->assertContains('recipe1', $recipeIds);
@@ -204,10 +204,10 @@ class CookbookTest extends TestCase
         // Check that recipes are properly reordered
         $this->assertEquals('recipe3', $cookbook->recipe_ids[0]['recipe_id']);
         $this->assertEquals(1, $cookbook->recipe_ids[0]['order']);
-        
+
         $this->assertEquals('recipe1', $cookbook->recipe_ids[1]['recipe_id']);
         $this->assertEquals(2, $cookbook->recipe_ids[1]['order']);
-        
+
         $this->assertEquals('recipe2', $cookbook->recipe_ids[2]['recipe_id']);
         $this->assertEquals(3, $cookbook->recipe_ids[2]['order']);
     }
@@ -258,7 +258,7 @@ class CookbookTest extends TestCase
             'name' => 'Test Cookbook',
             'recipe_ids' => [
                 ['recipe_id' => 'recipe1', 'order' => 1],
-                ['recipe_id' => 'recipe2', 'order' => 2]
+                ['recipe_id' => 'recipe2', 'order' => 2],
             ],
         ]);
 
@@ -275,7 +275,7 @@ class CookbookTest extends TestCase
      */
     public function test_mongodb_connection()
     {
-        $cookbook = new Cookbook();
+        $cookbook = new Cookbook;
         $this->assertEquals('mongodb', $cookbook->getConnectionName());
         $this->assertEquals('cookbooks', $cookbook->getTable());
     }

@@ -13,13 +13,12 @@ use Illuminate\Support\Facades\Auth;
 class RecipeController extends Controller
 {
     protected $recipeService;
+
     protected $pdfService;
 
     /**
      * Create a new controller instance.
      *
-     * @param  \App\Services\RecipeService  $recipeService
-     * @param  \App\Services\PDFService  $pdfService
      * @return void
      */
     public function __construct(RecipeService $recipeService, PDFService $pdfService)
@@ -31,7 +30,6 @@ class RecipeController extends Controller
     /**
      * Display a listing of the user's recipes.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
@@ -41,14 +39,13 @@ class RecipeController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data' => $recipes
+            'data' => $recipes,
         ]);
     }
 
     /**
      * Display a listing of public recipes.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function getPublicRecipes(Request $request)
@@ -57,14 +54,13 @@ class RecipeController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data' => $recipes
+            'data' => $recipes,
         ]);
     }
 
     /**
      * Store a newly created recipe in storage.
      *
-     * @param  \App\Http\Requests\Api\V1\RecipeRequest  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(RecipeRequest $request)
@@ -72,10 +68,10 @@ class RecipeController extends Controller
         $user = Auth::user();
 
         // Check if user can create more recipes
-        if (!$user->canCreateRecipe()) {
+        if (! $user->canCreateRecipe()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'You have reached your recipe limit. Please upgrade your subscription to create more recipes.'
+                'message' => 'You have reached your recipe limit. Please upgrade your subscription to create more recipes.',
             ], 403);
         }
 
@@ -84,7 +80,7 @@ class RecipeController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Recipe created successfully',
-            'data' => $recipe
+            'data' => $recipe,
         ], 201);
     }
 
@@ -99,31 +95,30 @@ class RecipeController extends Controller
         $recipe = $this->recipeService->getRecipe($id);
 
         // Check if recipe exists
-        if (!$recipe) {
+        if (! $recipe) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Recipe not found'
+                'message' => 'Recipe not found',
             ], 404);
         }
 
         // Check if user has access to this recipe
-        if (!$this->recipeService->userCanAccessRecipe(Auth::id(), $recipe)) {
+        if (! $this->recipeService->userCanAccessRecipe(Auth::id(), $recipe)) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'You do not have permission to view this recipe'
+                'message' => 'You do not have permission to view this recipe',
             ], 403);
         }
 
         return response()->json([
             'status' => 'success',
-            'data' => $recipe
+            'data' => $recipe,
         ]);
     }
 
     /**
      * Update the specified recipe in storage.
      *
-     * @param  \App\Http\Requests\Api\V1\RecipeRequest  $request
      * @param  string  $id
      * @return \Illuminate\Http\JsonResponse
      */
@@ -132,18 +127,18 @@ class RecipeController extends Controller
         $recipe = Recipe::find($id);
 
         // Check if recipe exists
-        if (!$recipe) {
+        if (! $recipe) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Recipe not found'
+                'message' => 'Recipe not found',
             ], 404);
         }
 
         // Check if user owns this recipe
-        if ($recipe->user_id != Auth::id() && !Auth::user()->isAdmin()) {
+        if ($recipe->user_id != Auth::id() && ! Auth::user()->isAdmin()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'You do not have permission to update this recipe'
+                'message' => 'You do not have permission to update this recipe',
             ], 403);
         }
 
@@ -152,7 +147,7 @@ class RecipeController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Recipe updated successfully',
-            'data' => $recipe
+            'data' => $recipe,
         ]);
     }
 
@@ -167,18 +162,18 @@ class RecipeController extends Controller
         $recipe = Recipe::find($id);
 
         // Check if recipe exists
-        if (!$recipe) {
+        if (! $recipe) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Recipe not found'
+                'message' => 'Recipe not found',
             ], 404);
         }
 
         // Check if user owns this recipe
-        if ($recipe->user_id != Auth::id() && !Auth::user()->isAdmin()) {
+        if ($recipe->user_id != Auth::id() && ! Auth::user()->isAdmin()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'You do not have permission to delete this recipe'
+                'message' => 'You do not have permission to delete this recipe',
             ], 403);
         }
 
@@ -186,7 +181,7 @@ class RecipeController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Recipe deleted successfully'
+            'message' => 'Recipe deleted successfully',
         ]);
     }
 
@@ -202,26 +197,26 @@ class RecipeController extends Controller
         $user = Auth::user();
 
         // Check if recipe exists
-        if (!$recipe) {
+        if (! $recipe) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Recipe not found'
+                'message' => 'Recipe not found',
             ], 404);
         }
 
         // Check if user owns this recipe
-        if ($recipe->user_id != $user->id && !$user->isAdmin()) {
+        if ($recipe->user_id != $user->id && ! $user->isAdmin()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'You do not have permission to update this recipe'
+                'message' => 'You do not have permission to update this recipe',
             ], 403);
         }
 
         // Check if user has Tier 2 access for privacy control
-        if (!$user->hasTier2Access() && !$user->isAdmin()) {
+        if (! $user->hasTier2Access() && ! $user->isAdmin()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Privacy control is only available for Tier 2 subscribers'
+                'message' => 'Privacy control is only available for Tier 2 subscribers',
             ], 403);
         }
 
@@ -230,14 +225,13 @@ class RecipeController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Recipe privacy updated successfully',
-            'data' => $recipe
+            'data' => $recipe,
         ]);
     }
 
     /**
      * Search for recipes.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function searchRecipes(Request $request)
@@ -250,7 +244,7 @@ class RecipeController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data' => $recipes
+            'data' => $recipes,
         ]);
     }
 
@@ -265,24 +259,24 @@ class RecipeController extends Controller
         $recipe = Recipe::find($id);
 
         // Check if recipe exists
-        if (!$recipe) {
+        if (! $recipe) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Recipe not found'
+                'message' => 'Recipe not found',
             ], 404);
         }
 
         // Check if user has access to this recipe
-        if (!$this->recipeService->userCanAccessRecipe(Auth::id(), $recipe)) {
+        if (! $this->recipeService->userCanAccessRecipe(Auth::id(), $recipe)) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'You do not have permission to view this recipe'
+                'message' => 'You do not have permission to view this recipe',
             ], 403);
         }
 
         $pdf = $this->pdfService->generateRecipePDF($recipe);
 
-        return $pdf->download('recipe-' . $recipe->id . '.pdf');
+        return $pdf->download('recipe-'.$recipe->id.'.pdf');
     }
 
     /**
@@ -297,43 +291,45 @@ class RecipeController extends Controller
         $recipe = Recipe::find($id);
 
         // Check if recipe exists
-        if (!$recipe) {
+        if (! $recipe) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Recipe not found'
+                'message' => 'Recipe not found',
             ], 404);
         }
 
         // Check if user has access to this recipe
-        if (!$this->recipeService->userCanAccessRecipe(Auth::id(), $recipe)) {
+        if (! $this->recipeService->userCanAccessRecipe(Auth::id(), $recipe)) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'You do not have permission to view this recipe'
+                'message' => 'You do not have permission to view this recipe',
             ], 403);
         }
 
         // Check if user has Tier 1 access for export functionality
         $user = Auth::user();
-        if (!$user->hasTier1Access() && !$user->isAdmin()) {
+        if (! $user->hasTier1Access() && ! $user->isAdmin()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Export functionality is only available for Tier 1 and Tier 2 subscribers'
+                'message' => 'Export functionality is only available for Tier 1 and Tier 2 subscribers',
             ], 403);
         }
 
         switch ($format) {
             case 'pdf':
                 $pdf = $this->pdfService->generateRecipePDF($recipe);
-                return $pdf->download('recipe-' . $recipe->id . '.pdf');
+
+                return $pdf->download('recipe-'.$recipe->id.'.pdf');
             case 'txt':
                 $content = $this->recipeService->generateRecipeText($recipe);
+
                 return response($content)
                     ->header('Content-Type', 'text/plain')
-                    ->header('Content-Disposition', 'attachment; filename="recipe-' . $recipe->id . '.txt"');
+                    ->header('Content-Disposition', 'attachment; filename="recipe-'.$recipe->id.'.txt"');
             default:
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Unsupported export format'
+                    'message' => 'Unsupported export format',
                 ], 400);
         }
     }

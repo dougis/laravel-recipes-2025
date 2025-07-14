@@ -10,6 +10,7 @@ class Course extends Model
     use HasFactory;
 
     protected $connection = 'mongodb';
+
     protected $collection = 'courses';
 
     /**

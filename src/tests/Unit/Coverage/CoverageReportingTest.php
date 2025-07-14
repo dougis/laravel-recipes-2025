@@ -11,9 +11,9 @@ class CoverageReportingTest extends TestCase
      */
     public function test_coverage_reporting_configuration_exists()
     {
-        $ciFilePath = __DIR__ . '/../../../../.github/workflows/ci-cd.yml';
+        $ciFilePath = __DIR__.'/../../../../.github/workflows/ci-cd.yml';
         $this->assertFileExists($ciFilePath, 'CI/CD workflow file should exist');
-        
+
         $ciContent = file_get_contents($ciFilePath);
         $this->assertStringContainsString('coverage', $ciContent, 'CI workflow should contain coverage configuration');
     }
@@ -23,9 +23,9 @@ class CoverageReportingTest extends TestCase
      */
     public function test_phpunit_coverage_configuration()
     {
-        $phpunitPath = __DIR__ . '/../../../phpunit.xml';
+        $phpunitPath = __DIR__.'/../../../phpunit.xml';
         $this->assertFileExists($phpunitPath, 'PHPUnit configuration should exist');
-        
+
         $phpunitContent = file_get_contents($phpunitPath);
         $this->assertStringContainsString('<source>', $phpunitContent, 'PHPUnit should have source configuration for coverage');
         $this->assertStringContainsString('<include>', $phpunitContent, 'PHPUnit should include app directory for coverage');
@@ -38,9 +38,9 @@ class CoverageReportingTest extends TestCase
     {
         // Test that we can download and verify Codacy coverage reporter
         $expectedUrl = 'https://coverage.codacy.com/get.sh';
-        
+
         // Verify URL is accessible (in real implementation)
-        $this->assertTrue(true, 'Codacy coverage reporter should be installable from ' . $expectedUrl);
+        $this->assertTrue(true, 'Codacy coverage reporter should be installable from '.$expectedUrl);
     }
 
     /**
@@ -51,9 +51,9 @@ class CoverageReportingTest extends TestCase
         // Verify that PHPUnit can generate LCOV format
         $testCommand = 'php artisan test --coverage-clover=test-coverage.xml';
         $this->assertIsString($testCommand, 'Test command should support coverage output');
-        
+
         // Clean up any test files
-        $testFile = __DIR__ . '/../../../test-coverage.xml';
+        $testFile = __DIR__.'/../../../test-coverage.xml';
         if (file_exists($testFile)) {
             unlink($testFile);
         }
@@ -68,10 +68,10 @@ class CoverageReportingTest extends TestCase
         $mockCoverageData = [
             'total_lines' => 1000,
             'covered_lines' => 800,
-            'coverage_percentage' => 80.0
+            'coverage_percentage' => 80.0,
         ];
-        
-        $this->assertGreaterThanOrEqual(70, $mockCoverageData['coverage_percentage'], 
+
+        $this->assertGreaterThanOrEqual(70, $mockCoverageData['coverage_percentage'],
             'Coverage should meet minimum threshold of 70%');
     }
 
@@ -82,9 +82,9 @@ class CoverageReportingTest extends TestCase
     {
         // In CI environment, these should be set
         $requiredEnvVars = [
-            'CODACY_PROJECT_TOKEN' // This will be set in CI secrets
+            'CODACY_PROJECT_TOKEN', // This will be set in CI secrets
         ];
-        
+
         // For local testing, we just verify the concept
         foreach ($requiredEnvVars as $envVar) {
             $this->assertIsString($envVar, "Environment variable $envVar should be configurable");
@@ -98,11 +98,11 @@ class CoverageReportingTest extends TestCase
     {
         $unitCoverage = ['lines' => 100, 'covered' => 80];
         $featureCoverage = ['lines' => 200, 'covered' => 160];
-        
+
         $totalLines = $unitCoverage['lines'] + $featureCoverage['lines'];
         $totalCovered = $unitCoverage['covered'] + $featureCoverage['covered'];
         $combinedCoverage = ($totalCovered / $totalLines) * 100;
-        
+
         $this->assertEquals(80.0, $combinedCoverage, 'Coverage combination should calculate correctly');
     }
 }
