@@ -474,12 +474,12 @@ class RecipeControllerTest extends TestCase
         $otherUser = $this->createUser();
 
         // Create user's own recipes (mix of public and private)
-        $userRecipe1 = $this->createRecipe($user, [
+        $this->createRecipe($user, [
             'name' => 'My Public Recipe',
             'is_private' => false,
         ]);
 
-        $userRecipe2 = $this->createRecipe($user, [
+        $this->createRecipe($user, [
             'name' => 'My Private Recipe',
             'is_private' => true,
         ]);
