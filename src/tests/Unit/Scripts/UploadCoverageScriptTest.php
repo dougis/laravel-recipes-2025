@@ -43,30 +43,36 @@ class UploadCoverageScriptTest extends TestCase
         // Create a temporary directory without coverage files
         $tempDir = sys_get_temp_dir().'/test_coverage_'.uniqid();
         mkdir($tempDir);
-
-        // Mock the PROJECT_ROOT to point to our temp directory
-        $modifiedScript = str_replace(
-            'PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"',
-            "PROJECT_ROOT=\"{$tempDir}\"",
-            file_get_contents($this->scriptPath)
-        );
-
         $tempScriptPath = $tempDir.'/test_script.sh';
-        file_put_contents($tempScriptPath, $modifiedScript);
-        chmod($tempScriptPath, 0755);
 
-        // Run check command
-        $output = shell_exec("CODACY_PROJECT_TOKEN=test bash {$tempScriptPath} check 2>&1");
+        try {
+            // Mock the PROJECT_ROOT to point to our temp directory
+            $modifiedScript = str_replace(
+                'PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"',
+                "PROJECT_ROOT=\"{$tempDir}\"",
+                file_get_contents($this->scriptPath)
+            );
 
-        $this->assertStringContainsString('No coverage files found', $output);
-        $this->assertStringContainsString('coverage-unit.xml', $output);
-        $this->assertStringContainsString('coverage-feature.xml', $output);
-        $this->assertStringContainsString('coverage.xml', $output);
-        $this->assertStringContainsString('coverage/lcov.info', $output);
+            file_put_contents($tempScriptPath, $modifiedScript);
+            chmod($tempScriptPath, 0755);
 
-        // Clean up
-        unlink($tempScriptPath);
-        rmdir($tempDir);
+            // Run check command
+            $output = shell_exec("CODACY_PROJECT_TOKEN=test bash {$tempScriptPath} check 2>&1");
+
+            $this->assertStringContainsString('No coverage files found', $output);
+            $this->assertStringContainsString('coverage-unit.xml', $output);
+            $this->assertStringContainsString('coverage-feature.xml', $output);
+            $this->assertStringContainsString('coverage.xml', $output);
+            $this->assertStringContainsString('coverage/lcov.info', $output);
+        } finally {
+            // Clean up
+            if (file_exists($tempScriptPath)) {
+                unlink($tempScriptPath);
+            }
+            if (is_dir($tempDir)) {
+                rmdir($tempDir);
+            }
+        }
     }
 
     /** @test */
@@ -75,37 +81,50 @@ class UploadCoverageScriptTest extends TestCase
         // Create a temporary directory with PHP coverage files
         $tempDir = sys_get_temp_dir().'/test_coverage_'.uniqid();
         mkdir($tempDir);
-
-        // Create mock coverage files
-        file_put_contents($tempDir.'/coverage-unit.xml', '<?xml version="1.0"?><coverage></coverage>');
-        file_put_contents($tempDir.'/coverage-feature.xml', '<?xml version="1.0"?><coverage></coverage>');
-        file_put_contents($tempDir.'/coverage.xml', '<?xml version="1.0"?><coverage></coverage>');
-
-        // Mock the PROJECT_ROOT to point to our temp directory
-        $modifiedScript = str_replace(
-            'PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"',
-            "PROJECT_ROOT=\"{$tempDir}\"",
-            file_get_contents($this->scriptPath)
-        );
-
         $tempScriptPath = $tempDir.'/test_script.sh';
-        file_put_contents($tempScriptPath, $modifiedScript);
-        chmod($tempScriptPath, 0755);
+        $coverageFiles = [
+            $tempDir.'/coverage-unit.xml',
+            $tempDir.'/coverage-feature.xml',
+            $tempDir.'/coverage.xml',
+        ];
 
-        // Run check command
-        $output = shell_exec("CODACY_PROJECT_TOKEN=test bash {$tempScriptPath} check 2>&1");
+        try {
+            // Create mock coverage files
+            foreach ($coverageFiles as $file) {
+                file_put_contents($file, '<?xml version="1.0"?><coverage></coverage>');
+            }
 
-        $this->assertStringContainsString('Found 3 coverage file(s)', $output);
-        $this->assertStringContainsString('coverage-unit.xml', $output);
-        $this->assertStringContainsString('coverage-feature.xml', $output);
-        $this->assertStringContainsString('coverage.xml', $output);
+            // Mock the PROJECT_ROOT to point to our temp directory
+            $modifiedScript = str_replace(
+                'PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"',
+                "PROJECT_ROOT=\"{$tempDir}\"",
+                file_get_contents($this->scriptPath)
+            );
 
-        // Clean up
-        unlink($tempScriptPath);
-        unlink($tempDir.'/coverage-unit.xml');
-        unlink($tempDir.'/coverage-feature.xml');
-        unlink($tempDir.'/coverage.xml');
-        rmdir($tempDir);
+            file_put_contents($tempScriptPath, $modifiedScript);
+            chmod($tempScriptPath, 0755);
+
+            // Run check command
+            $output = shell_exec("CODACY_PROJECT_TOKEN=test bash {$tempScriptPath} check 2>&1");
+
+            $this->assertStringContainsString('Found 3 coverage file(s)', $output);
+            $this->assertStringContainsString('coverage-unit.xml', $output);
+            $this->assertStringContainsString('coverage-feature.xml', $output);
+            $this->assertStringContainsString('coverage.xml', $output);
+        } finally {
+            // Clean up
+            if (file_exists($tempScriptPath)) {
+                unlink($tempScriptPath);
+            }
+            foreach ($coverageFiles as $file) {
+                if (file_exists($file)) {
+                    unlink($file);
+                }
+            }
+            if (is_dir($tempDir)) {
+                rmdir($tempDir);
+            }
+        }
     }
 
     /** @test */
@@ -114,33 +133,45 @@ class UploadCoverageScriptTest extends TestCase
         // Create a temporary directory with JavaScript coverage files
         $tempDir = sys_get_temp_dir().'/test_coverage_'.uniqid();
         mkdir($tempDir);
-        mkdir($tempDir.'/coverage');
-
-        // Create mock LCOV coverage file
-        file_put_contents($tempDir.'/coverage/lcov.info', 'TN:\nSF:src/example.js\nFNF:0\nFNH:0\nLF:10\nLH:8\nend_of_record');
-
-        // Mock the PROJECT_ROOT to point to our temp directory
-        $modifiedScript = str_replace(
-            'PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"',
-            "PROJECT_ROOT=\"{$tempDir}\"",
-            file_get_contents($this->scriptPath)
-        );
-
+        $coverageDir = $tempDir.'/coverage';
+        mkdir($coverageDir);
         $tempScriptPath = $tempDir.'/test_script.sh';
-        file_put_contents($tempScriptPath, $modifiedScript);
-        chmod($tempScriptPath, 0755);
+        $lcovFile = $coverageDir.'/lcov.info';
 
-        // Run check command
-        $output = shell_exec("CODACY_PROJECT_TOKEN=test bash {$tempScriptPath} check 2>&1");
+        try {
+            // Create mock LCOV coverage file
+            file_put_contents($lcovFile, 'TN:\nSF:src/example.js\nFNF:0\nFNH:0\nLF:10\nLH:8\nend_of_record');
 
-        $this->assertStringContainsString('Found 1 coverage file(s)', $output);
-        $this->assertStringContainsString('coverage/lcov.info', $output);
+            // Mock the PROJECT_ROOT to point to our temp directory
+            $modifiedScript = str_replace(
+                'PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"',
+                "PROJECT_ROOT=\"{$tempDir}\"",
+                file_get_contents($this->scriptPath)
+            );
 
-        // Clean up
-        unlink($tempScriptPath);
-        unlink($tempDir.'/coverage/lcov.info');
-        rmdir($tempDir.'/coverage');
-        rmdir($tempDir);
+            file_put_contents($tempScriptPath, $modifiedScript);
+            chmod($tempScriptPath, 0755);
+
+            // Run check command
+            $output = shell_exec("CODACY_PROJECT_TOKEN=test bash {$tempScriptPath} check 2>&1");
+
+            $this->assertStringContainsString('Found 1 coverage file(s)', $output);
+            $this->assertStringContainsString('coverage/lcov.info', $output);
+        } finally {
+            // Clean up
+            if (file_exists($tempScriptPath)) {
+                unlink($tempScriptPath);
+            }
+            if (file_exists($lcovFile)) {
+                unlink($lcovFile);
+            }
+            if (is_dir($coverageDir)) {
+                rmdir($coverageDir);
+            }
+            if (is_dir($tempDir)) {
+                rmdir($tempDir);
+            }
+        }
     }
 
     /** @test */
@@ -178,26 +209,6 @@ class UploadCoverageScriptTest extends TestCase
         $this->assertStringNotContainsString('echo "$file_format" | tr', $scriptContent);
     }
 
-    /** @test */
-    public function script_should_map_file_types_to_proper_languages()
-    {
-        // This test defines the expected behavior after the fix
-        // LCOV files should map to 'javascript' language
-        // XML files should map to 'php' language
-
-        // These assertions will pass after we implement the fix
-        $expectedMappings = [
-            'lcov.info' => 'javascript',
-            'coverage.xml' => 'php',
-            'coverage-unit.xml' => 'php',
-            'coverage-feature.xml' => 'php',
-        ];
-
-        foreach ($expectedMappings as $file => $expectedLanguage) {
-            $this->assertIsString($expectedLanguage);
-            $this->assertNotEmpty($expectedLanguage);
-        }
-    }
 
     /** @test */
     public function script_handles_usage_help()
