@@ -75,13 +75,13 @@ abstract class UploadCoverageScriptTestBase extends TestCase
 
             $output = stream_get_contents($pipes[1]);
             $error = stream_get_contents($pipes[2]);
-            
+
             fclose($pipes[1]);
             fclose($pipes[2]);
 
             proc_close($process);
 
-            return $output . $error;
+            return $output.$error;
         }
 
         return '';

@@ -37,7 +37,7 @@ class RecipeController extends Controller
         $user = Auth::user();
         $page = $request->get('page', 1);
         $limit = $request->get('limit', 10);
-        
+
         $result = $this->recipeService->getUserRecipes($user->id, $page, $limit);
 
         return response()->json([
@@ -55,7 +55,7 @@ class RecipeController extends Controller
     {
         $page = $request->get('page', 1);
         $limit = $request->get('limit', 10);
-        
+
         $result = $this->recipeService->getPublicRecipes($page, $limit);
 
         return response()->json([

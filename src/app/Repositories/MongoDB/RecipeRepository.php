@@ -85,11 +85,11 @@ class RecipeRepository implements RecipeRepositoryInterface
     public function getUserRecipes($userId, $page = 1, $limit = 10)
     {
         $query = Recipe::where('user_id', $userId);
-        
+
         $total = $query->count();
         $recipes = $query->skip(($page - 1) * $limit)
-                        ->take($limit)
-                        ->get();
+            ->take($limit)
+            ->get();
 
         return [
             'recipes' => $recipes,
@@ -98,7 +98,7 @@ class RecipeRepository implements RecipeRepositoryInterface
                 'per_page' => (int) $limit,
                 'total' => $total,
                 'last_page' => ceil($total / $limit),
-            ]
+            ],
         ];
     }
 
@@ -113,13 +113,13 @@ class RecipeRepository implements RecipeRepositoryInterface
     {
         $query = Recipe::where(function ($q) {
             $q->where('is_private', false)
-              ->orWhereNull('is_private');
+                ->orWhereNull('is_private');
         });
-        
+
         $total = $query->count();
         $recipes = $query->skip(($page - 1) * $limit)
-                        ->take($limit)
-                        ->get();
+            ->take($limit)
+            ->get();
 
         return [
             'recipes' => $recipes,
@@ -128,7 +128,7 @@ class RecipeRepository implements RecipeRepositoryInterface
                 'per_page' => (int) $limit,
                 'total' => $total,
                 'last_page' => ceil($total / $limit),
-            ]
+            ],
         ];
     }
 
@@ -167,11 +167,11 @@ class RecipeRepository implements RecipeRepositoryInterface
 
         // Get total count
         $total = $baseQuery->count();
-        
+
         // Get paginated results
         $recipes = $baseQuery->skip(($page - 1) * $limit)
-                            ->take($limit)
-                            ->get();
+            ->take($limit)
+            ->get();
 
         return [
             'recipes' => $recipes,
@@ -180,7 +180,7 @@ class RecipeRepository implements RecipeRepositoryInterface
                 'per_page' => (int) $limit,
                 'total' => $total,
                 'last_page' => ceil($total / $limit),
-            ]
+            ],
         ];
     }
 }
