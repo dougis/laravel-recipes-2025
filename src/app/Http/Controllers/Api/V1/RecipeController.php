@@ -249,7 +249,9 @@ class RecipeController extends Controller
         $page = $request->get('page', 1);
         $limit = $request->get('limit', 10);
 
-        $result = $this->recipeService->searchRecipes($request->query('query'), Auth::id(), $page, $limit);
+        $user = $request->user();
+        $userId = $user ? $user->id : null;
+        $result = $this->recipeService->searchRecipes($request->query('query'), $userId, $page, $limit);
 
         return response()->json([
             'status' => 'success',

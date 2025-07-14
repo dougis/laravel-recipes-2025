@@ -7,6 +7,12 @@ use App\Repositories\Interfaces\RecipeRepositoryInterface;
 
 class RecipeRepository implements RecipeRepositoryInterface
 {
+    protected $model;
+
+    public function __construct(Recipe $model)
+    {
+        $this->model = $model;
+    }
     /**
      * Get all recipes.
      *
@@ -84,7 +90,7 @@ class RecipeRepository implements RecipeRepositoryInterface
      */
     public function getUserRecipes($userId, $page = 1, $limit = 10)
     {
-        $query = Recipe::where('user_id', $userId);
+        $query = $this->model->where('user_id', $userId);
 
         $total = $query->count();
         $recipes = $query->skip(($page - 1) * $limit)
