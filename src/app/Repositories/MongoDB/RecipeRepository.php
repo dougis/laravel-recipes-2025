@@ -4,7 +4,6 @@ namespace App\Repositories\MongoDB;
 
 use App\Models\Recipe;
 use App\Repositories\Interfaces\RecipeRepositoryInterface;
-use Illuminate\Support\Facades\Auth;
 
 class RecipeRepository implements RecipeRepositoryInterface
 {
@@ -32,7 +31,6 @@ class RecipeRepository implements RecipeRepositoryInterface
     /**
      * Create a new recipe.
      *
-     * @param  array  $data
      * @return \App\Models\Recipe
      */
     public function create(array $data)
@@ -44,19 +42,18 @@ class RecipeRepository implements RecipeRepositoryInterface
      * Update a recipe.
      *
      * @param  string  $id
-     * @param  array  $data
      * @return \App\Models\Recipe
      */
     public function update($id, array $data)
     {
         $recipe = $this->find($id);
-        
-        if (!$recipe) {
+
+        if (! $recipe) {
             return null;
         }
-        
+
         $recipe->update($data);
-        
+
         return $recipe;
     }
 
@@ -69,11 +66,11 @@ class RecipeRepository implements RecipeRepositoryInterface
     public function delete($id)
     {
         $recipe = $this->find($id);
-        
-        if (!$recipe) {
+
+        if (! $recipe) {
             return false;
         }
-        
+
         return $recipe->delete();
     }
 
@@ -111,26 +108,26 @@ class RecipeRepository implements RecipeRepositoryInterface
     {
         // Build base query
         $baseQuery = Recipe::search($query);
-        
+
         // Apply visibility restrictions
         if ($userId) {
             // User can see their own recipes (private or public)
             // Plus any public recipes from other users
-            $baseQuery->where(function($q) use ($userId) {
+            $baseQuery->where(function ($q) use ($userId) {
                 $q->where('user_id', $userId)
-                  ->orWhere(function($q2) {
-                      $q2->where('is_private', false)
-                         ->orWhereNull('is_private');
-                  });
+                    ->orWhere(function ($q2) {
+                        $q2->where('is_private', false)
+                            ->orWhereNull('is_private');
+                    });
             });
         } else {
             // Guest can only see public recipes
-            $baseQuery->where(function($q) {
+            $baseQuery->where(function ($q) {
                 $q->where('is_private', false)
-                  ->orWhereNull('is_private');
+                    ->orWhereNull('is_private');
             });
         }
-        
+
         // Get results
         return $baseQuery->get();
     }

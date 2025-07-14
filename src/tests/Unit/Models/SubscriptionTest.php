@@ -3,8 +3,8 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Subscription;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class SubscriptionTest extends TestCase
 {
@@ -47,7 +47,7 @@ class SubscriptionTest extends TestCase
             'features',
         ];
 
-        $subscription = new Subscription();
+        $subscription = new Subscription;
         $this->assertEquals($fillable, $subscription->getFillable());
     }
 
@@ -95,7 +95,7 @@ class SubscriptionTest extends TestCase
      */
     public function test_mongodb_connection()
     {
-        $subscription = new Subscription();
+        $subscription = new Subscription;
         $this->assertEquals('mongodb', $subscription->getConnectionName());
         $this->assertEquals('subscriptions', $subscription->getTable());
     }

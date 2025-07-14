@@ -2,24 +2,24 @@
 
 namespace Tests\Unit\Services;
 
-use Tests\TestCase;
-use App\Services\CookbookService;
 use App\Models\Cookbook;
-use App\Models\Recipe;
 use App\Models\User;
 use App\Repositories\Interfaces\CookbookRepositoryInterface;
+use App\Services\CookbookService;
 use Illuminate\Support\Facades\Auth;
 use Mockery;
+use Tests\TestCase;
 
 class CookbookServiceTest extends TestCase
 {
     protected $cookbookRepository;
+
     protected $cookbookService;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Mock the repository interface
         $this->cookbookRepository = Mockery::mock(CookbookRepositoryInterface::class);
         $this->cookbookService = new CookbookService($this->cookbookRepository);
@@ -98,7 +98,7 @@ class CookbookServiceTest extends TestCase
         $userId = 'user123';
         $data = [
             'name' => 'New Cookbook',
-            'description' => 'Test description'
+            'description' => 'Test description',
         ];
         $expectedData = array_merge($data, ['user_id' => $userId]);
         $expectedCookbook = new Cookbook($expectedData);
@@ -122,7 +122,7 @@ class CookbookServiceTest extends TestCase
         $cookbookId = 'cookbook123';
         $data = [
             'name' => 'Updated Cookbook',
-            'description' => 'Updated description'
+            'description' => 'Updated description',
         ];
         $expectedCookbook = new Cookbook(array_merge($data, ['_id' => $cookbookId]));
 
@@ -163,7 +163,7 @@ class CookbookServiceTest extends TestCase
         $cookbookId = 'cookbook123';
         $cookbook = Mockery::mock(Cookbook::class);
         $cookbook->is_private = false;
-        
+
         $cookbook->shouldReceive('save')->once();
 
         $this->cookbookRepository
@@ -202,10 +202,10 @@ class CookbookServiceTest extends TestCase
         // Arrange
         $cookbookId = 'cookbook123';
         $recipeIds = ['recipe1', 'recipe2'];
-        
+
         $cookbook = Mockery::mock(Cookbook::class);
         $cookbook->recipe_ids = [
-            ['recipe_id' => 'existing_recipe', 'order' => 0]
+            ['recipe_id' => 'existing_recipe', 'order' => 0],
         ];
         $cookbook->shouldReceive('save')->once();
 
@@ -231,10 +231,10 @@ class CookbookServiceTest extends TestCase
         // Arrange
         $cookbookId = 'cookbook123';
         $recipeIds = ['existing_recipe', 'new_recipe'];
-        
+
         $cookbook = Mockery::mock(Cookbook::class);
         $cookbook->recipe_ids = [
-            ['recipe_id' => 'existing_recipe', 'order' => 0]
+            ['recipe_id' => 'existing_recipe', 'order' => 0],
         ];
         $cookbook->shouldReceive('save')->once();
 
@@ -277,12 +277,12 @@ class CookbookServiceTest extends TestCase
         // Arrange
         $cookbookId = 'cookbook123';
         $recipeToRemove = 'recipe2';
-        
+
         $cookbook = Mockery::mock(Cookbook::class);
         $cookbook->recipe_ids = [
             ['recipe_id' => 'recipe1', 'order' => 0],
             ['recipe_id' => 'recipe2', 'order' => 1],
-            ['recipe_id' => 'recipe3', 'order' => 2]
+            ['recipe_id' => 'recipe3', 'order' => 2],
         ];
         $cookbook->shouldReceive('save')->once();
 
@@ -327,14 +327,14 @@ class CookbookServiceTest extends TestCase
         $recipeOrder = [
             'recipe1' => 2,
             'recipe2' => 0,
-            'recipe3' => 1
+            'recipe3' => 1,
         ];
-        
+
         $cookbook = Mockery::mock(Cookbook::class);
         $cookbook->recipe_ids = [
             ['recipe_id' => 'recipe1', 'order' => 0],
             ['recipe_id' => 'recipe2', 'order' => 1],
-            ['recipe_id' => 'recipe3', 'order' => 2]
+            ['recipe_id' => 'recipe3', 'order' => 2],
         ];
         $cookbook->shouldReceive('save')->once();
 
@@ -387,10 +387,10 @@ class CookbookServiceTest extends TestCase
         // Arrange
         $userId = 'user123';
         $cookbook = new Cookbook(['_id' => 'cookbook1', 'is_private' => true, 'user_id' => 'other_user']);
-        
+
         $adminUser = Mockery::mock(User::class);
         $adminUser->shouldReceive('isAdmin')->andReturn(true);
-        
+
         Auth::shouldReceive('user')->andReturn($adminUser);
 
         // Act
@@ -405,10 +405,10 @@ class CookbookServiceTest extends TestCase
         // Arrange
         $userId = 'user123';
         $cookbook = new Cookbook(['_id' => 'cookbook1', 'is_private' => true, 'user_id' => 'other_user']);
-        
+
         $normalUser = Mockery::mock(User::class);
         $normalUser->shouldReceive('isAdmin')->andReturn(false);
-        
+
         Auth::shouldReceive('user')->andReturn($normalUser);
 
         // Act

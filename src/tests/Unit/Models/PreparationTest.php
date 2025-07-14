@@ -3,9 +3,8 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Preparation;
-use App\Models\Recipe;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class PreparationTest extends TestCase
 {
@@ -31,7 +30,7 @@ class PreparationTest extends TestCase
     {
         $fillable = ['name'];
 
-        $preparation = new Preparation();
+        $preparation = new Preparation;
         $this->assertEquals($fillable, $preparation->getFillable());
     }
 
@@ -40,7 +39,7 @@ class PreparationTest extends TestCase
      */
     public function test_recipes_relationship()
     {
-        $preparation = new Preparation();
+        $preparation = new Preparation;
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsToMany::class, $preparation->recipes());
     }
 
@@ -49,7 +48,7 @@ class PreparationTest extends TestCase
      */
     public function test_mongodb_connection()
     {
-        $preparation = new Preparation();
+        $preparation = new Preparation;
         $this->assertEquals('mongodb', $preparation->getConnectionName());
         $this->assertEquals('preparations', $preparation->getTable());
     }
@@ -60,9 +59,9 @@ class PreparationTest extends TestCase
     public function test_preparation_creation()
     {
         $preparation = Preparation::create(['name' => 'Grilled']);
-        
+
         $this->assertDatabaseHas('preparations', [
-            'name' => 'Grilled'
+            'name' => 'Grilled',
         ]);
     }
 
@@ -89,7 +88,7 @@ class PreparationTest extends TestCase
      */
     public function test_has_factory_trait()
     {
-        $preparation = new Preparation();
+        $preparation = new Preparation;
         $this->assertTrue(method_exists($preparation, 'factory'));
     }
 }

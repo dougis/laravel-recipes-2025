@@ -3,9 +3,8 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Classification;
-use App\Models\Recipe;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class ClassificationTest extends TestCase
 {
@@ -31,7 +30,7 @@ class ClassificationTest extends TestCase
     {
         $fillable = ['name'];
 
-        $classification = new Classification();
+        $classification = new Classification;
         $this->assertEquals($fillable, $classification->getFillable());
     }
 
@@ -40,7 +39,7 @@ class ClassificationTest extends TestCase
      */
     public function test_recipes_relationship()
     {
-        $classification = new Classification();
+        $classification = new Classification;
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\HasMany::class, $classification->recipes());
     }
 
@@ -49,7 +48,7 @@ class ClassificationTest extends TestCase
      */
     public function test_mongodb_connection()
     {
-        $classification = new Classification();
+        $classification = new Classification;
         $this->assertEquals('mongodb', $classification->getConnectionName());
         $this->assertEquals('classifications', $classification->getTable());
     }
@@ -60,9 +59,9 @@ class ClassificationTest extends TestCase
     public function test_classification_creation()
     {
         $classification = Classification::create(['name' => 'Mexican']);
-        
+
         $this->assertDatabaseHas('classifications', [
-            'name' => 'Mexican'
+            'name' => 'Mexican',
         ]);
     }
 
@@ -71,7 +70,7 @@ class ClassificationTest extends TestCase
      */
     public function test_has_factory_trait()
     {
-        $classification = new Classification();
+        $classification = new Classification;
         $this->assertTrue(method_exists($classification, 'factory'));
     }
 }

@@ -11,9 +11,9 @@ class CodacyIntegrationTest extends TestCase
      */
     public function test_coverage_upload_script_exists()
     {
-        $scriptPath = __DIR__ . '/../../../scripts/upload-coverage.sh';
+        $scriptPath = __DIR__.'/../../../scripts/upload-coverage.sh';
         // Script will be created in implementation
-        $this->assertTrue(true, 'Coverage upload script should be created at ' . $scriptPath);
+        $this->assertTrue(true, 'Coverage upload script should be created at '.$scriptPath);
     }
 
     /**
@@ -22,7 +22,7 @@ class CodacyIntegrationTest extends TestCase
     public function test_coverage_data_formatting()
     {
         $mockLcovData = "TN:\nSF:/path/to/file.php\nFNF:10\nFNH:8\nLF:100\nLH:85\nend_of_record\n";
-        
+
         $this->assertStringContainsString('SF:', $mockLcovData, 'LCOV data should contain source file information');
         $this->assertStringContainsString('LF:', $mockLcovData, 'LCOV data should contain lines found');
         $this->assertStringContainsString('LH:', $mockLcovData, 'LCOV data should contain lines hit');
@@ -34,7 +34,7 @@ class CodacyIntegrationTest extends TestCase
     public function test_coverage_reporter_command()
     {
         $expectedCommand = 'bash <(curl -Ls https://coverage.codacy.com/get.sh)';
-        $this->assertStringContainsString('coverage.codacy.com', $expectedCommand, 
+        $this->assertStringContainsString('coverage.codacy.com', $expectedCommand,
             'Command should use official Codacy coverage endpoint');
     }
 
@@ -45,11 +45,11 @@ class CodacyIntegrationTest extends TestCase
     {
         $coverageFiles = [
             'coverage-unit.xml',
-            'coverage-feature.xml'
+            'coverage-feature.xml',
         ];
-        
+
         foreach ($coverageFiles as $file) {
-            $this->assertStringContainsString('coverage', $file, 
+            $this->assertStringContainsString('coverage', $file,
                 "File $file should be a coverage file");
         }
     }
@@ -60,7 +60,7 @@ class CodacyIntegrationTest extends TestCase
     public function test_coverage_format_handling()
     {
         $supportedFormats = ['clover', 'lcov', 'jacoco'];
-        
+
         foreach ($supportedFormats as $format) {
             $this->assertIsString($format, "Format $format should be supported");
         }
@@ -75,9 +75,9 @@ class CodacyIntegrationTest extends TestCase
             'network_timeout',
             'invalid_token',
             'file_not_found',
-            'invalid_format'
+            'invalid_format',
         ];
-        
+
         foreach ($mockErrorScenarios as $scenario) {
             $this->assertIsString($scenario, "Error scenario $scenario should be handled");
         }

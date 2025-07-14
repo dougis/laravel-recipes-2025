@@ -16,7 +16,6 @@ class UserController extends Controller
     /**
      * Create a new controller instance.
      *
-     * @param  \App\Services\SubscriptionService  $subscriptionService
      * @return void
      */
     public function __construct(SubscriptionService $subscriptionService)
@@ -32,7 +31,7 @@ class UserController extends Controller
     public function getProfile()
     {
         $user = Auth::user();
-        
+
         return response()->json([
             'status' => 'success',
             'data' => [
@@ -44,26 +43,25 @@ class UserController extends Controller
                     'status' => $user->subscription_status,
                     'expires_at' => $user->subscription_expires_at,
                 ],
-            ]
+            ],
         ]);
     }
 
     /**
      * Update user profile.
      *
-     * @param  \App\Http\Requests\Api\V1\UserProfileRequest  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function updateProfile(UserProfileRequest $request)
     {
         $user = Auth::user();
-        
+
         $user->update($request->validated());
-        
+
         return response()->json([
             'status' => 'success',
             'message' => 'Profile updated successfully',
-            'data' => $user
+            'data' => $user,
         ]);
     }
 
@@ -75,19 +73,18 @@ class UserController extends Controller
     public function getSubscription()
     {
         $user = Auth::user();
-        
+
         $subscription = $this->subscriptionService->getUserSubscription($user->id);
-        
+
         return response()->json([
             'status' => 'success',
-            'data' => $subscription
+            'data' => $subscription,
         ]);
     }
 
     /**
      * Update user subscription.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function updateSubscription(Request $request)
@@ -96,25 +93,25 @@ class UserController extends Controller
             'subscription_tier' => 'required|integer|min:0|max:2',
             'payment_method_id' => 'required_if:subscription_tier,1,2|string',
         ]);
-        
+
         $user = Auth::user();
-        
+
         try {
             $subscription = $this->subscriptionService->updateUserSubscription(
                 $user->id,
                 $request->subscription_tier,
                 $request->payment_method_id ?? null
             );
-            
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Subscription updated successfully',
-                'data' => $subscription
+                'data' => $subscription,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to update subscription: ' . $e->getMessage()
+                'message' => 'Failed to update subscription: '.$e->getMessage(),
             ], 400);
         }
     }

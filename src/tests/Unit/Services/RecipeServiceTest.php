@@ -2,23 +2,24 @@
 
 namespace Tests\Unit\Services;
 
-use Tests\TestCase;
-use App\Services\RecipeService;
 use App\Models\Recipe;
 use App\Models\User;
 use App\Repositories\Interfaces\RecipeRepositoryInterface;
+use App\Services\RecipeService;
 use Illuminate\Support\Facades\Auth;
 use Mockery;
+use Tests\TestCase;
 
 class RecipeServiceTest extends TestCase
 {
     protected $recipeRepository;
+
     protected $recipeService;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Mock the repository interface
         $this->recipeRepository = Mockery::mock(RecipeRepositoryInterface::class);
         $this->recipeService = new RecipeService($this->recipeRepository);
@@ -98,7 +99,7 @@ class RecipeServiceTest extends TestCase
         $data = [
             'name' => 'New Recipe',
             'ingredients' => 'Test ingredients',
-            'instructions' => 'Test instructions'
+            'instructions' => 'Test instructions',
         ];
         $expectedData = array_merge($data, ['user_id' => $userId]);
         $expectedRecipe = new Recipe($expectedData);
@@ -122,7 +123,7 @@ class RecipeServiceTest extends TestCase
         $recipeId = 'recipe123';
         $data = [
             'name' => 'Updated Recipe',
-            'ingredients' => 'Updated ingredients'
+            'ingredients' => 'Updated ingredients',
         ];
         $expectedRecipe = new Recipe(array_merge($data, ['_id' => $recipeId]));
 
@@ -163,7 +164,7 @@ class RecipeServiceTest extends TestCase
         $recipeId = 'recipe123';
         $recipe = Mockery::mock(Recipe::class);
         $recipe->is_private = false;
-        
+
         $recipe->shouldReceive('save')->once();
 
         $this->recipeRepository
@@ -251,10 +252,10 @@ class RecipeServiceTest extends TestCase
         // Arrange
         $userId = 'user123';
         $recipe = new Recipe(['_id' => 'recipe1', 'is_private' => true, 'user_id' => 'other_user']);
-        
+
         $adminUser = Mockery::mock(User::class);
         $adminUser->shouldReceive('isAdmin')->andReturn(true);
-        
+
         Auth::shouldReceive('user')->andReturn($adminUser);
 
         // Act
@@ -269,10 +270,10 @@ class RecipeServiceTest extends TestCase
         // Arrange
         $userId = 'user123';
         $recipe = new Recipe(['_id' => 'recipe1', 'is_private' => true, 'user_id' => 'other_user']);
-        
+
         $normalUser = Mockery::mock(User::class);
         $normalUser->shouldReceive('isAdmin')->andReturn(false);
-        
+
         Auth::shouldReceive('user')->andReturn($normalUser);
 
         // Act
@@ -287,7 +288,7 @@ class RecipeServiceTest extends TestCase
         // Arrange
         $source = (object) ['name' => 'Test Source'];
         $classification = (object) ['name' => 'Test Classification'];
-        
+
         $recipe = new Recipe([
             'name' => 'Test Recipe',
             'ingredients' => 'Test ingredients',
@@ -298,9 +299,9 @@ class RecipeServiceTest extends TestCase
             'fat' => 10,
             'cholesterol' => 50,
             'sodium' => 400,
-            'protein' => 20
+            'protein' => 20,
         ]);
-        
+
         $recipe->source = $source;
         $recipe->classification = $classification;
 
@@ -332,7 +333,7 @@ class RecipeServiceTest extends TestCase
         $recipe = new Recipe([
             'name' => 'Simple Recipe',
             'ingredients' => 'Simple ingredients',
-            'instructions' => 'Simple instructions'
+            'instructions' => 'Simple instructions',
         ]);
 
         // Act
@@ -344,7 +345,7 @@ class RecipeServiceTest extends TestCase
         $this->assertStringContainsString('Simple ingredients', $result);
         $this->assertStringContainsString('INSTRUCTIONS:', $result);
         $this->assertStringContainsString('Simple instructions', $result);
-        
+
         // Should not contain optional sections
         $this->assertStringNotContainsString('Source:', $result);
         $this->assertStringNotContainsString('Classification:', $result);

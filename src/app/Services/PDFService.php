@@ -11,24 +11,22 @@ class PDFService
     /**
      * Generate a PDF for a recipe.
      *
-     * @param  \App\Models\Recipe  $recipe
      * @return \Barryvdh\DomPDF\PDF
      */
     public function generateRecipePDF(Recipe $recipe)
     {
         // Load relationships
         $recipe->load(['source', 'classification', 'meals', 'courses', 'preparations']);
-        
+
         $pdf = PDF::loadView('pdfs.recipe', compact('recipe'));
         $pdf->setPaper('a4', 'portrait');
-        
+
         return $pdf;
     }
 
     /**
      * Generate a PDF for a cookbook.
      *
-     * @param  \App\Models\Cookbook  $cookbook
      * @return \Barryvdh\DomPDF\PDF
      */
     public function generateCookbookPDF(Cookbook $cookbook)
@@ -38,7 +36,7 @@ class PDFService
         $recipes = Recipe::whereIn('_id', $recipeIds)
             ->with(['source', 'classification', 'meals', 'courses', 'preparations'])
             ->get();
-        
+
         // Sort recipes by order
         $orderedRecipes = [];
         foreach ($cookbook->recipe_ids ?? [] as $item) {
@@ -50,16 +48,16 @@ class PDFService
                 }
             }
         }
-        
-        usort($orderedRecipes, function($a, $b) {
+
+        usort($orderedRecipes, function ($a, $b) {
             return $a->order <=> $b->order;
         });
-        
+
         $cookbook->recipes = $orderedRecipes;
-        
+
         $pdf = PDF::loadView('pdfs.cookbook', compact('cookbook'));
         $pdf->setPaper('a4', 'portrait');
-        
+
         return $pdf;
     }
 }

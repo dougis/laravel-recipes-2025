@@ -2,13 +2,13 @@
 
 namespace Tests\Unit\Services;
 
-use Tests\TestCase;
-use App\Services\PDFService;
-use App\Models\Recipe;
 use App\Models\Cookbook;
+use App\Models\Recipe;
+use App\Services\PDFService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Barryvdh\DomPDF\PDF as DomPDF;
 use Mockery;
+use Tests\TestCase;
 
 class PDFServiceTest extends TestCase
 {
@@ -17,8 +17,8 @@ class PDFServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
-        $this->pdfService = new PDFService();
+
+        $this->pdfService = new PDFService;
     }
 
     protected function tearDown(): void
@@ -32,7 +32,7 @@ class PDFServiceTest extends TestCase
         // Arrange
         $recipe = Mockery::mock(Recipe::class);
         $mockPdf = Mockery::mock(DomPDF::class);
-        
+
         $recipe->shouldReceive('load')
             ->once()
             ->with(['source', 'classification', 'meals', 'courses', 'preparations'])
@@ -40,7 +40,7 @@ class PDFServiceTest extends TestCase
 
         Pdf::shouldReceive('loadView')
             ->once()
-            ->with('pdfs.recipe', Mockery::on(function($data) use ($recipe) {
+            ->with('pdfs.recipe', Mockery::on(function ($data) use ($recipe) {
                 return isset($data['recipe']) && $data['recipe'] === $recipe;
             }))
             ->andReturn($mockPdf);
@@ -66,14 +66,14 @@ class PDFServiceTest extends TestCase
             'recipe_ids' => [
                 ['recipe_id' => 'recipe1', 'order' => 1],
                 ['recipe_id' => 'recipe2', 'order' => 0],
-                ['recipe_id' => 'recipe3', 'order' => 2]
-            ]
+                ['recipe_id' => 'recipe3', 'order' => 2],
+            ],
         ]);
 
         $recipes = collect([
             new Recipe(['_id' => 'recipe1', 'name' => 'Recipe 1']),
             new Recipe(['_id' => 'recipe2', 'name' => 'Recipe 2']),
-            new Recipe(['_id' => 'recipe3', 'name' => 'Recipe 3'])
+            new Recipe(['_id' => 'recipe3', 'name' => 'Recipe 3']),
         ]);
 
         // Mock Recipe::whereIn chain
@@ -95,14 +95,14 @@ class PDFServiceTest extends TestCase
 
         Pdf::shouldReceive('loadView')
             ->once()
-            ->with('pdfs.cookbook', Mockery::on(function($data) {
+            ->with('pdfs.cookbook', Mockery::on(function ($data) {
                 $cookbook = $data['cookbook'];
-                
+
                 // Check that recipes are properly ordered
-                if (!isset($cookbook->recipes) || count($cookbook->recipes) !== 3) {
+                if (! isset($cookbook->recipes) || count($cookbook->recipes) !== 3) {
                     return false;
                 }
-                
+
                 // Check correct order: recipe2 (order 0), recipe1 (order 1), recipe3 (order 2)
                 return $cookbook->recipes[0]->_id === 'recipe2' &&
                        $cookbook->recipes[1]->_id === 'recipe1' &&
@@ -128,7 +128,7 @@ class PDFServiceTest extends TestCase
         $cookbook = new Cookbook([
             '_id' => 'cookbook123',
             'name' => 'Empty Cookbook',
-            'recipe_ids' => null
+            'recipe_ids' => null,
         ]);
 
         $mockPdf = Mockery::mock(DomPDF::class);
@@ -150,8 +150,9 @@ class PDFServiceTest extends TestCase
 
         Pdf::shouldReceive('loadView')
             ->once()
-            ->with('pdfs.cookbook', Mockery::on(function($data) {
+            ->with('pdfs.cookbook', Mockery::on(function ($data) {
                 $cookbook = $data['cookbook'];
+
                 return isset($cookbook->recipes) && count($cookbook->recipes) === 0;
             }))
             ->andReturn($mockPdf);
@@ -177,14 +178,14 @@ class PDFServiceTest extends TestCase
             'recipe_ids' => [
                 ['recipe_id' => 'recipe1', 'order' => 0],
                 ['recipe_id' => 'missing_recipe', 'order' => 1],
-                ['recipe_id' => 'recipe3', 'order' => 2]
-            ]
+                ['recipe_id' => 'recipe3', 'order' => 2],
+            ],
         ]);
 
         // Only return recipes that exist
         $recipes = collect([
             new Recipe(['_id' => 'recipe1', 'name' => 'Recipe 1']),
-            new Recipe(['_id' => 'recipe3', 'name' => 'Recipe 3'])
+            new Recipe(['_id' => 'recipe3', 'name' => 'Recipe 3']),
         ]);
 
         Recipe::shouldReceive('whereIn')
@@ -205,9 +206,9 @@ class PDFServiceTest extends TestCase
 
         Pdf::shouldReceive('loadView')
             ->once()
-            ->with('pdfs.cookbook', Mockery::on(function($data) {
+            ->with('pdfs.cookbook', Mockery::on(function ($data) {
                 $cookbook = $data['cookbook'];
-                
+
                 // Should only have 2 recipes (missing one should be skipped)
                 return isset($cookbook->recipes) && count($cookbook->recipes) === 2;
             }))
@@ -231,7 +232,7 @@ class PDFServiceTest extends TestCase
         $cookbook = new Cookbook([
             '_id' => 'cookbook123',
             'name' => 'Test Cookbook',
-            'recipe_ids' => []
+            'recipe_ids' => [],
         ]);
 
         Recipe::shouldReceive('whereIn->with->get')
@@ -259,7 +260,7 @@ class PDFServiceTest extends TestCase
         // Arrange
         $recipe = Mockery::mock(Recipe::class);
         $mockPdf = Mockery::mock(DomPDF::class);
-        
+
         $recipe->shouldReceive('load')
             ->andReturnSelf();
 

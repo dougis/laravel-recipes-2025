@@ -1,16 +1,16 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\V1\AuthController;
-use App\Http\Controllers\Api\V1\RecipeController;
-use App\Http\Controllers\Api\V1\CookbookController;
-use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\AdminController;
+use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ClassificationController;
-use App\Http\Controllers\Api\V1\SourceController;
-use App\Http\Controllers\Api\V1\MealController;
+use App\Http\Controllers\Api\V1\CookbookController;
 use App\Http\Controllers\Api\V1\CourseController;
+use App\Http\Controllers\Api\V1\MealController;
 use App\Http\Controllers\Api\V1\PreparationController;
+use App\Http\Controllers\Api\V1\RecipeController;
+use App\Http\Controllers\Api\V1\SourceController;
+use App\Http\Controllers\Api\V1\UserController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +44,7 @@ Route::group(['prefix' => 'users', 'middleware' => 'auth:sanctum'], function () 
 Route::group(['prefix' => 'recipes'], function () {
     Route::get('public', [RecipeController::class, 'getPublicRecipes']);
     Route::get('search', [RecipeController::class, 'searchRecipes']);
-    
+
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [RecipeController::class, 'index']);
         Route::post('/', [RecipeController::class, 'store']);
@@ -53,7 +53,7 @@ Route::group(['prefix' => 'recipes'], function () {
         Route::delete('{id}', [RecipeController::class, 'destroy']);
         Route::put('{id}/privacy', [RecipeController::class, 'togglePrivacy']);
     });
-    
+
     // Print/Export Endpoints for Recipes
     Route::get('{id}/print', [RecipeController::class, 'getPrintableRecipe']);
     Route::get('{id}/export/{format}', [RecipeController::class, 'exportRecipe']);
@@ -62,7 +62,7 @@ Route::group(['prefix' => 'recipes'], function () {
 // Cookbook Endpoints
 Route::group(['prefix' => 'cookbooks'], function () {
     Route::get('public', [CookbookController::class, 'getPublicCookbooks']);
-    
+
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [CookbookController::class, 'index']);
         Route::post('/', [CookbookController::class, 'store']);
@@ -74,7 +74,7 @@ Route::group(['prefix' => 'cookbooks'], function () {
         Route::delete('{id}/recipes/{recipe_id}', [CookbookController::class, 'removeRecipe']);
         Route::put('{id}/recipes/order', [CookbookController::class, 'reorderRecipes']);
     });
-    
+
     // Print/Export Endpoints for Cookbooks
     Route::get('{id}/print', [CookbookController::class, 'getPrintableCookbook']);
     Route::get('{id}/export/{format}', [CookbookController::class, 'exportCookbook']);

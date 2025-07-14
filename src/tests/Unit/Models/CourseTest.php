@@ -3,9 +3,8 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Course;
-use App\Models\Recipe;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class CourseTest extends TestCase
 {
@@ -31,7 +30,7 @@ class CourseTest extends TestCase
     {
         $fillable = ['name'];
 
-        $course = new Course();
+        $course = new Course;
         $this->assertEquals($fillable, $course->getFillable());
     }
 
@@ -40,7 +39,7 @@ class CourseTest extends TestCase
      */
     public function test_recipes_relationship()
     {
-        $course = new Course();
+        $course = new Course;
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsToMany::class, $course->recipes());
     }
 
@@ -49,7 +48,7 @@ class CourseTest extends TestCase
      */
     public function test_mongodb_connection()
     {
-        $course = new Course();
+        $course = new Course;
         $this->assertEquals('mongodb', $course->getConnectionName());
         $this->assertEquals('courses', $course->getTable());
     }
@@ -60,9 +59,9 @@ class CourseTest extends TestCase
     public function test_course_creation()
     {
         $course = Course::create(['name' => 'Main Course']);
-        
+
         $this->assertDatabaseHas('courses', [
-            'name' => 'Main Course'
+            'name' => 'Main Course',
         ]);
     }
 
@@ -87,7 +86,7 @@ class CourseTest extends TestCase
      */
     public function test_has_factory_trait()
     {
-        $course = new Course();
+        $course = new Course;
         $this->assertTrue(method_exists($course, 'factory'));
     }
 }

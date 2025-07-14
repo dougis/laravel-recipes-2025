@@ -101,11 +101,11 @@ return [
                 'name' => 10,
                 'ingredients' => 5,
                 'tags' => 3,
-                'instructions' => 1
+                'instructions' => 1,
             ],
             'default_language' => 'english',
             'language_override' => 'language',
-            'name' => 'recipe_search_index'
+            'name' => 'recipe_search_index',
         ],
     ],
 ];

@@ -102,7 +102,7 @@ class RecipeFactory extends Factory
     {
         $ingredients = [];
         $count = $this->faker->numberBetween(3, 8);
-        
+
         $commonIngredients = [
             '2 cups flour',
             '1 lb chicken breast',
@@ -133,7 +133,7 @@ class RecipeFactory extends Factory
     {
         $steps = [];
         $count = $this->faker->numberBetween(3, 6);
-        
+
         $commonSteps = [
             'Preheat oven to 350°F.',
             'Mix dry ingredients in a large bowl.',
@@ -148,7 +148,7 @@ class RecipeFactory extends Factory
         ];
 
         for ($i = 0; $i < $count; $i++) {
-            $steps[] = ($i + 1) . '. ' . $this->faker->randomElement($commonSteps);
+            $steps[] = ($i + 1).'. '.$this->faker->randomElement($commonSteps);
         }
 
         return implode("\n", $steps);

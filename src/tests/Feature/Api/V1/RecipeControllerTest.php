@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Api\V1;
 
-use Tests\TestCase;
 use App\Models\Recipe;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class RecipeControllerTest extends TestCase
 {
@@ -21,29 +21,29 @@ class RecipeControllerTest extends TestCase
     public function test_authenticated_user_can_create_recipe_with_valid_data()
     {
         $user = $this->actingAsUser();
-        
+
         $recipeData = [
             'name' => 'Test Recipe',
             'ingredients' => 'Test ingredients\nSecond ingredient',
             'instructions' => 'Test instructions\nStep 2',
             'servings' => 4,
             'prep_time' => 15,
-            'cook_time' => 30
+            'cook_time' => 30,
         ];
-        
+
         $response = $this->postApi('/recipes', $recipeData);
-        
+
         $this->assertSuccessResponse($response);
         $response->assertJsonStructure([
             'data' => [
-                'recipe' => ['id', 'name', 'ingredients', 'instructions', 'servings']
-            ]
+                'recipe' => ['id', 'name', 'ingredients', 'instructions', 'servings'],
+            ],
         ]);
-        
+
         $this->assertDatabaseHas('recipes', [
             'name' => 'Test Recipe',
             'user_id' => $user->_id,
-            'servings' => 4
+            'servings' => 4,
         ]);
     }
 
@@ -53,22 +53,22 @@ class RecipeControllerTest extends TestCase
     public function test_user_cannot_create_recipe_with_invalid_data()
     {
         $user = $this->actingAsUser();
-        
+
         // Test missing required fields
         $response = $this->postApi('/recipes', []);
-        
+
         $this->assertErrorResponse($response, 422);
         $response->assertJsonValidationErrors(['name', 'ingredients', 'instructions']);
-        
+
         // Test invalid data types
         $response = $this->postApi('/recipes', [
             'name' => '',
             'ingredients' => '',
             'instructions' => '',
             'servings' => 'invalid',
-            'prep_time' => -1
+            'prep_time' => -1,
         ]);
-        
+
         $this->assertErrorResponse($response, 422);
         $response->assertJsonValidationErrors(['name', 'ingredients', 'instructions', 'servings', 'prep_time']);
     }
@@ -80,19 +80,19 @@ class RecipeControllerTest extends TestCase
     {
         $user = $this->createFreeUser();
         $this->actingAs($user, 'sanctum');
-        
+
         // Create 25 recipes (the limit for free users)
         for ($i = 0; $i < 25; $i++) {
             $this->createRecipe($user, ['name' => "Recipe $i"]);
         }
-        
+
         // Try to create 26th recipe
         $response = $this->postApi('/recipes', [
             'name' => 'Over Limit Recipe',
             'ingredients' => 'Test ingredients',
-            'instructions' => 'Test instructions'
+            'instructions' => 'Test instructions',
         ]);
-        
+
         $this->assertErrorResponse($response, 403);
         $response->assertJsonPath('message', 'Recipe limit reached for your subscription tier');
     }
@@ -104,19 +104,19 @@ class RecipeControllerTest extends TestCase
     {
         $user = $this->createTier1User();
         $this->actingAs($user, 'sanctum');
-        
+
         // Create more than free tier limit
         for ($i = 0; $i < 30; $i++) {
             $this->createRecipe($user);
         }
-        
+
         // Should still be able to create more
         $response = $this->postApi('/recipes', [
             'name' => 'Unlimited Recipe',
             'ingredients' => 'Test ingredients',
-            'instructions' => 'Test instructions'
+            'instructions' => 'Test instructions',
         ]);
-        
+
         $this->assertSuccessResponse($response);
     }
 
@@ -128,11 +128,11 @@ class RecipeControllerTest extends TestCase
         $user = $this->actingAsUser();
         $recipe = $this->createRecipe($user, [
             'name' => 'My Private Recipe',
-            'is_private' => true
+            'is_private' => true,
         ]);
-        
+
         $response = $this->getApi("/recipes/{$recipe->_id}");
-        
+
         $this->assertSuccessResponse($response);
         $response->assertJsonPath('data.recipe.name', 'My Private Recipe');
     }
@@ -144,14 +144,14 @@ class RecipeControllerTest extends TestCase
     {
         $owner = $this->createUser();
         $viewer = $this->actingAsUser();
-        
+
         $recipe = $this->createRecipe($owner, [
             'name' => 'Public Recipe',
-            'is_private' => false
+            'is_private' => false,
         ]);
-        
+
         $response = $this->getApi("/recipes/{$recipe->_id}");
-        
+
         $this->assertSuccessResponse($response);
         $response->assertJsonPath('data.recipe.name', 'Public Recipe');
     }
@@ -163,14 +163,14 @@ class RecipeControllerTest extends TestCase
     {
         $owner = $this->createUser();
         $viewer = $this->actingAsUser();
-        
+
         $recipe = $this->createRecipe($owner, [
             'name' => 'Private Recipe',
-            'is_private' => true
+            'is_private' => true,
         ]);
-        
+
         $response = $this->getApi("/recipes/{$recipe->_id}");
-        
+
         $this->assertForbiddenResponse($response);
     }
 
@@ -181,16 +181,16 @@ class RecipeControllerTest extends TestCase
     {
         $user = $this->actingAsUser();
         $recipe = $this->createRecipe($user);
-        
+
         $updateData = [
             'name' => 'Updated Recipe Name',
             'ingredients' => 'Updated ingredients',
             'instructions' => 'Updated instructions',
-            'servings' => 6
+            'servings' => 6,
         ];
-        
+
         $response = $this->putApi("/recipes/{$recipe->_id}", $updateData);
-        
+
         $this->assertSuccessResponse($response);
         $response->assertJsonPath('data.recipe.name', 'Updated Recipe Name');
         $response->assertJsonPath('data.recipe.servings', 6);
@@ -203,13 +203,13 @@ class RecipeControllerTest extends TestCase
     {
         $owner = $this->createUser();
         $otherUser = $this->actingAsUser();
-        
+
         $recipe = $this->createRecipe($owner);
-        
+
         $response = $this->putApi("/recipes/{$recipe->_id}", [
-            'name' => 'Hacked Recipe'
+            'name' => 'Hacked Recipe',
         ]);
-        
+
         $this->assertForbiddenResponse($response);
     }
 
@@ -220,12 +220,12 @@ class RecipeControllerTest extends TestCase
     {
         $user = $this->actingAsUser();
         $recipe = $this->createRecipe($user);
-        
+
         $response = $this->deleteApi("/recipes/{$recipe->_id}");
-        
+
         $this->assertSuccessResponse($response);
         $response->assertJsonPath('message', 'Recipe deleted successfully');
-        
+
         // Verify recipe is deleted
         $this->assertDatabaseMissing('recipes', ['_id' => $recipe->_id]);
     }
@@ -237,13 +237,13 @@ class RecipeControllerTest extends TestCase
     {
         $owner = $this->createUser();
         $otherUser = $this->actingAsUser();
-        
+
         $recipe = $this->createRecipe($owner);
-        
+
         $response = $this->deleteApi("/recipes/{$recipe->_id}");
-        
+
         $this->assertForbiddenResponse($response);
-        
+
         // Verify recipe still exists
         $this->assertDatabaseHas('recipes', ['_id' => $recipe->_id]);
     }
@@ -259,17 +259,17 @@ class RecipeControllerTest extends TestCase
     {
         $user = $this->createTier2User();
         $this->actingAs($user, 'sanctum');
-        
+
         $recipe = $this->createRecipe($user, ['is_private' => false]);
-        
+
         $response = $this->putApi("/recipes/{$recipe->_id}/privacy");
-        
+
         $this->assertSuccessResponse($response);
         $response->assertJsonPath('data.recipe.is_private', true);
-        
+
         // Toggle back
         $response = $this->putApi("/recipes/{$recipe->_id}/privacy");
-        
+
         $this->assertSuccessResponse($response);
         $response->assertJsonPath('data.recipe.is_private', false);
     }
@@ -281,11 +281,11 @@ class RecipeControllerTest extends TestCase
     {
         $user = $this->createTier1User();
         $this->actingAs($user, 'sanctum');
-        
+
         $recipe = $this->createRecipe($user);
-        
+
         $response = $this->putApi("/recipes/{$recipe->_id}/privacy");
-        
+
         $this->assertForbiddenResponse($response);
         $response->assertJsonPath('message', 'Privacy controls require Tier 2 subscription');
     }
@@ -297,11 +297,11 @@ class RecipeControllerTest extends TestCase
     {
         $user = $this->createFreeUser();
         $this->actingAs($user, 'sanctum');
-        
+
         $recipe = $this->createRecipe($user);
-        
+
         $response = $this->putApi("/recipes/{$recipe->_id}/privacy");
-        
+
         $this->assertForbiddenResponse($response);
         $response->assertJsonPath('message', 'Privacy controls require Tier 2 subscription');
     }
@@ -314,11 +314,11 @@ class RecipeControllerTest extends TestCase
         $owner = $this->createUser();
         $admin = $this->createAdminUser();
         $this->actingAs($admin, 'sanctum');
-        
+
         $recipe = $this->createRecipe($owner, ['is_private' => false]);
-        
+
         $response = $this->putApi("/recipes/{$recipe->_id}/privacy");
-        
+
         $this->assertSuccessResponse($response);
         $response->assertJsonPath('data.recipe.is_private', true);
     }
@@ -330,9 +330,9 @@ class RecipeControllerTest extends TestCase
     {
         $user = $this->createUser();
         $recipe = $this->createRecipe($user);
-        
+
         $response = $this->putApi("/recipes/{$recipe->_id}/privacy");
-        
+
         $this->assertUnauthorizedResponse($response);
     }
 
@@ -347,26 +347,26 @@ class RecipeControllerTest extends TestCase
     {
         $this->createRecipe(null, [
             'name' => 'Chocolate Cake',
-            'is_private' => false
+            'is_private' => false,
         ]);
-        
+
         $this->createRecipe(null, [
             'name' => 'Vanilla Cake',
-            'is_private' => false
+            'is_private' => false,
         ]);
-        
+
         $this->createRecipe(null, [
             'name' => 'Beef Stew',
-            'is_private' => false
+            'is_private' => false,
         ]);
-        
+
         $response = $this->getApi('/recipes/search?query=cake');
-        
+
         $this->assertSuccessResponse($response);
-        
+
         $recipeNames = collect($response->json('data.recipes'))
             ->pluck('name')->toArray();
-            
+
         $this->assertContains('Chocolate Cake', $recipeNames);
         $this->assertContains('Vanilla Cake', $recipeNames);
         $this->assertNotContains('Beef Stew', $recipeNames);
@@ -379,21 +379,21 @@ class RecipeControllerTest extends TestCase
     {
         $publicRecipe = $this->createRecipe(null, [
             'name' => 'Public Chicken Recipe',
-            'is_private' => false
+            'is_private' => false,
         ]);
-        
+
         $privateRecipe = $this->createRecipe(null, [
-            'name' => 'Private Chicken Recipe', 
-            'is_private' => true
+            'name' => 'Private Chicken Recipe',
+            'is_private' => true,
         ]);
-        
+
         $response = $this->getApi('/recipes/search?query=chicken');
-        
+
         $this->assertSuccessResponse($response);
-        
+
         $recipeNames = collect($response->json('data.recipes'))
             ->pluck('name')->toArray();
-            
+
         $this->assertContains('Public Chicken Recipe', $recipeNames);
         $this->assertNotContains('Private Chicken Recipe', $recipeNames);
     }
@@ -404,24 +404,24 @@ class RecipeControllerTest extends TestCase
     public function test_search_includes_own_private_recipes()
     {
         $user = $this->actingAsUser();
-        
+
         $ownPrivateRecipe = $this->createRecipe($user, [
             'name' => 'My Private Chicken Recipe',
-            'is_private' => true
+            'is_private' => true,
         ]);
-        
+
         $othersPrivateRecipe = $this->createRecipe(null, [
             'name' => 'Others Private Chicken Recipe',
-            'is_private' => true
+            'is_private' => true,
         ]);
-        
+
         $response = $this->getApi('/recipes/search?query=chicken');
-        
+
         $this->assertSuccessResponse($response);
-        
+
         $recipeNames = collect($response->json('data.recipes'))
             ->pluck('name')->toArray();
-            
+
         $this->assertContains('My Private Chicken Recipe', $recipeNames);
         $this->assertNotContains('Others Private Chicken Recipe', $recipeNames);
     }
@@ -435,12 +435,12 @@ class RecipeControllerTest extends TestCase
         for ($i = 1; $i <= 15; $i++) {
             $this->createRecipe(null, [
                 'name' => "Test Recipe $i",
-                'is_private' => false
+                'is_private' => false,
             ]);
         }
-        
+
         $response = $this->getApi('/recipes/search?query=test&limit=10&page=1');
-        
+
         $this->assertSuccessResponse($response);
         $this->assertCount(10, $response->json('data.recipes'));
         $response->assertJsonPath('data.pagination.current_page', 1);
@@ -455,11 +455,11 @@ class RecipeControllerTest extends TestCase
     {
         $this->createRecipe(null, [
             'name' => 'Chocolate Cake',
-            'is_private' => false
+            'is_private' => false,
         ]);
-        
+
         $response = $this->getApi('/recipes/search?query=nonexistent');
-        
+
         $this->assertSuccessResponse($response);
         $this->assertEmpty($response->json('data.recipes'));
         $response->assertJsonPath('data.pagination.total', 0);
@@ -472,26 +472,26 @@ class RecipeControllerTest extends TestCase
     {
         $this->createRecipe(null, [
             'name' => 'Public Recipe 1',
-            'is_private' => false
+            'is_private' => false,
         ]);
-        
+
         $this->createRecipe(null, [
             'name' => 'Public Recipe 2',
-            'is_private' => false
+            'is_private' => false,
         ]);
-        
+
         $this->createRecipe(null, [
             'name' => 'Private Recipe',
-            'is_private' => true
+            'is_private' => true,
         ]);
-        
+
         $response = $this->getApi('/recipes');
-        
+
         $this->assertSuccessResponse($response);
-        
+
         $recipes = $response->json('data.recipes');
         $this->assertCount(2, $recipes);
-        
+
         $recipeNames = collect($recipes)->pluck('name')->toArray();
         $this->assertContains('Public Recipe 1', $recipeNames);
         $this->assertContains('Public Recipe 2', $recipeNames);
@@ -509,11 +509,11 @@ class RecipeControllerTest extends TestCase
     {
         $user = $this->createTier1User();
         $this->actingAs($user, 'sanctum');
-        
+
         $recipe = $this->createRecipe($user);
-        
+
         $response = $this->getApi("/recipes/{$recipe->_id}/export/pdf");
-        
+
         $this->assertSuccessResponse($response);
         $response->assertHeader('Content-Type', 'application/pdf');
         $response->assertHeader('Content-Disposition');
@@ -526,11 +526,11 @@ class RecipeControllerTest extends TestCase
     {
         $user = $this->createTier1User();
         $this->actingAs($user, 'sanctum');
-        
+
         $recipe = $this->createRecipe($user);
-        
+
         $response = $this->getApi("/recipes/{$recipe->_id}/export/txt");
-        
+
         $this->assertSuccessResponse($response);
         $response->assertHeader('Content-Type', 'text/plain');
         $response->assertHeader('Content-Disposition');
@@ -543,11 +543,11 @@ class RecipeControllerTest extends TestCase
     {
         $user = $this->createFreeUser();
         $this->actingAs($user, 'sanctum');
-        
+
         $recipe = $this->createRecipe($user);
-        
+
         $response = $this->getApi("/recipes/{$recipe->_id}/export/pdf");
-        
+
         $this->assertForbiddenResponse($response);
         $response->assertJsonPath('message', 'Export functionality requires paid subscription');
     }
@@ -560,11 +560,11 @@ class RecipeControllerTest extends TestCase
         $owner = $this->createUser();
         $user = $this->createTier1User();
         $this->actingAs($user, 'sanctum');
-        
+
         $recipe = $this->createRecipe($owner, ['is_private' => true]);
-        
+
         $response = $this->getApi("/recipes/{$recipe->_id}/export/pdf");
-        
+
         $this->assertForbiddenResponse($response);
     }
 
@@ -575,14 +575,14 @@ class RecipeControllerTest extends TestCase
     {
         $user = $this->createTier2User();
         $this->actingAs($user, 'sanctum');
-        
+
         $recipe = $this->createRecipe($user);
-        
+
         // Test PDF export
         $pdfResponse = $this->getApi("/recipes/{$recipe->_id}/export/pdf");
         $this->assertSuccessResponse($pdfResponse);
         $pdfResponse->assertHeader('Content-Type', 'application/pdf');
-        
+
         // Test TXT export
         $txtResponse = $this->getApi("/recipes/{$recipe->_id}/export/txt");
         $this->assertSuccessResponse($txtResponse);
@@ -596,11 +596,11 @@ class RecipeControllerTest extends TestCase
     {
         $user = $this->createTier1User();
         $this->actingAs($user, 'sanctum');
-        
+
         $recipe = $this->createRecipe($user);
-        
+
         $response = $this->getApi("/recipes/{$recipe->_id}/export/invalid");
-        
+
         $this->assertErrorResponse($response, 400);
         $response->assertJsonPath('message', 'Invalid export format');
     }
@@ -617,9 +617,9 @@ class RecipeControllerTest extends TestCase
         $response = $this->postApi('/recipes', [
             'name' => 'Test Recipe',
             'ingredients' => 'Test ingredients',
-            'instructions' => 'Test instructions'
+            'instructions' => 'Test instructions',
         ]);
-        
+
         $this->assertUnauthorizedResponse($response);
     }
 
@@ -630,11 +630,11 @@ class RecipeControllerTest extends TestCase
     {
         $recipe = $this->createRecipe(null, [
             'name' => 'Public Recipe',
-            'is_private' => false
+            'is_private' => false,
         ]);
-        
+
         $response = $this->getApi("/recipes/{$recipe->_id}");
-        
+
         $this->assertSuccessResponse($response);
         $response->assertJsonPath('data.recipe.name', 'Public Recipe');
     }
@@ -646,11 +646,11 @@ class RecipeControllerTest extends TestCase
     {
         $recipe = $this->createRecipe(null, [
             'name' => 'Private Recipe',
-            'is_private' => true
+            'is_private' => true,
         ]);
-        
+
         $response = $this->getApi("/recipes/{$recipe->_id}");
-        
+
         $this->assertForbiddenResponse($response);
     }
 
@@ -661,15 +661,15 @@ class RecipeControllerTest extends TestCase
     {
         $owner = $this->createUser();
         $otherUser = $this->actingAsUser();
-        
+
         $recipe = $this->createRecipe($owner);
-        
+
         // Cannot update
         $updateResponse = $this->putApi("/recipes/{$recipe->_id}", [
-            'name' => 'Updated Name'
+            'name' => 'Updated Name',
         ]);
         $this->assertForbiddenResponse($updateResponse);
-        
+
         // Cannot delete
         $deleteResponse = $this->deleteApi("/recipes/{$recipe->_id}");
         $this->assertForbiddenResponse($deleteResponse);
@@ -683,19 +683,19 @@ class RecipeControllerTest extends TestCase
         $owner = $this->createUser();
         $admin = $this->createAdminUser();
         $this->actingAs($admin, 'sanctum');
-        
+
         $recipe = $this->createRecipe($owner, [
             'name' => 'Private Recipe',
-            'is_private' => true
+            'is_private' => true,
         ]);
-        
+
         // Admin can view private recipe
         $viewResponse = $this->getApi("/recipes/{$recipe->_id}");
         $this->assertSuccessResponse($viewResponse);
-        
+
         // Admin can update recipe
         $updateResponse = $this->putApi("/recipes/{$recipe->_id}", [
-            'name' => 'Admin Updated Recipe'
+            'name' => 'Admin Updated Recipe',
         ]);
         $this->assertSuccessResponse($updateResponse);
         $updateResponse->assertJsonPath('data.recipe.name', 'Admin Updated Recipe');
@@ -711,15 +711,15 @@ class RecipeControllerTest extends TestCase
     public function test_recipe_creation_with_maximum_field_lengths()
     {
         $user = $this->actingAsUser();
-        
+
         $longString = str_repeat('a', 10000); // Very long string
-        
+
         $response = $this->postApi('/recipes', [
             'name' => $longString,
             'ingredients' => $longString,
-            'instructions' => $longString
+            'instructions' => $longString,
         ]);
-        
+
         // Should either succeed or fail with validation error
         if ($response->status() === 422) {
             $response->assertJsonValidationErrors(['name']);
@@ -734,16 +734,16 @@ class RecipeControllerTest extends TestCase
     public function test_recipe_creation_with_special_characters()
     {
         $user = $this->actingAsUser();
-        
+
         $recipeData = [
             'name' => 'Recipe with émojis 🍰 & spëcial chars!',
             'ingredients' => 'Ingredients with ñ, ü, and other chars',
             'instructions' => 'Instructions with "quotes" and <html> tags',
-            'servings' => 4
+            'servings' => 4,
         ];
-        
+
         $response = $this->postApi('/recipes', $recipeData);
-        
+
         $this->assertSuccessResponse($response);
         $response->assertJsonPath('data.recipe.name', 'Recipe with émojis 🍰 & spëcial chars!');
     }
@@ -754,7 +754,7 @@ class RecipeControllerTest extends TestCase
     public function test_recipe_creation_with_boundary_values()
     {
         $user = $this->actingAsUser();
-        
+
         // Test minimum values
         $response = $this->postApi('/recipes', [
             'name' => 'A', // Minimum length
@@ -762,11 +762,11 @@ class RecipeControllerTest extends TestCase
             'instructions' => 'C',
             'servings' => 1,
             'prep_time' => 0,
-            'cook_time' => 0
+            'cook_time' => 0,
         ]);
-        
+
         $this->assertSuccessResponse($response);
-        
+
         // Test maximum reasonable values
         $response = $this->postApi('/recipes', [
             'name' => str_repeat('Recipe Name ', 10),
@@ -774,9 +774,9 @@ class RecipeControllerTest extends TestCase
             'instructions' => str_repeat('Instruction step ', 30),
             'servings' => 999,
             'prep_time' => 9999,
-            'cook_time' => 9999
+            'cook_time' => 9999,
         ]);
-        
+
         $this->assertSuccessResponse($response);
     }
 
@@ -786,13 +786,13 @@ class RecipeControllerTest extends TestCase
     public function test_malformed_json_requests()
     {
         $user = $this->actingAsUser();
-        
+
         // Send malformed JSON
         $response = $this->json('POST', '/api/v1/recipes', [], [
-            'Authorization' => 'Bearer ' . $user->createToken('test')->plainTextToken,
-            'Content-Type' => 'application/json'
+            'Authorization' => 'Bearer '.$user->createToken('test')->plainTextToken,
+            'Content-Type' => 'application/json',
         ], '{invalid-json}');
-        
+
         $this->assertErrorResponse($response, 400);
     }
 
@@ -802,17 +802,17 @@ class RecipeControllerTest extends TestCase
     public function test_recipe_not_found_handling()
     {
         $user = $this->actingAsUser();
-        
+
         $nonExistentId = '507f1f77bcf86cd799439011'; // Valid ObjectId format
-        
+
         $response = $this->getApi("/recipes/{$nonExistentId}");
         $this->assertErrorResponse($response, 404);
-        
+
         $response = $this->putApi("/recipes/{$nonExistentId}", [
-            'name' => 'Updated Name'
+            'name' => 'Updated Name',
         ]);
         $this->assertErrorResponse($response, 404);
-        
+
         $response = $this->deleteApi("/recipes/{$nonExistentId}");
         $this->assertErrorResponse($response, 404);
     }
@@ -823,14 +823,14 @@ class RecipeControllerTest extends TestCase
     public function test_invalid_recipe_id_format_handling()
     {
         $user = $this->actingAsUser();
-        
+
         $invalidId = 'invalid-id';
-        
+
         $response = $this->getApi("/recipes/{$invalidId}");
         $this->assertErrorResponse($response, 400);
-        
+
         $response = $this->putApi("/recipes/{$invalidId}", [
-            'name' => 'Updated Name'
+            'name' => 'Updated Name',
         ]);
         $this->assertErrorResponse($response, 400);
     }

@@ -10,6 +10,7 @@ class Cookbook extends Model
     use HasFactory;
 
     protected $connection = 'mongodb';
+
     protected $collection = 'cookbooks';
 
     /**
@@ -54,77 +55,77 @@ class Cookbook extends Model
 
     /**
      * Add a recipe to the cookbook.
-     * 
-     * @param string $recipeId
-     * @param int $order
+     *
+     * @param  string  $recipeId
+     * @param  int  $order
      * @return void
      */
     public function addRecipe($recipeId, $order = null)
     {
         // Get current recipe_ids
         $recipeIds = $this->recipe_ids ?? [];
-        
+
         // If order is not specified, add to the end
         if ($order === null) {
             $order = count($recipeIds);
         }
-        
+
         // Add new recipe with order
         $recipeIds[] = [
             'recipe_id' => $recipeId,
-            'order' => $order
+            'order' => $order,
         ];
-        
+
         // Update the model
         $this->recipe_ids = $recipeIds;
     }
 
     /**
      * Remove a recipe from the cookbook.
-     * 
-     * @param string $recipeId
+     *
+     * @param  string  $recipeId
      * @return void
      */
     public function removeRecipe($recipeId)
     {
         // Get current recipe_ids
         $recipeIds = $this->recipe_ids ?? [];
-        
+
         // Filter out the recipe to remove
-        $recipeIds = array_filter($recipeIds, function($item) use ($recipeId) {
+        $recipeIds = array_filter($recipeIds, function ($item) use ($recipeId) {
             return $item['recipe_id'] != $recipeId;
         });
-        
+
         // Reindex array
         $recipeIds = array_values($recipeIds);
-        
+
         // Update the model
         $this->recipe_ids = $recipeIds;
     }
 
     /**
      * Reorder recipes in the cookbook.
-     * 
-     * @param array $recipeOrder Array of recipe_id => order pairs
+     *
+     * @param  array  $recipeOrder  Array of recipe_id => order pairs
      * @return void
      */
     public function reorderRecipes($recipeOrder)
     {
         // Get current recipe_ids
         $recipeIds = $this->recipe_ids ?? [];
-        
+
         // Update orders based on the provided array
         foreach ($recipeIds as &$item) {
             if (isset($recipeOrder[$item['recipe_id']])) {
                 $item['order'] = $recipeOrder[$item['recipe_id']];
             }
         }
-        
+
         // Sort by order
-        usort($recipeIds, function($a, $b) {
+        usort($recipeIds, function ($a, $b) {
             return $a['order'] <=> $b['order'];
         });
-        
+
         // Update the model
         $this->recipe_ids = $recipeIds;
     }
