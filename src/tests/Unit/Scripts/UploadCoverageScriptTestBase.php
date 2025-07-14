@@ -55,17 +55,35 @@ abstract class UploadCoverageScriptTestBase extends TestCase
     }
 
     /**
-     * Execute script command safely in controlled environment
+     * Execute script command safely in controlled environment using proc_open
      */
     protected function executeScriptCommand(string $scriptPath, string $command, array $env = []): string
     {
-        $envVars = '';
-        foreach ($env as $key => $value) {
-            $envVars .= $key.'='.escapeshellarg($value).' ';
+        $descriptorSpec = [
+            0 => ['pipe', 'r'],  // stdin
+            1 => ['pipe', 'w'],  // stdout
+            2 => ['pipe', 'w'],  // stderr
+        ];
+
+        $cmd = ['bash', $scriptPath, $command];
+        $environment = array_merge(getenv(), $env);
+
+        $process = proc_open($cmd, $descriptorSpec, $pipes, null, $environment);
+
+        if (is_resource($process)) {
+            fclose($pipes[0]); // Close stdin
+
+            $output = stream_get_contents($pipes[1]);
+            $error = stream_get_contents($pipes[2]);
+            
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+
+            proc_close($process);
+
+            return $output . $error;
         }
 
-        $fullCommand = $envVars.'bash '.escapeshellarg($scriptPath).' '.escapeshellarg($command).' 2>&1';
-
-        return shell_exec($fullCommand) ?? '';
+        return '';
     }
 }
