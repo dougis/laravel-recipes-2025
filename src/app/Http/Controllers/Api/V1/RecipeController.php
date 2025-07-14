@@ -35,11 +35,14 @@ class RecipeController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $recipes = $this->recipeService->getUserRecipes($user->id);
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit', 10);
+        
+        $result = $this->recipeService->getUserRecipes($user->id, $page, $limit);
 
         return response()->json([
             'status' => 'success',
-            'data' => $recipes,
+            'data' => $result,
         ]);
     }
 
@@ -50,11 +53,14 @@ class RecipeController extends Controller
      */
     public function getPublicRecipes(Request $request)
     {
-        $recipes = $this->recipeService->getPublicRecipes();
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit', 10);
+        
+        $result = $this->recipeService->getPublicRecipes($page, $limit);
 
         return response()->json([
             'status' => 'success',
-            'data' => $recipes,
+            'data' => $result,
         ]);
     }
 
@@ -71,7 +77,7 @@ class RecipeController extends Controller
         if (! $user->canCreateRecipe()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'You have reached your recipe limit. Please upgrade your subscription to create more recipes.',
+                'message' => 'Recipe limit reached for your subscription tier',
             ], 403);
         }
 
@@ -240,11 +246,14 @@ class RecipeController extends Controller
             'query' => 'required|string|min:2',
         ]);
 
-        $recipes = $this->recipeService->searchRecipes($request->query('query'), Auth::id());
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit', 10);
+
+        $result = $this->recipeService->searchRecipes($request->query('query'), Auth::id(), $page, $limit);
 
         return response()->json([
             'status' => 'success',
-            'data' => $recipes,
+            'data' => $result,
         ]);
     }
 
@@ -256,7 +265,14 @@ class RecipeController extends Controller
      */
     public function getPrintableRecipe($id)
     {
-        $recipe = Recipe::find($id);
+        try {
+            $recipe = Recipe::find($id);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid recipe ID format',
+            ], 400);
+        }
 
         // Check if recipe exists
         if (! $recipe) {
@@ -274,9 +290,9 @@ class RecipeController extends Controller
             ], 403);
         }
 
-        $pdf = $this->pdfService->generateRecipePDF($recipe);
-
-        return $pdf->download('recipe-'.$recipe->id.'.pdf');
+        // Return HTML view for printing
+        return view('recipes.print', compact('recipe'))
+            ->header('Content-Type', 'text/html; charset=UTF-8');
     }
 
     /**

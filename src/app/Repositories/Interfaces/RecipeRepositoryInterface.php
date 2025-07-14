@@ -46,23 +46,29 @@ interface RecipeRepositoryInterface
      * Get recipes for a specific user.
      *
      * @param  string  $userId
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param  int  $page
+     * @param  int  $limit
+     * @return array
      */
-    public function getUserRecipes($userId);
+    public function getUserRecipes($userId, $page = 1, $limit = 10);
 
     /**
      * Get public recipes.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param  int  $page
+     * @param  int  $limit
+     * @return array
      */
-    public function getPublicRecipes();
+    public function getPublicRecipes($page = 1, $limit = 10);
 
     /**
      * Search for recipes.
      *
      * @param  string  $query
      * @param  string|null  $userId
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param  int  $page
+     * @param  int  $limit
+     * @return array
      */
-    public function searchRecipes($query, $userId = null);
+    public function searchRecipes($query, $userId = null, $page = 1, $limit = 10);
 }

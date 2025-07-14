@@ -24,21 +24,25 @@ class RecipeService
      * Get all recipes for a user.
      *
      * @param  string  $userId
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param  int  $page
+     * @param  int  $limit
+     * @return array
      */
-    public function getUserRecipes($userId)
+    public function getUserRecipes($userId, $page = 1, $limit = 10)
     {
-        return $this->recipeRepository->getUserRecipes($userId);
+        return $this->recipeRepository->getUserRecipes($userId, $page, $limit);
     }
 
     /**
      * Get all public recipes.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param  int  $page
+     * @param  int  $limit
+     * @return array
      */
-    public function getPublicRecipes()
+    public function getPublicRecipes($page = 1, $limit = 10)
     {
-        return $this->recipeRepository->getPublicRecipes();
+        return $this->recipeRepository->getPublicRecipes($page, $limit);
     }
 
     /**
@@ -114,9 +118,9 @@ class RecipeService
      * @param  string|null  $userId
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function searchRecipes($query, $userId = null)
+    public function searchRecipes($query, $userId = null, $page = 1, $limit = 10)
     {
-        return $this->recipeRepository->searchRecipes($query, $userId);
+        return $this->recipeRepository->searchRecipes($query, $userId, $page, $limit);
     }
 
     /**
