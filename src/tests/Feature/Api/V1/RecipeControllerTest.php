@@ -466,9 +466,94 @@ class RecipeControllerTest extends TestCase
     }
 
     /**
-     * Test public endpoint only returns public recipes.
+     * Test authenticated user can list own recipes with pagination.
      */
-    public function test_public_endpoint_only_returns_public_recipes()
+    public function test_authenticated_user_can_list_own_recipes_with_pagination()
+    {
+        $user = $this->actingAsUser();
+        $otherUser = $this->createUser();
+
+        // Create user's own recipes (mix of public and private)
+        $this->createRecipe($user, [
+            'name' => 'My Public Recipe',
+            'is_private' => false,
+        ]);
+
+        $this->createRecipe($user, [
+            'name' => 'My Private Recipe',
+            'is_private' => true,
+        ]);
+
+        // Create another user's recipes (should not appear)
+        $this->createRecipe($otherUser, [
+            'name' => 'Others Public Recipe',
+            'is_private' => false,
+        ]);
+
+        $this->createRecipe($otherUser, [
+            'name' => 'Others Private Recipe',
+            'is_private' => true,
+        ]);
+
+        $response = $this->getApi('/recipes/');
+
+        $this->assertSuccessResponse($response);
+
+        $recipes = $response->json('data.recipes');
+        $this->assertCount(2, $recipes);
+
+        $recipeNames = collect($recipes)->pluck('name')->toArray();
+        $this->assertContains('My Public Recipe', $recipeNames);
+        $this->assertContains('My Private Recipe', $recipeNames);
+        $this->assertNotContains('Others Public Recipe', $recipeNames);
+        $this->assertNotContains('Others Private Recipe', $recipeNames);
+    }
+
+    /**
+     * Test user recipes endpoint supports pagination.
+     */
+    public function test_user_recipes_endpoint_supports_pagination()
+    {
+        $user = $this->actingAsUser();
+
+        // Create 15 recipes for the user
+        for ($i = 1; $i <= 15; $i++) {
+            $this->createRecipe($user, [
+                'name' => "User Recipe $i",
+                'is_private' => $i % 2 === 0, // Mix of public and private
+            ]);
+        }
+
+        $response = $this->getApi('/recipes/?limit=10&page=1');
+
+        $this->assertSuccessResponse($response);
+        $this->assertCount(10, $response->json('data.recipes'));
+        $response->assertJsonPath('data.pagination.current_page', 1);
+        $response->assertJsonPath('data.pagination.per_page', 10);
+        $response->assertJsonPath('data.pagination.total', 15);
+
+        // Test page 2
+        $response = $this->getApi('/recipes/?limit=10&page=2');
+
+        $this->assertSuccessResponse($response);
+        $this->assertCount(5, $response->json('data.recipes'));
+        $response->assertJsonPath('data.pagination.current_page', 2);
+    }
+
+    /**
+     * Test user recipes endpoint requires authentication.
+     */
+    public function test_user_recipes_endpoint_requires_authentication()
+    {
+        $response = $this->getApi('/recipes/');
+
+        $this->assertUnauthorizedResponse($response);
+    }
+
+    /**
+     * Test public recipes endpoint returns only public recipes.
+     */
+    public function test_public_recipes_endpoint_returns_only_public_recipes()
     {
         $this->createRecipe(null, [
             'name' => 'Public Recipe 1',
@@ -485,7 +570,7 @@ class RecipeControllerTest extends TestCase
             'is_private' => true,
         ]);
 
-        $response = $this->getApi('/recipes');
+        $response = $this->getApi('/recipes/public');
 
         $this->assertSuccessResponse($response);
 
@@ -496,6 +581,51 @@ class RecipeControllerTest extends TestCase
         $this->assertContains('Public Recipe 1', $recipeNames);
         $this->assertContains('Public Recipe 2', $recipeNames);
         $this->assertNotContains('Private Recipe', $recipeNames);
+    }
+
+    /**
+     * Test public recipes endpoint supports pagination.
+     */
+    public function test_public_recipes_endpoint_supports_pagination()
+    {
+        // Create 12 public recipes and 3 private ones
+        for ($i = 1; $i <= 12; $i++) {
+            $this->createRecipe(null, [
+                'name' => "Public Recipe $i",
+                'is_private' => false,
+            ]);
+        }
+
+        for ($i = 1; $i <= 3; $i++) {
+            $this->createRecipe(null, [
+                'name' => "Private Recipe $i",
+                'is_private' => true,
+            ]);
+        }
+
+        $response = $this->getApi('/recipes/public?limit=10&page=1');
+
+        $this->assertSuccessResponse($response);
+        $this->assertCount(10, $response->json('data.recipes'));
+        $response->assertJsonPath('data.pagination.current_page', 1);
+        $response->assertJsonPath('data.pagination.per_page', 10);
+        $response->assertJsonPath('data.pagination.total', 12); // Only public recipes counted
+    }
+
+    /**
+     * Test public recipes endpoint does not require authentication.
+     */
+    public function test_public_recipes_endpoint_does_not_require_authentication()
+    {
+        $this->createRecipe(null, [
+            'name' => 'Public Recipe',
+            'is_private' => false,
+        ]);
+
+        $response = $this->getApi('/recipes/public');
+
+        $this->assertSuccessResponse($response);
+        $this->assertNotEmpty($response->json('data.recipes'));
     }
 
     // ===============================
@@ -603,6 +733,141 @@ class RecipeControllerTest extends TestCase
 
         $this->assertErrorResponse($response, 400);
         $response->assertJsonPath('message', 'Invalid export format');
+    }
+
+    // ===============================
+    // PRINT FUNCTIONALITY TESTS
+    // ===============================
+
+    /**
+     * Test authenticated user can access print view of own recipe.
+     */
+    public function test_authenticated_user_can_access_print_view_of_own_recipe()
+    {
+        $user = $this->actingAsUser();
+        $recipe = $this->createRecipe($user, [
+            'name' => 'My Printable Recipe',
+            'is_private' => true,
+        ]);
+
+        $response = $this->getApi("/recipes/{$recipe->_id}/print");
+
+        $this->assertSuccessResponse($response);
+        $response->assertHeader('Content-Type', 'text/html; charset=UTF-8');
+    }
+
+    /**
+     * Test authenticated user can access print view of public recipe.
+     */
+    public function test_authenticated_user_can_access_print_view_of_public_recipe()
+    {
+        $owner = $this->createUser();
+        $user = $this->actingAsUser();
+
+        $recipe = $this->createRecipe($owner, [
+            'name' => 'Public Printable Recipe',
+            'is_private' => false,
+        ]);
+
+        $response = $this->getApi("/recipes/{$recipe->_id}/print");
+
+        $this->assertSuccessResponse($response);
+        $response->assertHeader('Content-Type', 'text/html; charset=UTF-8');
+    }
+
+    /**
+     * Test unauthenticated user can access print view of public recipe.
+     */
+    public function test_unauthenticated_user_can_access_print_view_of_public_recipe()
+    {
+        $recipe = $this->createRecipe(null, [
+            'name' => 'Public Printable Recipe',
+            'is_private' => false,
+        ]);
+
+        $response = $this->getApi("/recipes/{$recipe->_id}/print");
+
+        $this->assertSuccessResponse($response);
+        $response->assertHeader('Content-Type', 'text/html; charset=UTF-8');
+    }
+
+    /**
+     * Test user cannot access print view of others private recipe.
+     */
+    public function test_user_cannot_access_print_view_of_others_private_recipe()
+    {
+        $owner = $this->createUser();
+        $user = $this->actingAsUser();
+
+        $recipe = $this->createRecipe($owner, [
+            'name' => 'Private Recipe',
+            'is_private' => true,
+        ]);
+
+        $response = $this->getApi("/recipes/{$recipe->_id}/print");
+
+        $this->assertForbiddenResponse($response);
+    }
+
+    /**
+     * Test unauthenticated user cannot access print view of private recipe.
+     */
+    public function test_unauthenticated_user_cannot_access_print_view_of_private_recipe()
+    {
+        $recipe = $this->createRecipe(null, [
+            'name' => 'Private Recipe',
+            'is_private' => true,
+        ]);
+
+        $response = $this->getApi("/recipes/{$recipe->_id}/print");
+
+        $this->assertForbiddenResponse($response);
+    }
+
+    /**
+     * Test admin can access print view of any recipe.
+     */
+    public function test_admin_can_access_print_view_of_any_recipe()
+    {
+        $owner = $this->createUser();
+        $admin = $this->createAdminUser();
+        $this->actingAs($admin, 'sanctum');
+
+        $recipe = $this->createRecipe($owner, [
+            'name' => 'Admin Accessible Recipe',
+            'is_private' => true,
+        ]);
+
+        $response = $this->getApi("/recipes/{$recipe->_id}/print");
+
+        $this->assertSuccessResponse($response);
+        $response->assertHeader('Content-Type', 'text/html; charset=UTF-8');
+    }
+
+    /**
+     * Test print endpoint handles non-existent recipe.
+     */
+    public function test_print_endpoint_handles_non_existent_recipe()
+    {
+        $user = $this->actingAsUser();
+        $nonExistentId = '507f1f77bcf86cd799439011'; // Valid ObjectId format
+
+        $response = $this->getApi("/recipes/{$nonExistentId}/print");
+
+        $this->assertErrorResponse($response, 404);
+    }
+
+    /**
+     * Test print endpoint handles invalid recipe ID.
+     */
+    public function test_print_endpoint_handles_invalid_recipe_id()
+    {
+        $user = $this->actingAsUser();
+        $invalidId = 'invalid-id';
+
+        $response = $this->getApi("/recipes/{$invalidId}/print");
+
+        $this->assertErrorResponse($response, 400);
     }
 
     // ===============================

@@ -7,6 +7,12 @@ use App\Repositories\Interfaces\RecipeRepositoryInterface;
 
 class RecipeRepository implements RecipeRepositoryInterface
 {
+    protected $model;
+
+    public function __construct(Recipe $model)
+    {
+        $this->model = $model;
+    }
     /**
      * Get all recipes.
      *
@@ -78,23 +84,58 @@ class RecipeRepository implements RecipeRepositoryInterface
      * Get recipes for a specific user.
      *
      * @param  string  $userId
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param  int  $page
+     * @param  int  $limit
+     * @return array
      */
-    public function getUserRecipes($userId)
+    public function getUserRecipes($userId, $page = 1, $limit = 10)
     {
-        return Recipe::where('user_id', $userId)->get();
+        $query = $this->model->where('user_id', $userId);
+
+        $total = $query->count();
+        $recipes = $query->skip(($page - 1) * $limit)
+            ->take($limit)
+            ->get();
+
+        return [
+            'recipes' => $recipes,
+            'pagination' => [
+                'current_page' => (int) $page,
+                'per_page' => (int) $limit,
+                'total' => $total,
+                'last_page' => ceil($total / $limit),
+            ],
+        ];
     }
 
     /**
      * Get public recipes.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param  int  $page
+     * @param  int  $limit
+     * @return array
      */
-    public function getPublicRecipes()
+    public function getPublicRecipes($page = 1, $limit = 10)
     {
-        return Recipe::where('is_private', false)
-            ->orWhereNull('is_private')
+        $query = Recipe::where(function ($q) {
+            $q->where('is_private', false)
+                ->orWhereNull('is_private');
+        });
+
+        $total = $query->count();
+        $recipes = $query->skip(($page - 1) * $limit)
+            ->take($limit)
             ->get();
+
+        return [
+            'recipes' => $recipes,
+            'pagination' => [
+                'current_page' => (int) $page,
+                'per_page' => (int) $limit,
+                'total' => $total,
+                'last_page' => ceil($total / $limit),
+            ],
+        ];
     }
 
     /**
@@ -102,9 +143,11 @@ class RecipeRepository implements RecipeRepositoryInterface
      *
      * @param  string  $query
      * @param  string|null  $userId
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param  int  $page
+     * @param  int  $limit
+     * @return array
      */
-    public function searchRecipes($query, $userId = null)
+    public function searchRecipes($query, $userId = null, $page = 1, $limit = 10)
     {
         // Build base query
         $baseQuery = Recipe::search($query);
@@ -128,7 +171,22 @@ class RecipeRepository implements RecipeRepositoryInterface
             });
         }
 
-        // Get results
-        return $baseQuery->get();
+        // Get total count
+        $total = $baseQuery->count();
+
+        // Get paginated results
+        $recipes = $baseQuery->skip(($page - 1) * $limit)
+            ->take($limit)
+            ->get();
+
+        return [
+            'recipes' => $recipes,
+            'pagination' => [
+                'current_page' => (int) $page,
+                'per_page' => (int) $limit,
+                'total' => $total,
+                'last_page' => ceil($total / $limit),
+            ],
+        ];
     }
 }
